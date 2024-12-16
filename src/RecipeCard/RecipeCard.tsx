@@ -255,7 +255,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                                             {typeof item === "string" ? item : JSON.stringify(item)}
                                         </div>
                                     ))
-                                    : editableRecipe[field]}
+                                    : <>{editableRecipe[field] as string}</>}
                             </>
                         )}
                     </div>

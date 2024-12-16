@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/types.d.ts","./src/main.tsx","./src/utils.ts","./src/vite-env.d.ts","./src/authcontext/authcontext.tsx","./src/login/login.tsx","./src/recipecard/recipecard.tsx","./src/recipelist/recipelist.tsx","./src/recipelist/reciperow.tsx","./src/recipeview/recipeview.tsx","./src/recipescraper/recipescraper.tsx"],"version":"5.7.2"}

@@ -1,5 +1,5 @@
 
-import translations from "./translations.json";
+import translations from "./translations.json" assert { type: "json" };
 import { Language } from "./Types.js";
 
 export const isArrayField = <T>(field: unknown): field is T[] => Array.isArray(field);
