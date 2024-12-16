@@ -6,6 +6,7 @@ import RecipeCard from "../RecipeCard/RecipeCard.js";
 import { translate } from "../utils.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { useBusy } from "../Busy/BusyContext.js";
 
 type RecipeScraperProps = {
     language: "en" | "nl";
@@ -14,14 +15,16 @@ type RecipeScraperProps = {
 const RecipeScraper: React.FC<RecipeScraperProps> = ({language}) => {
     const [recipe, setRecipe] = useState<RecipeData | undefined>();
     const [url, setUrl ] = useState<string>("");
-
+    const { showBusy, hideBusy } = useBusy();
     const fetchData = async (url: string) => {
+        showBusy();
         try {
             const response = await axios.get(`/api/scrape?url=${url}`); // API call through proxy
             setRecipe(response.data)
         } catch (error) {
             console.error('Error fetching recipe data:', error);
         }
+        hideBusy();
     };
 
     const onUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {

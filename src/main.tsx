@@ -8,6 +8,8 @@ import './index.css'
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { BusyProvider } from "./Busy/BusyProvider.js";
+import { BusyIndicator } from "./Busy/BusyIndicator.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -44,7 +46,10 @@ async function signInWithGoogle() {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
+      <BusyProvider>
+        <BusyIndicator />
       <App />
+      </BusyProvider>
     </BrowserRouter>
   </StrictMode>,
 )
