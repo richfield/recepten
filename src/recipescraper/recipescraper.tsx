@@ -16,6 +16,16 @@ const RecipeScraper: React.FC<RecipeScraperProps> = ({language}) => {
     const [recipe, setRecipe] = useState<RecipeData | undefined>();
     const [url, setUrl ] = useState<string>("");
     const { showBusy, hideBusy } = useBusy();
+
+    const handleButtonClick = async () => {
+        showBusy();
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate an API call
+        } finally {
+            hideBusy();
+        }
+    };
+
     const fetchData = async (url: string) => {
         showBusy();
         try {
@@ -56,6 +66,7 @@ const RecipeScraper: React.FC<RecipeScraperProps> = ({language}) => {
             </Form.Group>
         </Form>
         <RecipeCard recipe={recipe} save={handleSave} language = {language} />
+        <button onClick={handleButtonClick}>Do Something</button>
     </div>
     // ... rest of your component rendering logic ...
 };
