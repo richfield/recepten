@@ -28,11 +28,7 @@ jobs:
     - name: Build the project
       run: npm run build
 
-    - name: Copy files to deployment directory
+    - name: Copy files
       run: |
-        cp -R ${{ github.workspace }}/dist/* /docker-config/recepten/
-        cp ${{ github.workspace }}/package.json /docker-config/recepten/
-
-
-    - name: Restart Service
-      run: docker compose -f /docker-config/recepten/compose.yml up -d --force-recreate
+       rm -f /data/www/recepten/assets/*
+       cp -r ${{ github.workspace }}/dist/* /data/www/recepten/
