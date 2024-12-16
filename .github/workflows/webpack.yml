@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     strategy:
       matrix:
@@ -31,4 +31,4 @@ jobs:
     - name: Copy files
       run: |
        rm -f /data/www/recepten/assets/*
-       cp -r ${{ github.workspace }}/dist/* /data/www/recepten/
+       cp -r ${{ github.workspace }}/dist/* /data/www/recepten
