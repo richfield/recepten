@@ -23,7 +23,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
 
     useEffect(() => {
         if (recipe !== undefined) {
-            recipe.id = recipe.id || uuidv4()
+            recipe._id = recipe._id || uuidv4()
         }
         console.log({ recipe })
         setEditableRecipe(recipe)
