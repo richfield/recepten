@@ -41,12 +41,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
         return <></>
     }
 
-    const handleImageChange = (imageIndex: number, value: string): void => {
-        const newImageValue = editableRecipe.image ?? [];
-        newImageValue[imageIndex] = value;
-        handleInputChange("image", newImageValue)
-    }
-
     const handleSectionToggle = (section: string) => {
         setEditableSection(editableSection === section ? null : section);
     };
@@ -391,40 +385,42 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                     <h1>{renderSection<string>('name', translate("name", language))}</h1>
                 </Card.Header>
                 <Card.Body>
-                    <Row>
+                    <>
                         <Col md={3} style={{ textAlign: "center", position: "relative" }}>
-                        <>
-                            {editableRecipe.image ? (
-                                editableRecipe.image.map((image, index) => {
-                                <>
-                                    <Card.Img
-                                        style={{ width: "100%" }}
-                                        variant="top"
-                                        src={image}
-                                        alt={editableRecipe.name}
-                                        onDoubleClick={() => handleShowModal(index)}
-                                    />
-                                    <div
-                                        style={{
-                                            position: "absolute",
-                                            top: 10,
-                                            right: 10,
-                                            zIndex: 2,
-                                            cursor: "pointer",
-                                            display: "visible" // hidden by default
-                                        }}
-                                        onClick={() => handleShowModal(index)}
-                                    >
-                                        <Button variant="light" onClick={() => handleShowModal(index)}><FontAwesomeIcon icon={faEdit} /></Button>
-                                    </div>
-                                </>
+                            <>
+                                {Array.isArray(editableRecipe.image) && editableRecipe.image.length > 0 ? (
+                                    editableRecipe.image.map((image, index) => (
+                                        <Row key={index}>
+                                            <Card.Img
+                                                style={{ width: "100%" }}
+                                                variant="top"
+                                                src={image}
+                                                alt={editableRecipe.name}
+                                                onDoubleClick={() => handleShowModal(index)}
+                                            />
+                                            <div
+                                                style={{
+                                                    position: "absolute",
+                                                    top: 10,
+                                                    right: 10,
+                                                    zIndex: 2,
+                                                    cursor: "pointer",
+                                                    display: "visible" // hidden by default
+                                                }}
+                                                onClick={() => handleShowModal(index)}
+                                            >
+                                                <Button variant="light"><FontAwesomeIcon icon={faEdit} /></Button>
+                                            </div>
+                                        </Row>
 
-                                })
-                            ) : (
+                                    ))
+                                ) : (
+                                    <Row>
                                     <Button variant="light" onClick={() => handleShowModal(0)}>
-                                    <FontAwesomeIcon icon={faEdit} />
-                                </Button>
-                            )}
+                                        <FontAwesomeIcon icon={faEdit} />
+                                    </Button>
+                                    </Row>
+                                )}
                             </>
                             <Modal show={show} onHide={handleCloseModel}>
                                 <Modal.Header closeButton>
@@ -434,7 +430,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                                     <Form.Control
                                         type="text"
                                         value={editableRecipe.image ? String(editableRecipe.image[imageIndex]) : ""}
-                                        onChange={(e) => handleImageChange(imageIndex, e.target.value)}
+                                        onChange={(e) => handleListChange("image", imageIndex, e.target.value)}
                                         placeholder={translate("editimageurl", language)}
                                     />
                                 </Modal.Body>
@@ -462,7 +458,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                                 {renderSection<string>('keywords', translate("keywords", language), "")}
                             </ListGroup>
                         </Col>
-                    </Row>
+                    </>
                 </Card.Body>
             </Card>
         )
