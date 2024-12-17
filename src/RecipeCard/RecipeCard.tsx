@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, ListGroup, Button, Form, InputGroup, Row, Col, ButtonGroup, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Card, ListGroup, Button, Form, InputGroup, Row, Col, ButtonGroup, Modal, OverlayTrigger, Tooltip, Container } from "react-bootstrap";
 import { AxiosResponse } from 'axios';
 import { RecipeData, Language } from "../Types.js";
 
@@ -385,8 +385,8 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                     <h1>{renderSection<string>('name', translate("name", language))}</h1>
                 </Card.Header>
                 <Card.Body>
-                    <>
-                        <Col md={3} style={{ textAlign: "center", position: "relative" }}>
+                    <Container>
+                        <Col md={3} sm={12} style={{ textAlign: "center", position: "relative" }}>
                             <>
                                 {Array.isArray(editableRecipe.image) && editableRecipe.image.length > 0 ? (
                                     editableRecipe.image.map((image, index) => {
@@ -417,9 +417,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                                     })
                                 ) : (
                                     <Row>
-                                    <Button variant="light" onClick={() => handleShowModal(0)}>
-                                        <FontAwesomeIcon icon={faEdit} />
-                                    </Button>
+                                        <Button variant="light" onClick={() => handleShowModal(0)}>
+                                            <FontAwesomeIcon icon={faEdit} />
+                                        </Button>
                                     </Row>
                                 )}
                             </>
@@ -444,22 +444,26 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                                     </Button>
                                 </Modal.Footer>
                             </Modal>
-                            <ListGroup variant="flush">
-                                {renderTimeSection('cookTime', translate("cookTime", language), language)}
-                                {renderTimeSection('prepTime', translate("prepTime", language), language)}
-                                {renderTimeSection('totalTime', translate("totalTime", language), language)}
-                            </ListGroup>
+                            <Row>
+                                <ListGroup variant="flush">
+                                    {renderTimeSection('cookTime', translate("cookTime", language), language)}
+                                    {renderTimeSection('prepTime', translate("prepTime", language), language)}
+                                    {renderTimeSection('totalTime', translate("totalTime", language), language)}
+                                </ListGroup>
+                            </Row>
                         </Col>
 
-                        <Col md={9}>
-                            <ListGroup variant="flush">
-                                {renderSection<string>('description', translate("description", language))}
-                                {renderSection<string>('recipeIngredient', translate("ingredients", language), "")}
-                                {renderInstructions()}
-                                {renderSection<string>('keywords', translate("keywords", language), "")}
-                            </ListGroup>
+                        <Col md={9} sm={12}>
+                            <Row>
+                                <ListGroup variant="flush">
+                                    {renderSection<string>('description', translate("description", language))}
+                                    {renderSection<string>('recipeIngredient', translate("ingredients", language), "")}
+                                    {renderInstructions()}
+                                    {renderSection<string>('keywords', translate("keywords", language), "")}
+                                </ListGroup>
+                            </Row>
                         </Col>
-                    </>
+                    </Container>
                 </Card.Body>
             </Card>
         )
