@@ -15,19 +15,19 @@ export const RecipeRow = ({ recipe, index, onDeleted }: { recipe: RecipeData; in
     const handleClose = () => setShow(false); // Close the modal
 
     const confirmDelete = async () => {
-        await axios.delete(`/api/recipes/${recipe.id}`); // API call through proxy
+        await axios.delete(`/api/recipes/${recipe._id}`); // API call through proxy
         onDeleted();
         setShow(false); // Close modal after deletion
     };
 
     return (
-        <tr onDoubleClick={() => navigate(`/recipe/${recipe.id}`)}>
+        <tr onDoubleClick={() => navigate(`/recipe/${recipe._id}`)}>
             <td>{index + 1}</td>
             <td>{recipe.name}</td>
             <td>{recipe.description}</td>
             <td>
                 <ButtonGroup>
-                    <Link to={`/recipe/${recipe.id}`}>
+                    <Link to={`/recipe/${recipe._id}`}>
                         <Button variant="primary"><FontAwesomeIcon icon={faEdit} /></Button>
                     </Link>
                     <Button variant="danger" onClick={handleDelete}>

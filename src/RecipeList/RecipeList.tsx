@@ -46,7 +46,7 @@ const RecipeList: React.FC<RecipeListProps> = ({ language }) => {
         </thead>
         <tbody> {
             recipes && recipes.map((recipe, index) => (
-                <RecipeRow key={recipe.id} recipe={recipe} index={index} onDeleted={onDeleted} />
+                <RecipeRow key={recipe._id} recipe={recipe} index={index} onDeleted={onDeleted} />
             ))
         }
         </tbody>

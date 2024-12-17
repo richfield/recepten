@@ -45,7 +45,7 @@ export type RecipeData = {
     recipeCuisine?: string[];
     aggregateRating?: string; // Optional field
     video?: string; // Optional field
-    id?: string;
+    _id?: string;
 };
 
 export interface Translations {
@@ -54,3 +54,44 @@ export interface Translations {
 
 export type Language = "en"|"nl"
 
+/**
+ * Represents the settings associated with a user profile.
+ */
+export interface UserSettings {
+    [key: string]: string; // A dictionary of settings (key-value pairs)
+}
+
+/**
+ * Represents a user profile in the application.
+ */
+export interface UserProfile {
+    /**
+     * Firebase User ID.
+     */
+    firebaseUID: string;
+
+    /**
+     * Dictionary of user settings.
+     */
+    settings: UserSettings;
+
+    /**
+     * Array of roles assigned to the user.
+     */
+    roles: string[];
+
+    /**
+     * Array of groups the user belongs to.
+     */
+    groups: string[];
+
+    /**
+     * Timestamp of when the profile was created.
+     */
+    createdAt: Date;
+
+    /**
+     * Timestamp of when the profile was last updated.
+     */
+    updatedAt: Date;
+}

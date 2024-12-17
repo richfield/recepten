@@ -81,7 +81,7 @@ function App() {
               {user && user.photoURL ? (<>
 
                 <Image
-                  src={user.photoURL || 'https://lh3.googleusercontent.com/a/ACg8ocJAcKC6GUDYVsxsFD3Nzk5fgdNQASygp6lMSw2v2UxPM2ci5pZ2=s96-c'}
+                  src={user.photoURL || ''}
                   alt="User Avatar"
                   roundedCircle
                   style={{ width: '40px', height: '40px', marginRight: '10px' }}

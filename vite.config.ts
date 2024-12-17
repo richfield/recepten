@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from "@vitejs/plugin-react-swc";
 import { VitePWA } from 'vite-plugin-pwa';
 
-const apiUrl = process.env.API_URL || 'http://localhost:3000'
+const apiUrl = process.env.API_URL || 'http://debian.ten-velde.com:3005'
 
 // https://vitejs.dev/config/
 export default defineConfig({
