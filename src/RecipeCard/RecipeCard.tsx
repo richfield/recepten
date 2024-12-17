@@ -389,31 +389,32 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                         <Col md={3} style={{ textAlign: "center", position: "relative" }}>
                             <>
                                 {Array.isArray(editableRecipe.image) && editableRecipe.image.length > 0 ? (
-                                    editableRecipe.image.map((image, index) => (
-                                        <Row key={index}>
-                                            <Card.Img
-                                                style={{ width: "100%" }}
-                                                variant="top"
-                                                src={image}
-                                                alt={editableRecipe.name}
-                                                onDoubleClick={() => handleShowModal(index)}
-                                            />
-                                            <div
-                                                style={{
-                                                    position: "absolute",
-                                                    top: 10,
-                                                    right: 10,
-                                                    zIndex: 2,
-                                                    cursor: "pointer",
-                                                    display: "visible" // hidden by default
-                                                }}
-                                                onClick={() => handleShowModal(index)}
-                                            >
-                                                <Button variant="light"><FontAwesomeIcon icon={faEdit} /></Button>
-                                            </div>
-                                        </Row>
+                                    editableRecipe.image.map((image, index) => {
+                                        return index === 0 && (
+                                            <Row key={index}>
+                                                <Card.Img
+                                                    style={{ width: "100%" }}
+                                                    variant="top"
+                                                    src={image}
+                                                    alt={editableRecipe.name}
+                                                    onDoubleClick={() => handleShowModal(index)} />
+                                                <div
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: 10,
+                                                        right: 10,
+                                                        zIndex: 2,
+                                                        cursor: "pointer",
+                                                        display: "visible" // hidden by default
+                                                    }}
+                                                    onClick={() => handleShowModal(index)}
+                                                >
+                                                    <Button variant="light"><FontAwesomeIcon icon={faEdit} /></Button>
+                                                </div>
+                                            </Row>
 
-                                    ))
+                                        );
+                                    })
                                 ) : (
                                     <Row>
                                     <Button variant="light" onClick={() => handleShowModal(0)}>
