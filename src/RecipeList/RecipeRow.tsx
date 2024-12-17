@@ -19,7 +19,7 @@ export const RecipeRow = ({ recipe, index, onDeleted }: { recipe: RecipeData; in
         onDeleted();
         setShow(false); // Close modal after deletion
     };
-
+    console.log({recipe, id: recipe._id})
     return (
         <tr onDoubleClick={() => navigate(`/recipe/${recipe._id}`)}>
             <td>{index + 1}</td>

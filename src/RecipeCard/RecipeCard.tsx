@@ -30,12 +30,21 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
     }, [recipe])
 
     const [show, setShowModel] = useState(false);
-
+    const [imageIndex, setImageIndex] = useState<number>(0);
     const handleCloseModel = () => setShowModel(false);
-    const handleShowModal = () => setShowModel(true);
+    const handleShowModal = (index: number) => {
+        setImageIndex(index);
+        setShowModel(true);
+    };
 
     if (!editableRecipe) {
         return <></>
+    }
+
+    const handleImageChange = (imageIndex: number, value: string): void => {
+        const newImageValue = editableRecipe.image ?? [];
+        newImageValue[imageIndex] = value;
+        handleInputChange("image", newImageValue)
     }
 
     const handleSectionToggle = (section: string) => {
@@ -384,14 +393,16 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                 <Card.Body>
                     <Row>
                         <Col md={3} style={{ textAlign: "center", position: "relative" }}>
+                        <>
                             {editableRecipe.image ? (
+                                editableRecipe.image.map((image, index) => {
                                 <>
                                     <Card.Img
                                         style={{ width: "100%" }}
                                         variant="top"
-                                        src={editableRecipe.image}
+                                        src={image}
                                         alt={editableRecipe.name}
-                                        onDoubleClick={handleShowModal}
+                                        onDoubleClick={() => handleShowModal(index)}
                                     />
                                     <div
                                         style={{
@@ -402,16 +413,19 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                                             cursor: "pointer",
                                             display: "visible" // hidden by default
                                         }}
-                                        onClick={handleShowModal}
+                                        onClick={() => handleShowModal(index)}
                                     >
-                                        <Button variant="light" onClick={handleShowModal}><FontAwesomeIcon icon={faEdit} /></Button>
+                                        <Button variant="light" onClick={() => handleShowModal(index)}><FontAwesomeIcon icon={faEdit} /></Button>
                                     </div>
                                 </>
+
+                                })
                             ) : (
-                                <Button variant="light" onClick={handleShowModal}>
+                                    <Button variant="light" onClick={() => handleShowModal(0)}>
                                     <FontAwesomeIcon icon={faEdit} />
                                 </Button>
                             )}
+                            </>
                             <Modal show={show} onHide={handleCloseModel}>
                                 <Modal.Header closeButton>
                                     <Modal.Title>{translate("editimageurl", language)}</Modal.Title>
@@ -419,8 +433,8 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
                                 <Modal.Body>
                                     <Form.Control
                                         type="text"
-                                        value={editableRecipe.image ? String(editableRecipe.image) : ""}
-                                        onChange={(e) => handleInputChange("image", e.target.value)}
+                                        value={editableRecipe.image ? String(editableRecipe.image[imageIndex]) : ""}
+                                        onChange={(e) => handleImageChange(imageIndex, e.target.value)}
                                         placeholder={translate("editimageurl", language)}
                                     />
                                 </Modal.Body>
@@ -456,3 +470,4 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
 }
 
 export default RecipeCard;
+
