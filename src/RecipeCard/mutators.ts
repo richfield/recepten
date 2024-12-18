@@ -15,6 +15,7 @@ const myArrayMutators: MyArrayMutators = {
     move: arrayMutators.move,
     pop: arrayMutators.pop,
     push: arrayMutators.push,
+    remove: arrayMutators.remove
     //default: arrayMutators.default, // Cast to the correct Mutator type
 };
 

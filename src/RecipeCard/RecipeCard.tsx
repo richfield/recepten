@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Row, Col, ButtonGroup } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { AxiosResponse } from 'axios';
 import { RecipeData, Language } from "../Types.js";
 import { v4 as uuidv4 } from 'uuid';
 import ViewRecipe from "./ViewRecipe.js";
 import EditRecipe from "./EditRecipe.js";
-import { faSave, faTimes, faEdit } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type RecipeCardProps = {
     recipe: RecipeData | undefined;
@@ -31,36 +29,21 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
         return <></>
     }
 
-    const handleSave = () => {
-        save(editableRecipe);
+    const handleSave = (recipe: RecipeData) => {
+        save(recipe);
+        setEditableRecipe(recipe);
         setEditMode(false);
     }
 
+    const handleToggle = () => {
+        setEditMode(!editMode)
+    }
 
     return (
         editableRecipe && (<Col>
-            <Row className="d-flex justify-content-between align-items-center">
-                <Col/>
-                <Col xs="auto">
-                    {editMode ? (
-                        <ButtonGroup>
-                            <Button variant="outline" size="sm" onClick={handleSave}>
-                                <FontAwesomeIcon icon={faSave} />
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => setEditMode(false)}>
-                                <FontAwesomeIcon icon={faTimes} />
-                            </Button>
-                        </ButtonGroup>
-                    ) : (
-                        <Button variant="outline" size="sm" onClick={() => setEditMode(true)}>
-                            <FontAwesomeIcon icon={faEdit} />
-                        </Button>
-                    )}
-                </Col>
-            </Row>
             <Row>
-            {editMode ? <EditRecipe language={language} recipe={editableRecipe} onSave={setEditableRecipe} /> :
-                <ViewRecipe language={language} recipe={editableRecipe} />}
+            {editMode ? <EditRecipe language={language} recipe={editableRecipe} onSave={handleSave} toggleEdit={handleToggle}/> :
+                    <ViewRecipe language={language} recipe={editableRecipe} toggleEdit={handleToggle} />}
             </Row>
         </Col>
         )

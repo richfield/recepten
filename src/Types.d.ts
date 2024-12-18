@@ -30,7 +30,8 @@ export type RecipeData = {
     '@type'?: 'Recipe';
     author?: Author;
     keywords?: string[];
-    image?: string[];
+    images?: string[];
+    image?: Buffer;
     recipeIngredient?: string[];
     name?: string;
     url?: string;

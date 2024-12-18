@@ -1,16 +1,19 @@
 // ViewRecipe Component
 import React from 'react';
-import { Card, ListGroup, Container, Col, Row } from "react-bootstrap";
+import { Card, ListGroup, Container, Col, Row, Button } from "react-bootstrap";
 import { RecipeData, Language } from "../Types.js";
 import { translate } from "../utils.js";
 import moment from 'moment/min/moment-with-locales';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 type ViewRecipeProps = {
     recipe: RecipeData;
     language: Language;
+    toggleEdit: () => void
 };
 
-const formatTime = (time: string|undefined, language: Language) => {
+const formatTime = (time: string | undefined, language: Language) => {
     if (!time) {
         return time;
     }
@@ -19,19 +22,27 @@ const formatTime = (time: string|undefined, language: Language) => {
     return (duration.hours() > 0 || duration.minutes() > 0) && duration.locale(language).humanize();
 };
 
-const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language }) => (
-            <Container style={{width: "90%"}}>
-                <Col>
-                    <Row>
-                        <h1>{recipe.name}</h1>
-                    </Row>
+const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit }) => (
+    <Container>
+        <Col>
+            <Row className="d-flex justify-content-between align-items-center">
+                <Col />
+                <Col xs="auto">
+                    <Button variant="outline" size="sm" onClick={toggleEdit} >
+                        <FontAwesomeIcon icon={faEdit} />
+                    </Button>
                 </Col>
+            </Row>
+            <Row>
+                <h1>{recipe.name}</h1>
+            </Row>
+            <Row>
                 <Col md={3} style={{ textAlign: "center" }}>
                     {recipe.image && recipe.image.length > 0 && (
                         <Card.Img
                             style={{ width: "100%" }}
                             variant="top"
-                            src={recipe.image[0]}
+                            src={recipe.images ? recipe.images[0] : ""}
                             alt={recipe.name}
                         />
                     )}
@@ -63,7 +74,10 @@ const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language }) => (
                         </ListGroup.Item>
                     </ListGroup>
                 </Col>
-            </Container>
+            </Row>
+        </Col>
+
+    </Container>
 );
 
 export default ViewRecipe;

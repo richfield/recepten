@@ -24,6 +24,7 @@
     "html-recipe-parser": "^1.0.15",
     "jsonld": "^8.3.2",
     "moment": "^2.30.1",
+    "rc-picker": "^4.8.3",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.6",
     "react-dom": "^18.3.1",

@@ -18,7 +18,9 @@
     "prepTime": "Preparation time",
     "totalTime": "Total time",
     "home": "Home",
-    "search": "Search"
+    "search": "Search",
+    "times": "Times"
+
   },
   "nl": {
     "title": "Recepten",
@@ -39,6 +41,7 @@
     "prepTime": "Voorbereidingstijd",
     "totalTime": "Totale tijd",
     "home": "Thuis",
-    "search": "Zoeken"
+    "search": "Zoeken",
+    "times" : "Tijden"
   }
 }
