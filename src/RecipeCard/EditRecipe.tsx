@@ -2,19 +2,20 @@
 import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
-import arrayMutators from 'final-form-arrays';
 import { Card, Button, Container, Row, Col, InputGroup, Form as BootstrapForm } from "react-bootstrap";
 import { RecipeData, Language } from "../Types.js";
 import { translate } from "../utils.js";
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import myArrayMutators from "./mutators.js";
 
 type EditRecipeProps = {
     recipe: RecipeData;
     onSave: (recipe: RecipeData) => void;
     language: Language;
 };
+
 
 const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language }) => {
     const [times, setTimes] = useState({
@@ -44,7 +45,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language }) => 
         <Form
             initialValues={recipe}
             onSubmit={handleSubmit}
-            mutators={{ ...arrayMutators }}
+            mutators={{ ...myArrayMutators }}
             render={({ handleSubmit }) => (
                 <BootstrapForm onSubmit={handleSubmit}>
                     <Card style={{ width: '100%' }}>
