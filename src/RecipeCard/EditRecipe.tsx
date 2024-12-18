@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
-//import arrayMutators from 'final-form-arrays';
+import arrayMutators from 'final-form-arrays';
 import { Card, Button, Container, Row, Col, InputGroup, Form as BootstrapForm } from "react-bootstrap";
 import { RecipeData, Language } from "../Types.js";
 import { translate } from "../utils.js";
@@ -44,7 +44,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language }) => 
         <Form
             initialValues={recipe}
             onSubmit={handleSubmit}
-            //mutators={{ ...arrayMutators }}
+            mutators={{ ...arrayMutators }}
             render={({ handleSubmit }) => (
                 <BootstrapForm onSubmit={handleSubmit}>
                     <Card style={{ width: '100%' }}>
