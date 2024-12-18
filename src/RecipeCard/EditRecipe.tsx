@@ -1,5 +1,5 @@
 // EditRecipe Component
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
 import { Card, Button, Container, Row, Col, Form as BootstrapForm, Image, ButtonGroup } from "react-bootstrap";
