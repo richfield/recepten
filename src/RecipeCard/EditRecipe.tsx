@@ -100,6 +100,13 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                         </Card.Header>
                         <Card.Body>
                             <Container>
+                                <Row>
+                                    <Field name="description">
+                                        {({ input }) => (
+                                            <BootstrapForm.Control {...input} as="textarea" placeholder={translate("description", language)} />
+                                        )}
+                                    </Field>
+                                </Row>
                                 <Row className="mb-4">
                                         <h1>{translate("Images", language)}:</h1>
                                     <Col md={4}>
@@ -179,13 +186,6 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                 </Row>
                                     </Col>
                                 </Row>
-                                <Row>
-                                    <Field name="description">
-                                        {({ input }) => (
-                                            <BootstrapForm.Control {...input} as="textarea" placeholder={translate("description", language)} />
-                                        )}
-                                    </Field>
-                                </Row>
                                 <Row style={{ marginTop: "10px" }}>
                                     <FieldArray name="recipeIngredient">
                                         {({ fields }) => (
@@ -256,6 +256,38 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                     <DurationPickerField name="cookTime" label={translate("cookTime", language)} />
                                     <DurationPickerField name="prepTime" label={translate("prepTime", language)} />
                                     <DurationPickerField name="totalTime" label={translate("totalTime", language)} />
+                                </Row>
+                                <Row style={{ marginTop: "10px" }}>
+                                    <FieldArray name="keywords">
+                                        {({ fields }) => (
+                                            <>
+                                                <Col>
+                                                    <h1>{translate("keywords", language)}</h1>
+                                                </Col>
+                                                <Col xs="auto">
+                                                    <Button variant="outline-secondary" onClick={() => fields.push('')}>
+                                                        <FontAwesomeIcon icon={faPlus} />
+                                                    </Button>
+                                                </Col>
+                                                {fields.map((name, index) => (
+                                                    <Row key={index} className="mb-2">
+                                                        <Col>
+                                                            <Field name={name}>
+                                                                {({ input }) => (
+                                                                    <BootstrapForm.Control {...input} type="text" placeholder={translate("keyword", language)} />
+                                                                )}
+                                                            </Field>
+                                                        </Col>
+                                                        <Col xs="auto">
+                                                            <Button variant="outline-secondary" onClick={() => fields.remove(index)}>
+                                                                <FontAwesomeIcon icon={faMinus} />
+                                                            </Button>
+                                                        </Col>
+                                                    </Row>
+                                                ))}
+                                            </>
+                                        )}
+                                    </FieldArray>
                                 </Row>
                             </Container>
                         </Card.Body>

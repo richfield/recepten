@@ -38,6 +38,7 @@ const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit })
             </Row>
             <Row>
                 <Col md={3} style={{ textAlign: "center" }}>
+                    <Card>
                     {recipe.images && recipe.images.length > 0 && (
                         <Card.Img
                             style={{ width: "100%" }}
@@ -51,6 +52,16 @@ const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit })
                         <ListGroup.Item>{translate("prepTime", language)}: {formatTime(recipe.prepTime, language)}</ListGroup.Item>
                         <ListGroup.Item>{translate("totalTime", language)}: {formatTime(recipe.totalTime, language)}</ListGroup.Item>
                     </ListGroup>
+
+                    </Card>
+                    { recipe.keywords?.length !== 0 && <Card>
+                        <Card.Header>
+                            {translate("keywords", language)}
+                        </Card.Header>
+                        <Card.Body>
+                            {recipe.keywords?.join(', ')}
+                        </Card.Body>
+                    </Card> }
                 </Col>
 
                 <Col md={9}>
@@ -75,6 +86,7 @@ const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit })
                     </ListGroup>
                 </Col>
             </Row>
+
         </Col>
 
     </Container>
