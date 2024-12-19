@@ -106,15 +106,14 @@ function App() {
     <div className="app-container">
       <AuthProvider>
         <NavBar />
-      <Container style={{ marginLeft: "20px", marginRight: "20px", borderColor: "yellow", borderWidth:"3px", borderStyle:"solid"}} className="content"
-      >
-        <Routes>
-          <Route path="/" element={<RecipeList language={language} />} />
-          <Route path="/add" element={<RecipeScraper language={language} />} />
-          <Route path="/recipe/:id" element={<RecipeView language={language} />} />
-          <Route path="/search/:searchQuery" element={<RecipeList language={language} />} />
-        </Routes>
-      </Container>
+        <Container className="content">
+          <Routes>
+            <Route path="/" element={<RecipeList language={language} />} />
+            <Route path="/add" element={<RecipeScraper language={language} />} />
+            <Route path="/recipe/:id" element={<RecipeView language={language} />} />
+            <Route path="/search/:searchQuery" element={<RecipeList language={language} />} />
+          </Routes>
+        </Container>
       </AuthProvider>
     </div>
   )

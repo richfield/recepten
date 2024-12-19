@@ -38,11 +38,11 @@ const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit })
             </Row>
             <Row>
                 <Col md={3} style={{ textAlign: "center" }}>
-                    {recipe.image && recipe.image.length > 0 && (
+                    {recipe.images && recipe.images.length > 0 && (
                         <Card.Img
                             style={{ width: "100%" }}
                             variant="top"
-                            src={recipe.images ? recipe.images[0] : ""}
+                            src={`/api/recipes/${recipe._id}/image`}
                             alt={recipe.name}
                         />
                     )}

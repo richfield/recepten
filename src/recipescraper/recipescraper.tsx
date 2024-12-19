@@ -20,7 +20,10 @@ const RecipeScraper: React.FC<RecipeScraperProps> = ({language}) => {
         showBusy();
         try {
             const response = await axios.get(`/api/scrape?url=${url}`); // API call through proxy
-            navigate(`/recipe/${response.data._id}`)
+            console.log({response})
+            if(response.data._id) {
+                navigate(`/recipe/${response.data._id}`)
+            }
         } catch (error) {
             console.error('Error fetching recipe data:', error);
         }

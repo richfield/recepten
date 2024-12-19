@@ -31,7 +31,6 @@ export type RecipeData = {
     author?: Author;
     keywords?: string[];
     images?: string[];
-    image?: Buffer;
     recipeIngredient?: string[];
     name?: string;
     url?: string;
