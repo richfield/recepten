@@ -11,18 +11,18 @@
     "dev:server": "ts-node src/api/server.ts"
   },
   "dependencies": {
+    "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.1",
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@mui/icons-material": "^6.2.1",
+    "@mui/material": "^6.2.1",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
-    "cheerio": "^1.0.0",
-    "express": "^4.21.1",
+    "final-form": "^4.20.10",
     "final-form-arrays": "^3.1.0",
     "firebase": "^11.1.0",
-    "html-recipe-parser": "^1.0.15",
-    "jsonld": "^8.3.2",
     "moment": "^2.30.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.6",
@@ -30,13 +30,11 @@
     "react-final-form": "^6.5.9",
     "react-final-form-arrays": "^3.1.4",
     "react-router-dom": "^7.0.2",
-    "uuid": "^11.0.3",
-    "vite-plugin-bootstrap": "^5.2.3"
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@types/bootstrap": "^5.2.10",
-    "@types/express": "^5.0.0",
     "@types/node": "^22.7.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

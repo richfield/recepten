@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col } from "react-bootstrap";
+import {Grid} from '@mui/material';
 import { AxiosResponse } from 'axios';
 import { RecipeData, Language } from "../Types.js";
 import { v4 as uuidv4 } from 'uuid';
@@ -40,15 +40,15 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
     }
 
     return (
-        editableRecipe && (<Col>
-            <Row>
-            {editMode ? <EditRecipe language={language} recipe={editableRecipe} onSave={handleSave} toggleEdit={handleToggle}/> :
-                    <ViewRecipe language={language} recipe={editableRecipe} toggleEdit={handleToggle} />}
-            </Row>
-        </Col>
+        editableRecipe && (
+            <Grid container spacing={2}>
+                <Grid item xs={12} component="div">
+                    {editMode ? <EditRecipe language={language} recipe={editableRecipe} onSave={handleSave} toggleEdit={handleToggle}/> :
+                        <ViewRecipe language={language} recipe={editableRecipe} toggleEdit={handleToggle} />}
+                </Grid>
+            </Grid>
         )
     );
 }
 
 export default RecipeCard;
-

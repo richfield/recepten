@@ -2,28 +2,27 @@
 import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
-import { Card, Button, Container, Row, Col, Form as BootstrapForm, Image, ButtonGroup, OverlayTrigger, Popover } from "react-bootstrap";
-import { RecipeData, Language } from "../Types.js";
-import { translate } from "../utils.js";
+import { Card, Button, Container, Grid, TextField, IconButton, Typography, Box, CardProps } from '@mui/material';
+import { RecipeData, Language } from '../Types.js';
+import { translate } from '../utils.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus, faSave, faTimes, faEye, faStar } from '@fortawesome/free-solid-svg-icons';
-import myArrayMutators from "./mutators.js";
-import { DurationPickerField } from "../Components/DurationPicker.js";
-import axios from "axios";
+import myArrayMutators from './mutators.js';
+import { DurationPickerField } from '../Components/DurationPicker.js';
+import axios from 'axios';
 
 type EditRecipeProps = {
     recipe: RecipeData;
     onSave: (recipe: RecipeData) => void;
     language: Language;
-    toggleEdit: () => void
+    toggleEdit: () => void;
 };
 
-
 const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggleEdit }) => {
-    const [forceRender, setForceRender] = useState<number>(0)
+    const [forceRender, setForceRender] = useState<number>(0);
 
     const handleSubmit = (values: RecipeData) => {
-        console.log({ values })
+        console.log({ values });
         onSave(values);
     };
 
@@ -38,11 +37,11 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
 
     async function handleSetDefaultImage(url: string): Promise<void> {
         try {
-            const recipeId = recipe._id
+            const recipeId = recipe._id;
             await axios.post(`/api/recipes/${recipeId}/image/url`, { url }, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            setForceRender(forceRender+1);
+            setForceRender(forceRender + 1);
             console.log('Default image set successfully');
         } catch (error) {
             console.error('Failed to set default image', error);
@@ -67,237 +66,169 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
         }
     };
 
-
     return (
         <Form
             initialValues={recipe}
             onSubmit={handleSubmit}
             mutators={{ ...myArrayMutators }}
             render={({ handleSubmit }) => (
-                <BootstrapForm onSubmit={handleSubmit}>
-                    <Row className="d-flex justify-content-between align-items-center">
-                        <Col />
-                        <Col xs="auto">
-                            <ButtonGroup>
-                                <Button variant="outline" size="sm" onClick={handleSubmit}>
+                <form onSubmit={handleSubmit}>
+                    <Grid container justifyContent="space-between" alignItems="center">
+                        <Grid item />
+                        <Grid item>
+                            <Box display="flex" gap={1}>
+                                <IconButton onClick={handleSubmit}>
                                     <FontAwesomeIcon icon={faSave} />
-                                </Button>
-                                <Button variant="outline" size="sm" onClick={toggleEdit}>
+                                </IconButton>
+                                <IconButton onClick={toggleEdit}>
                                     <FontAwesomeIcon icon={faTimes} />
-                                </Button>
-                            </ButtonGroup>
-                        </Col>
-                    </Row>
-                    <Card style={{ width: '100%' }}>
-                        <Card.Header>
-                            <BootstrapForm.Group>
-                                <Field name="name">
-                                    {({ input }) => (
-                                        <BootstrapForm.Control {...input} type="text" placeholder={translate("name", language)} />
-                                    )}
-                                </Field>
-                            </BootstrapForm.Group>
-                        </Card.Header>
-                        <Card.Body>
+                                </IconButton>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    <Card>
+                        <Box p={2}>
+                            <Field name="name">
+                                {({ input }) => (
+                                    <TextField {...input} fullWidth label={translate('name', language)} />
+                                )}
+                            </Field>
+                        </Box>
+                        <Box p={2}>
                             <Container>
-                                <Row>
-                                    <Field name="description">
-                                        {({ input }) => (
-                                            <BootstrapForm.Control {...input} as="textarea" placeholder={translate("description", language)} />
-                                        )}
-                                    </Field>
-                                </Row>
-                                <Row className="mb-4">
-                                        <h1>{translate("Images", language)}:</h1>
-                                    <Col md={4}>
-                                        {recipe._id && <Image key={forceRender} src={`/api/recipes/${recipe._id}/image`} alt="Recipe" width={"100%"} rounded /> }
-                                    </Col>
-                                    <Col md={8}>
-                                    <Row>
-                                        <BootstrapForm.Group controlId="formFile">
-                                            <BootstrapForm.Label>
-                                                {translate("Upload new image", language)}
-                                            </BootstrapForm.Label>
-                                            <BootstrapForm.Control
-                                                type="file"
-                                                onChange={handleFileUpload}
-                                            />
-                                        </BootstrapForm.Group>
-                                    </Row>
-                                <Row style={{paddingTop:"5px"}}>
-                                    <FieldArray name="images">
-                                        {({ fields }) => (
-                                            <>
-                                                <Col/>
-                                                <Col xs="auto">
-                                                    <Button variant="outline-secondary" onClick={() => fields.push('')}>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12}>
+                                        <Field name="description">
+                                            {({ input }) => (
+                                                <TextField {...input} fullWidth multiline rows={4} label={translate('description', language)} />
+                                            )}
+                                        </Field>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography variant="h6">{translate('Images', language)}:</Typography>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={4}>
+                                                {recipe._id && <img key={forceRender} src={`/api/recipes/${recipe._id}/image`} alt="Recipe" width="100%" />}
+                                            </Grid>
+                                            <Grid item md={8}>
+                                                <Box>
+                                                    <input type="file" onChange={handleFileUpload} />
+                                                </Box>
+                                                <FieldArray name="images">
+                                                    {({ fields }) => (
+                                                        <>
+                                                            <IconButton onClick={() => fields.push('')}>
+                                                                <FontAwesomeIcon icon={faPlus} />
+                                                            </IconButton>
+                                                            {fields.map((name, index) => (
+                                                                <Grid container spacing={2} key={index} alignItems="center">
+                                                                    <Grid item md={9}>
+                                                                        <Field name={name}>
+                                                                            {({ input }) => (
+                                                                                <TextField {...input} fullWidth label={translate('imageUrl', language)} />
+                                                                            )}
+                                                                        </Field>
+                                                                    </Grid>
+                                                                    <Grid item>
+                                                                        <Box display="flex" gap={1}>
+                                                                            <IconButton>
+                                                                                <FontAwesomeIcon icon={faEye} />
+                                                                            </IconButton>
+                                                                            <IconButton onClick={() => handleSetDefaultImage(fields.value[index])}>
+                                                                                <FontAwesomeIcon icon={faStar} />
+                                                                            </IconButton>
+                                                                            <IconButton onClick={() => fields.remove(index)}>
+                                                                                <FontAwesomeIcon icon={faMinus} />
+                                                                            </IconButton>
+                                                                        </Box>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            ))}
+                                                        </>
+                                                    )}
+                                                </FieldArray>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FieldArray name="recipeIngredient">
+                                            {({ fields }) => (
+                                                <>
+                                                    <Typography variant="h6">{translate('ingredients', language)}</Typography>
+                                                    <IconButton onClick={() => fields.push('')}>
                                                         <FontAwesomeIcon icon={faPlus} />
-                                                    </Button>
-                                                </Col>
-                                                {fields.map((name, index) => (
-                                                    <Row key={index} className="mb-2 align-items-center">
-                                                        <Col md={9}>
-                                                            <Field name={name}>
-                                                                {({ input }) => (
-                                                                    <BootstrapForm.Control
-                                                                        {...input}
-                                                                        type="text"
-                                                                        placeholder={translate("imageUrl", language)}
-                                                                    />
-                                                                )}
-                                                            </Field>
-                                                        </Col>
-                                                        <Col xs="auto">
-                                                        <ButtonGroup>
-                                                            <OverlayTrigger
-                                                                placement="right"
-                                                                overlay={
-                                                                    <Popover>
-                                                                        <Popover.Body>
-                                                                            <img
-                                                                                src={fields.value[index]}
-                                                                                alt={`Preview ${index + 1}`}
-                                                                                style={{ width: "200px" }}
-                                                                            />
-                                                                        </Popover.Body>
-                                                                    </Popover>
-                                                                }
-                                                            >
-                                                                <Button variant="outline-secondary">
-                                                                    <FontAwesomeIcon icon={faEye} />
-                                                                </Button>
-                                                            </OverlayTrigger>
-                                                            <Button
-                                                                variant="outline-secondary"
-                                                                onClick={() => handleSetDefaultImage(fields.value[index])}
-                                                            >
-                                                                <FontAwesomeIcon icon={faStar} />
-                                                            </Button>
-                                                            <Button variant="outline-secondary" onClick={() => fields.remove(index)}>
-                                                                <FontAwesomeIcon icon={faMinus} />
-                                                            </Button>
-                                                            </ButtonGroup>
-                                                        </Col>
-                                                    </Row>
-                                                ))}
-                                            </>
-                                        )}
-                                    </FieldArray>
-                                </Row>
-                                    </Col>
-                                </Row>
-                                <Row style={{ marginTop: "10px" }}>
-                                    <FieldArray name="recipeIngredient">
-                                        {({ fields }) => (
-                                            <>
-                                                <Col>
-                                                    <h1>{translate("ingredients", language)}</h1>
-                                                </Col>
-                                                <Col xs="auto">
-                                                    <Button variant="outline-secondary" onClick={() => fields.push('')}>
+                                                    </IconButton>
+                                                    {fields.map((name, index) => (
+                                                        <Grid container spacing={2} key={index} alignItems="center">
+                                                            <Grid item xs={10}>
+                                                                <Field name={name}>
+                                                                    {({ input }) => (
+                                                                        <TextField {...input} fullWidth label={translate('ingredient', language)} />
+                                                                    )}
+                                                                </Field>
+                                                            </Grid>
+                                                            <Grid item>
+                                                                <IconButton onClick={() => fields.remove(index)}>
+                                                                    <FontAwesomeIcon icon={faMinus} />
+                                                                </IconButton>
+                                                            </Grid>
+                                                        </Grid>
+                                                    ))}
+                                                </>
+                                            )}
+                                        </FieldArray>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FieldArray name="recipeInstructions">
+                                            {({ fields }) => (
+                                                <>
+                                                    <Typography variant="h6">{translate('instructions', language)}:</Typography>
+                                                    <IconButton onClick={() => fields.push('')}>
                                                         <FontAwesomeIcon icon={faPlus} />
-                                                    </Button>
-                                                </Col>
-                                                {fields.map((name, index) => (
-                                                    <Row key={index} className="mb-2">
-                                                        <Col>
-                                                            <Field name={name}>
-                                                                {({ input }) => (
-                                                                    <BootstrapForm.Control {...input} type="text" placeholder={translate("ingredient", language)} />
-                                                                )}
-                                                            </Field>
-                                                        </Col>
-                                                        <Col xs="auto">
-                                                            <Button variant="outline-secondary" onClick={() => fields.remove(index)}>
-                                                                <FontAwesomeIcon icon={faMinus} />
-                                                            </Button>
-                                                        </Col>
-                                                    </Row>
-                                                ))}
-                                            </>
-                                        )}
-                                    </FieldArray>
-                                </Row>
-                                <Row>
-                                    <FieldArray name="recipeInstructions">
-                                        {({ fields }) => (
-                                            <>
-                                                <Col>
-                                                    <h1>{translate("instructions", language)}:</h1>
-                                                </Col>
-                                                <Col xs="auto">
-                                                    <Button variant="outline-secondary" onClick={() => fields.push('')}>
-                                                        <FontAwesomeIcon icon={faPlus} />
-                                                    </Button>
-                                                </Col>
-
-                                                {fields.map((name, index) => (
-                                                    <Row key={index} className="mb-2">
-                                                        <Col>
-                                                            <Field name={`${name}.text`}>
-                                                                {({ input }) => (
-                                                                    <BootstrapForm.Control {...input} as="textarea" placeholder={translate("instruction", language)} />
-                                                                )}
-                                                            </Field>
-                                                        </Col>
-                                                        <Col xs="auto">
-                                                            <Button variant="outline-secondary" onClick={() => fields.remove(index)}>
-                                                                <FontAwesomeIcon icon={faMinus} />
-                                                            </Button>
-                                                        </Col>
-                                                    </Row>
-                                                ))}
-                                            </>
-                                        )}
-                                    </FieldArray>
-                                </Row>
-                                <Row>
-                                    <h1>{translate("times", language)}</h1>
-                                    <DurationPickerField name="cookTime" label={translate("cookTime", language)} />
-                                    <DurationPickerField name="prepTime" label={translate("prepTime", language)} />
-                                    <DurationPickerField name="totalTime" label={translate("totalTime", language)} />
-                                </Row>
-                                <Row style={{ marginTop: "10px" }}>
-                                    <FieldArray name="keywords">
-                                        {({ fields }) => (
-                                            <>
-                                                <Col>
-                                                    <h1>{translate("keywords", language)}</h1>
-                                                </Col>
-                                                <Col xs="auto">
-                                                    <Button variant="outline-secondary" onClick={() => fields.push('')}>
-                                                        <FontAwesomeIcon icon={faPlus} />
-                                                    </Button>
-                                                </Col>
-                                                {fields.map((name, index) => (
-                                                    <Row key={index} className="mb-2">
-                                                        <Col>
-                                                            <Field name={name}>
-                                                                {({ input }) => (
-                                                                    <BootstrapForm.Control {...input} type="text" placeholder={translate("keyword", language)} />
-                                                                )}
-                                                            </Field>
-                                                        </Col>
-                                                        <Col xs="auto">
-                                                            <Button variant="outline-secondary" onClick={() => fields.remove(index)}>
-                                                                <FontAwesomeIcon icon={faMinus} />
-                                                            </Button>
-                                                        </Col>
-                                                    </Row>
-                                                ))}
-                                            </>
-                                        )}
-                                    </FieldArray>
-                                </Row>
+                                                    </IconButton>
+                                                    {fields.map((name, index) => (
+                                                        <Grid container spacing={2} key={index} alignItems="center">
+                                                            <Grid item xs={10}>
+                                                                <Field name={`${name}.text`}>
+                                                                    {({ input }) => (
+                                                                        <TextField {...input} fullWidth multiline rows={2} label={translate('instruction', language)} />
+                                                                    )}
+                                                                </Field>
+                                                            </Grid>
+                                                            <Grid item>
+                                                                <IconButton onClick={() => fields.remove(index)}>
+                                                                    <FontAwesomeIcon icon={faMinus} />
+                                                                </IconButton>
+                                                            </Grid>
+                                                        </Grid>
+                                                    ))}
+                                                </>
+                                            )}
+                                        </FieldArray>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography variant="h6">{translate('times', language)}</Typography>
+                                        <DurationPickerField name="cookTime" label={translate('cookTime', language)} />
+                                        <DurationPickerField name="prepTime" label={translate('prepTime', language)} />
+                                        <DurationPickerField name="totalTime" label={translate('totalTime', language)} />
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                        <ArrayCard language={language} field="keywords" />
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                        <ArrayCard language={language} field="recipeCategory" />
+                                        <ArrayCard language={language} field="recipeCuisine" />
+                                    </Grid>
+                                </Grid>
                             </Container>
-                        </Card.Body>
-                        <Card.Footer>
-                            <Button type="submit" variant="outline-secondary">
-                                {translate("save", language)}
+                        </Box>
+                        <Box p={2}>
+                            <Button type="submit" variant="contained" color="primary">
+                                {translate('save', language)}
                             </Button>
-                        </Card.Footer>
+                        </Box>
                     </Card>
-                </BootstrapForm>
+                </form>
             )}
         />
     );
@@ -305,4 +236,39 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
 
 export default EditRecipe;
 
-
+const ArrayCard: React.FC<{ language: Language; field: string } & CardProps> = ({ language, field, ...cardProps }) => {
+    return (
+        <Card {...cardProps}>
+            <Box p={2}>
+                <Typography variant="h6">{translate(field, language)}</Typography>
+            </Box>
+            <Box p={2}>
+                <FieldArray name={field}>
+                    {({ fields }) => (
+                        <>
+                            <IconButton onClick={() => fields.push('')}>
+                                <FontAwesomeIcon icon={faPlus} />
+                            </IconButton>
+                            {fields.map((name, index) => (
+                                <Grid container spacing={2} key={index} alignItems="center">
+                                    <Grid item xs={10}>
+                                        <Field name={name}>
+                                            {({ input }) => (
+                                                <TextField {...input} fullWidth label={translate('keyword', language)} />
+                                            )}
+                                        </Field>
+                                    </Grid>
+                                    <Grid item>
+                                        <IconButton onClick={() => fields.remove(index)}>
+                                            <FontAwesomeIcon icon={faMinus} />
+                                        </IconButton>
+                                    </Grid>
+                                </Grid>
+                            ))}
+                        </>
+                    )}
+                </FieldArray>
+            </Box>
+        </Card>
+    );
+};

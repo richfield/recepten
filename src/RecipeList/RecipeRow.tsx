@@ -1,23 +1,22 @@
-import { faEdit, faRemove, faCancel } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Edit, Delete, Cancel } from "@mui/icons-material";
+import { Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
-import { ButtonGroup, Button, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { RecipeData } from "../Types.js";
 
 export const RecipeRow = ({ recipe, index, onDeleted }: { recipe: RecipeData; index: number, onDeleted: () => void }) => {
-    const [show, setShow] = useState(false);
+    const [open, setOpen] = useState(false);
     const handleDelete = () => {
-        setShow(true); // Open the modal
+        setOpen(true); // Open the dialog
     };
     const navigate = useNavigate();
-    const handleClose = () => setShow(false); // Close the modal
+    const handleClose = () => setOpen(false); // Close the dialog
 
     const confirmDelete = async () => {
         await axios.delete(`/api/recipes/${recipe._id}`); // API call through proxy
         onDeleted();
-        setShow(false); // Close modal after deletion
+        setOpen(false); // Close dialog after deletion
     };
     console.log({recipe, id: recipe._id})
     return (
@@ -28,26 +27,28 @@ export const RecipeRow = ({ recipe, index, onDeleted }: { recipe: RecipeData; in
             <td>
                 <ButtonGroup>
                     <Link to={`/recipe/${recipe._id}`}>
-                        <Button variant="primary"><FontAwesomeIcon icon={faEdit} /></Button>
+                        <IconButton color="primary">
+                            <Edit />
+                        </IconButton>
                     </Link>
-                    <Button variant="danger" onClick={handleDelete}>
-                        <FontAwesomeIcon icon={faRemove}/>
-                    </Button>
+                    <IconButton color="error" onClick={handleDelete}>
+                        <Delete />
+                    </IconButton>
 
-                    <Modal show={show} onHide={handleClose}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Confirm Deletion</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>Are you sure you want to delete this recipe?</Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={handleClose}>
-                                <FontAwesomeIcon icon={faCancel} />
+                    <Dialog open={open} onClose={handleClose}>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>Are you sure you want to delete this recipe?</DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose} color="secondary" startIcon={<Cancel />}>
+                                Cancel
                             </Button>
-                            <Button variant="danger" onClick={confirmDelete}>
-                                <FontAwesomeIcon icon={faRemove} />
+                            <Button onClick={confirmDelete} color="error" startIcon={<Delete />}>
+                                Delete
                             </Button>
-                        </Modal.Footer>
-                    </Modal>
+                        </DialogActions>
+                    </Dialog>
                 </ButtonGroup>
             </td>
         </tr>

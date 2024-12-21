@@ -1,6 +1,6 @@
 // ViewRecipe Component
 import React from 'react';
-import { Card, ListGroup, Container, Col, Row, Button } from "react-bootstrap";
+import { Card, CardContent, CardMedia, List, ListItem, Container, Grid, Typography, IconButton } from "@mui/material";
 import { RecipeData, Language } from "../Types.js";
 import { translate } from "../utils.js";
 import moment from 'moment/min/moment-with-locales';
@@ -24,71 +24,70 @@ const formatTime = (time: string | undefined, language: Language) => {
 
 const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit }) => (
     <Container>
-        <Col>
-            <Row className="d-flex justify-content-between align-items-center">
-                <Col />
-                <Col xs="auto">
-                    <Button variant="outline" size="sm" onClick={toggleEdit} >
-                        <FontAwesomeIcon icon={faEdit} />
-                    </Button>
-                </Col>
-            </Row>
-            <Row>
-                <h1>{recipe.name}</h1>
-            </Row>
-            <Row>
-                <Col md={3} style={{ textAlign: "center" }}>
-                    <Card>
+        <Grid container spacing={2} justifyContent="space-between" alignItems="center">
+            <Grid item>
+                <Typography variant="h4">{recipe.name}</Typography>
+            </Grid>
+            <Grid item>
+                <IconButton onClick={toggleEdit}>
+                    <FontAwesomeIcon icon={faEdit} />
+                </IconButton>
+            </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+            <Grid item md={3} style={{ textAlign: "center" }}>
+                <Card>
                     {recipe.images && recipe.images.length > 0 && (
-                        <Card.Img
+                        <CardMedia
+                            component="img"
                             style={{ width: "100%" }}
-                            variant="top"
-                            src={`/api/recipes/${recipe._id}/image`}
+                            image={`/api/recipes/${recipe._id}/image`}
                             alt={recipe.name}
                         />
                     )}
-                    <ListGroup variant="flush">
-                        <ListGroup.Item>{translate("cookTime", language)}: {formatTime(recipe.cookTime, language)}</ListGroup.Item>
-                        <ListGroup.Item>{translate("prepTime", language)}: {formatTime(recipe.prepTime, language)}</ListGroup.Item>
-                        <ListGroup.Item>{translate("totalTime", language)}: {formatTime(recipe.totalTime, language)}</ListGroup.Item>
-                    </ListGroup>
-
+                    <CardContent>
+                        <List>
+                            <ListItem>{translate("cookTime", language)}: {formatTime(recipe.cookTime, language)}</ListItem>
+                            <ListItem>{translate("prepTime", language)}: {formatTime(recipe.prepTime, language)}</ListItem>
+                            <ListItem>{translate("totalTime", language)}: {formatTime(recipe.totalTime, language)}</ListItem>
+                        </List>
+                    </CardContent>
+                </Card>
+                {recipe.keywords?.length !== 0 && (
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6">{translate("keywords", language)}</Typography>
+                            <Typography>{recipe.keywords?.join(', ')}</Typography>
+                        </CardContent>
                     </Card>
-                    { recipe.keywords?.length !== 0 && <Card>
-                        <Card.Header>
-                            {translate("keywords", language)}
-                        </Card.Header>
-                        <Card.Body>
-                            {recipe.keywords?.join(', ')}
-                        </Card.Body>
-                    </Card> }
-                </Col>
-
-                <Col md={9}>
-                    <ListGroup variant="flush">
-                        <ListGroup.Item>{translate("description", language)}: {recipe.description}</ListGroup.Item>
-                        <ListGroup.Item>
-                            {translate("ingredients", language)}:
-                            <ListGroup>
-                                {recipe.recipeIngredient?.map((ingredient, index) => (
-                                    <ListGroup.Item key={index}>{ingredient}</ListGroup.Item>
-                                ))}
-                            </ListGroup>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            {translate("instructions", language)}:
-                            <ListGroup as="ol" numbered>
-                                {recipe.recipeInstructions?.map((instruction, index) => (
-                                    <ListGroup.Item as="li" key={index}>{instruction.text}</ListGroup.Item>
-                                ))}
-                            </ListGroup>
-                        </ListGroup.Item>
-                    </ListGroup>
-                </Col>
-            </Row>
-
-        </Col>
-
+                )}
+            </Grid>
+            <Grid item md={9}>
+                <Card>
+                    <CardContent>
+                        <List>
+                            <ListItem>{translate("description", language)}: {recipe.description}</ListItem>
+                            <ListItem>
+                                {translate("ingredients", language)}:
+                                <List>
+                                    {recipe.recipeIngredient?.map((ingredient, index) => (
+                                        <ListItem key={index}>{ingredient}</ListItem>
+                                    ))}
+                                </List>
+                            </ListItem>
+                            <ListItem>
+                                {translate("instructions", language)}:
+                                <List>
+                                    {recipe.recipeInstructions?.map((instruction, index) => (
+                                        <ListItem key={index}>{instruction.text}</ListItem>
+                                    ))}
+                                </List>
+                            </ListItem>
+                        </List>
+                    </CardContent>
+                </Card>
+            </Grid>
+        </Grid>
     </Container>
 );
 

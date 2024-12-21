@@ -10,6 +10,8 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { BusyProvider } from "./Busy/BusyProvider.js";
 import { BusyIndicator } from "./Busy/BusyIndicator.js";
+import { ApplicationContextProvider } from "./Components/ApplicationContext/ApplicationContextProvider.js";
+import { CssBaseline } from "@mui/material";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -46,10 +48,13 @@ async function signInWithGoogle() {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <BusyProvider>
-        <BusyIndicator />
-      <App />
-      </BusyProvider>
+      <ApplicationContextProvider>
+        <CssBaseline />
+        <BusyProvider>
+          <BusyIndicator />
+          <App />
+        </BusyProvider>
+      </ApplicationContextProvider>
     </BrowserRouter>
   </StrictMode>,
 )

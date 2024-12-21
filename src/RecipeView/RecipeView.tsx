@@ -1,14 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Language, RecipeData } from "../Types.js";
+import { RecipeData } from "../Types.js";
 import RecipeCard from "../RecipeCard/RecipeCard.js";
 import { useParams } from "react-router-dom";
+import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 
-type RecipeViewProps = {
-    language: Language
-};
 
-const RecipeView: React.FC<RecipeViewProps> = ({ language }) => {
+
+const RecipeView: React.FC = () => {
+    const { language } = useApplicationContext();
     const { id } = useParams();
     const [recipe, setRecipe] = useState<RecipeData>()
     const fetchData = async (url: string) => {

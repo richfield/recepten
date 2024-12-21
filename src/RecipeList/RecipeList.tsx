@@ -1,19 +1,16 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import AuthContext from "../AuthContext/AuthContext.js";
-import { Language, RecipeData } from "../Types.js";
+import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
+import { RecipeData } from "../Types.js";
 import { translate } from "../utils.js";
 import { RecipeRow } from "./RecipeRow.js";
 
-type RecipeListProps = {
-    language: Language
-};
 
-const RecipeList: React.FC<RecipeListProps> = ({ language }) => {
-    const authContext = useContext(AuthContext);
-    console.log({authContext})
+
+const RecipeList: React.FC = () => {
+    const { language } = useApplicationContext();
     const [recipes, setRecipes] = useState<RecipeData[]>()
     const { searchQuery } = useParams();
     console.log({searchQuery})

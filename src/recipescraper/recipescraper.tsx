@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Button, TextField, Grid } from '@mui/material';
 import { translate } from "../utils.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { useBusy } from "../Busy/BusyContext.js";
 import { useNavigate } from "react-router-dom";
+import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 
-type RecipeScraperProps = {
-    language: "en" | "nl";
-};
 
-const RecipeScraper: React.FC<RecipeScraperProps> = ({language}) => {
+const RecipeScraper: React.FC = () => {
+    const { language } = useApplicationContext();
     const [url, setUrl ] = useState<string>("");
     const { showBusy, hideBusy } = useBusy();
     const navigate = useNavigate();
@@ -35,26 +34,24 @@ const RecipeScraper: React.FC<RecipeScraperProps> = ({language}) => {
     };
 
     return <div className="content">
-        <Form>
-            <Form.Group as={Row} style={{marginBottom: "15px"}}>
-                <Col lg={11}>
-                    <Form.Control
-                        type="text"
-                        id="inputUrl"
-                        aria-describedby="urlHelp"
-                        value={url}
-                        onChange={onUrlChange}
-                        placeholder={translate("enterRecipeLink", language)}
-                    />
-                </Col>
-                <Col xs className="text-end">
-                    <Button variant="primary" onClick={() => fetchData(url)}>
-                        <FontAwesomeIcon icon={faDownload} />
-                    </Button>
-                </Col>
-            </Form.Group>
-        </Form>
+        <Grid container spacing={2} alignItems="center">
+            <Grid item lg={11}>
+                <TextField
+                    fullWidth
+                    type="text"
+                    id="inputUrl"
+                    value={url}
+                    onChange={onUrlChange}
+                    placeholder={translate("enterRecipeLink", language)}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs>
+                <Button variant="contained" color="primary" onClick={() => fetchData(url)}>
+                    <FontAwesomeIcon icon={faDownload} />
+                </Button>
+            </Grid>
+        </Grid>
     </div>
-    // ... rest of your component rendering logic ...
 };
-export default RecipeScraper
+export default RecipeScraper;
