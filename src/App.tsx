@@ -23,7 +23,7 @@ import { useApplicationContext } from "./Components/ApplicationContext/useApplic
 import { translate } from "./utils.js";
 import moment from "moment/min/moment-with-locales";
 import { signInWithGoogle } from "./main.js";
-import RecipeScraper from "./RecipeScraper_/RecipeScraper_.js";
+import RecipeScraper from "./RecipeScraper/RecipeScraper.js";
 
 function App() {
   const navigate = useNavigate();
