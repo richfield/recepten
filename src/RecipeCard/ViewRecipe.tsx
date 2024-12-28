@@ -1,6 +1,6 @@
 // ViewRecipe Component
 import React from 'react';
-import { Card, CardContent, CardMedia, List, ListItem, Container, Grid, Typography, IconButton } from "@mui/material";
+import { Card, CardContent, CardMedia, List, ListItem, Container, Typography, IconButton, Grid2, ListSubheader } from "@mui/material";
 import { RecipeData, Language } from "../Types.js";
 import { translate } from "../utils.js";
 import moment from 'moment/min/moment-with-locales';
@@ -24,18 +24,18 @@ const formatTime = (time: string | undefined, language: Language) => {
 
 const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit }) => (
     <Container>
-        <Grid container spacing={2} justifyContent="space-between" alignItems="center">
-            <Grid item>
+        <Grid2 container spacing={2} justifyContent="space-between" alignItems="center">
+            <Grid2>
                 <Typography variant="h4">{recipe.name}</Typography>
-            </Grid>
-            <Grid item>
+            </Grid2>
+            <Grid2>
                 <IconButton onClick={toggleEdit}>
                     <FontAwesomeIcon icon={faEdit} />
                 </IconButton>
-            </Grid>
-        </Grid>
-        <Grid container spacing={2}>
-            <Grid item md={3} style={{ textAlign: "center" }}>
+            </Grid2>
+        </Grid2>
+        <Grid2 container spacing={2}>
+            <Grid2 size={{ md: 3 }} style={{ textAlign: "center" }}>
                 <Card>
                     {recipe.images && recipe.images.length > 0 && (
                         <CardMedia
@@ -61,34 +61,53 @@ const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit })
                         </CardContent>
                     </Card>
                 )}
-            </Grid>
-            <Grid item md={9}>
+            </Grid2>
+            <Grid2 size={{ md: 9 }}>
                 <Card>
                     <CardContent>
-                        <List>
-                            <ListItem>{translate("description", language)}: {recipe.description}</ListItem>
-                            <ListItem>
-                                {translate("ingredients", language)}:
-                                <List>
-                                    {recipe.recipeIngredient?.map((ingredient, index) => (
-                                        <ListItem key={index}>{ingredient}</ListItem>
-                                    ))}
-                                </List>
-                            </ListItem>
-                            <ListItem>
-                                {translate("instructions", language)}:
-                                <List>
-                                    {recipe.recipeInstructions?.map((instruction, index) => (
-                                        <ListItem key={index}>{instruction.text}</ListItem>
-                                    ))}
-                                </List>
-                            </ListItem>
-                        </List>
+                        {renderField(recipe, "description", language)}
+                        {renderField(recipe, "recipeIngredient", language)}
+                        {renderField(recipe, "recipeInstructions", language, ({ text }) => text)}
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>
     </Container>
 );
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderField = (recipe: RecipeData, fieldName: keyof RecipeData, language: Language, valueProvider?: (value: any) => string) => {
+    const value = recipe[fieldName];
+    if (!value) return null;
+
+    if (Array.isArray(value)) {
+        return (
+            <List
+                subheader={
+                    <ListSubheader component="div" id="nested-list-subheader">
+                        {translate(fieldName, language)}
+                    </ListSubheader>
+                }>
+                {value.map((item, index) => {
+                    const currentValue = valueProvider ? valueProvider(item) : item.toString();
+                    return (
+                        <ListItem key={index}>{currentValue}</ListItem>
+                    );
+                })}
+            </List>
+        );
+    }
+    const currentValue = valueProvider ? valueProvider(value) : value.toString();
+    return (
+        <List
+            subheader={
+                <ListSubheader component="div" id="nested-list-subheader">
+                    {translate(fieldName, language)}
+                </ListSubheader>
+            }>
+            <ListItem>{currentValue}</ListItem>
+        </List>
+    );
+};
 
 export default ViewRecipe;
