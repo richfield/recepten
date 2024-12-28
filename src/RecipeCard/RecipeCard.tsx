@@ -10,12 +10,13 @@ type RecipeCardProps = {
     recipe: RecipeData | undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     save: (data: RecipeData) => Promise<AxiosResponse<any, any>>;
-    language: Language
+    language: Language,
+    edit: boolean
 };
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, save, language, edit = false }) => {
     const [editableRecipe, setEditableRecipe] = useState<RecipeData | undefined>(recipe);
-    const [editMode, setEditMode] = useState<boolean>(false);
+    const [editMode, setEditMode] = useState<boolean>(edit);
 
     useEffect(() => {
         if (recipe !== undefined) {

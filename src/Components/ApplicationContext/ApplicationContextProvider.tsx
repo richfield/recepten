@@ -4,6 +4,8 @@ import { ApplicationContext } from "./ApplicationContext.js";
 import { Language } from "../../Types.js";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from '../../main.js';
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 const lightTheme = createTheme({
   palette: {
@@ -42,7 +44,9 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   };
   return (
     <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut }}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </LocalizationProvider>
     </ApplicationContext.Provider>
   );
 };

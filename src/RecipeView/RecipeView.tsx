@@ -7,7 +7,7 @@ import { useApplicationContext } from "../Components/ApplicationContext/useAppli
 
 
 
-const RecipeView: React.FC = () => {
+const RecipeView: React.FC<{edit:boolean}> = ({edit}) => {
     const { language } = useApplicationContext();
     const { id } = useParams();
     const [recipe, setRecipe] = useState<RecipeData>()
@@ -27,7 +27,7 @@ const RecipeView: React.FC = () => {
         return await axios.post('/api/recipes/save', data)
     }
     console.log({recipe})
-    return <RecipeCard save={handleSave} recipe={recipe} language={language}/>
+    return <RecipeCard save={handleSave} recipe={recipe} language={language} edit={edit}/>
 };
 
 export default RecipeView

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Table } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { RecipeData } from "../Types.js";
@@ -32,7 +32,7 @@ const RecipeList: React.FC = () => {
         fetchData("/api/recipes")
     };
 
-    return <Table striped bordered hover>
+    return <Table >
         <thead>
             <tr>
                 <th>#</th>

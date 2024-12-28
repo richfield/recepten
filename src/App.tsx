@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Button, Container, IconButton, Typography, Avatar, Menu, MenuItem } from '@mui/material';
+import { AppBar, Toolbar, Button, Container, IconButton, Typography, Avatar, Menu, MenuItem, useMediaQuery, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import RecipeScraper from './recipescraper/recipescraper.js';
 import { translate } from './utils.js';
@@ -6,9 +6,11 @@ import moment from 'moment/min/moment-with-locales';
 import RecipeList from './RecipeList/RecipeList.js';
 import RecipeView from './RecipeView/RecipeView.js';
 import { useApplicationContext } from './Components/ApplicationContext/useApplicationContext.js';
-import { Brightness4, Brightness7,  Person } from '@mui/icons-material';
+import { Brightness4, Brightness7, Person, Menu as MenuIcon } from '@mui/icons-material';
 import { useState } from "react";
 import { signInWithGoogle } from "./main.js";
+import { default as PopupState, bindTrigger, bindMenu, InjectedProps } from 'material-ui-popup-state';
+import React from "react";
 
 function App() {
   const navigate = useNavigate();
@@ -29,6 +31,10 @@ function App() {
   const { language, theme, toggleTheme, user, setLanguage, signOut } = useApplicationContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width:600px)');
+  console.log({isMobile})
+
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -42,9 +48,10 @@ function App() {
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              Recipe App
+              {translate("title", language)}
             </Link>
           </Typography>
+          {!isMobile && <>
           <Button color="inherit" onClick={() => navigate('/recipes')}>
             {translate('recipes', language)}
           </Button>
@@ -57,7 +64,7 @@ function App() {
           <Button color="inherit" onClick={handleMenuClick}>
             {language === 'en' ? 'English' : 'Nederlands'}
           </Button>
-          <Menu
+          <Menu style={{visibility:"hidden"}}
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
@@ -65,6 +72,37 @@ function App() {
             <MenuItem onClick={() => { setLanguage('en'); handleMenuClose(); }}>English</MenuItem>
             <MenuItem onClick={() => { setLanguage('nl'); handleMenuClose(); }}>Nederlands</MenuItem>
           </Menu>
+
+          </>}
+          {isMobile && <>
+            <PopupState variant="popover" popupId="demo-popup-menu">
+              {(popupState: InjectedProps) => (
+                <React.Fragment>
+                  <IconButton edge="start" color="inherit" aria-label="menu" {...bindTrigger(popupState)}>
+                    <MenuIcon />
+                  </IconButton>
+                  <Menu {...bindMenu(popupState)}>
+                    <MenuItem onClick={popupState.close}>{translate("profile", language)}</MenuItem>
+                    <MenuItem onClick={popupState.close}>My account</MenuItem>
+                    </Menu>
+                </React.Fragment>
+              )}
+            </PopupState>
+            <Drawer
+              anchor="right"
+              open={drawerOpen}
+              onClose={() => setDrawerOpen(false)}
+            >
+              <List>
+                <ListItem component={Link} to="/">
+                  <ListItemText primary={translate("home", language)} />
+                </ListItem>
+                <ListItem component={Link} to="/scraper">
+                  <ListItemText primary={translate("add", language)} />
+                </ListItem>
+              </List>
+            </Drawer>
+          </>}
           <div style={{ marginLeft: 'auto' }}>
             {user && user.photoURL ? (
               <>
@@ -85,6 +123,7 @@ function App() {
           <Route path="/recipes" element={<RecipeList />} />
           <Route path="/scraper" element={<RecipeScraper />} />
           <Route path="/recipe/:id" element={<RecipeView />} />
+          <Route path="/recipe/:id/edit" element={<RecipeView edit={true} />} />
         </Routes>
       </Container>
     </>

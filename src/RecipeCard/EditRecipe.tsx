@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
-import { Card, Button, Container, Grid, TextField, IconButton, Typography, Box, CardProps } from '@mui/material';
+import { Card, Button, Container, Grid, TextField, IconButton, Typography, Box, CardProps, Grid2 } from '@mui/material';
 import { RecipeData, Language } from '../Types.js';
 import { translate } from '../utils.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -73,9 +73,9 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
             mutators={{ ...myArrayMutators }}
             render={({ handleSubmit }) => (
                 <form onSubmit={handleSubmit}>
-                    <Grid container justifyContent="space-between" alignItems="center">
-                        <Grid item />
-                        <Grid item>
+                    <Grid2 container justifyContent="space-between" alignItems="center">
+                        <Grid2 />
+                        <Grid2>
                             <Box display="flex" gap={1}>
                                 <IconButton onClick={handleSubmit}>
                                     <FontAwesomeIcon icon={faSave} />
@@ -84,8 +84,8 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                     <FontAwesomeIcon icon={faTimes} />
                                 </IconButton>
                             </Box>
-                        </Grid>
-                    </Grid>
+                        </Grid2>
+                    </Grid2>
                     <Card>
                         <Box p={2}>
                             <Field name="name">
@@ -206,12 +206,12 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                             )}
                                         </FieldArray>
                                     </Grid>
-                                    <Grid item xs={12}>
                                         <Typography variant="h6">{translate('times', language)}</Typography>
+                                    <Grid2 container spacing={0.5}>
                                         <DurationPickerField name="cookTime" label={translate('cookTime', language)} />
                                         <DurationPickerField name="prepTime" label={translate('prepTime', language)} />
                                         <DurationPickerField name="totalTime" label={translate('totalTime', language)} />
-                                    </Grid>
+                                    </Grid2>
                                     <Grid item xs={12} md={6}>
                                         <ArrayCard language={language} field="keywords" />
                                     </Grid>

@@ -19,7 +19,8 @@
     "totalTime": "Total time",
     "home": "Home",
     "search": "Search",
-    "times": "Times"
+    "times": "Times",
+    "profile": "Profile"
 
   },
   "nl": {
@@ -42,6 +43,7 @@
     "totalTime": "Totale tijd",
     "home": "Thuis",
     "search": "Zoeken",
-    "times" : "Tijden"
+    "times": "Tijden",
+    "profile": "Profiel"
   }
 }

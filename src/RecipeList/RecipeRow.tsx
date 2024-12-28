@@ -26,7 +26,7 @@ export const RecipeRow = ({ recipe, index, onDeleted }: { recipe: RecipeData; in
             <td>{recipe.description}</td>
             <td>
                 <ButtonGroup>
-                    <Link to={`/recipe/${recipe._id}`}>
+                    <Link to={`/recipe/${recipe._id}/edit`}>
                         <IconButton color="primary">
                             <Edit />
                         </IconButton>
