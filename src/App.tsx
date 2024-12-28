@@ -18,12 +18,12 @@ import {
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { Brightness4, Brightness7, Menu as MenuIcon, Person } from "@mui/icons-material";
 import RecipeList from "./RecipeList/RecipeList.js";
-import RecipeScraper from "./recipescraper/recipescraper.js";
 import RecipeView from "./RecipeView/RecipeView.js";
 import { useApplicationContext } from "./Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "./utils.js";
 import moment from "moment/min/moment-with-locales";
 import { signInWithGoogle } from "./main.js";
+import RecipeScraper from "./RecipeScraper/RecipeScraper.js";
 
 function App() {
   const navigate = useNavigate();

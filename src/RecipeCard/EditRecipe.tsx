@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
-import { Card, Button, Container, Grid, TextField, IconButton, Typography, Box, CardProps, Grid2 } from '@mui/material';
+import { Card, Button, Container, Grid, TextField, IconButton, Typography, Box, CardProps, Grid2, Portal } from '@mui/material';
 import { RecipeData, Language } from '../Types.js';
 import { translate } from '../utils.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,6 +10,7 @@ import { faPlus, faMinus, faSave, faTimes, faEye, faStar } from '@fortawesome/fr
 import myArrayMutators from './mutators.js';
 import { DurationPickerField } from '../Components/DurationPicker.js';
 import axios from 'axios';
+import { Add, AddAPhoto, Delete, Image } from "@mui/icons-material";
 
 type EditRecipeProps = {
     recipe: RecipeData;
@@ -66,6 +67,8 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
         }
     };
 
+
+
     return (
         <Form
             initialValues={recipe}
@@ -90,7 +93,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                         <Box p={2}>
                             <Field name="name">
                                 {({ input }) => (
-                                    <TextField {...input} fullWidth label={translate('name', language)} />
+                                    <TextField {...input} fullWidth label={translate('name', language)} variant="standard" size="small" />
                                 )}
                             </Field>
                         </Box>
@@ -100,7 +103,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                     <Grid item xs={12}>
                                         <Field name="description">
                                             {({ input }) => (
-                                                <TextField {...input} fullWidth multiline rows={4} label={translate('description', language)} />
+                                                <TextField {...input} fullWidth multiline rows={4} label={translate('description', language)} variant="standard" size="small" />
                                             )}
                                         </Field>
                                     </Grid>
@@ -114,18 +117,19 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                                 <Box>
                                                     <input type="file" onChange={handleFileUpload} />
                                                 </Box>
+                                                <ImageCard language={language} field="images" handleSetDefaultImage={handleSetDefaultImage} />
                                                 <FieldArray name="images">
                                                     {({ fields }) => (
                                                         <>
                                                             <IconButton onClick={() => fields.push('')}>
-                                                                <FontAwesomeIcon icon={faPlus} />
+                                                                <Add />
                                                             </IconButton>
                                                             {fields.map((name, index) => (
                                                                 <Grid container spacing={2} key={index} alignItems="center">
                                                                     <Grid item md={9}>
                                                                         <Field name={name}>
                                                                             {({ input }) => (
-                                                                                <TextField {...input} fullWidth label={translate('imageUrl', language)} />
+                                                                                <TextField {...input} fullWidth label={translate('imageUrl', language)} variant="standard" size="small" />
                                                                             )}
                                                                         </Field>
                                                                     </Grid>
@@ -163,7 +167,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                                             <Grid item xs={10}>
                                                                 <Field name={name}>
                                                                     {({ input }) => (
-                                                                        <TextField {...input} fullWidth label={translate('ingredient', language)} />
+                                                                        <TextField {...input} fullWidth label={translate('ingredient', language)} variant="standard" size="small" />
                                                                     )}
                                                                 </Field>
                                                             </Grid>
@@ -191,7 +195,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                                             <Grid item xs={10}>
                                                                 <Field name={`${name}.text`}>
                                                                     {({ input }) => (
-                                                                        <TextField {...input} fullWidth multiline rows={2} label={translate('instruction', language)} />
+                                                                        <TextField {...input} fullWidth multiline rows={2} label={translate('instruction', language)} variant="standard" size="small" />
                                                                     )}
                                                                 </Field>
                                                             </Grid>
@@ -206,7 +210,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                             )}
                                         </FieldArray>
                                     </Grid>
-                                        <Typography variant="h6">{translate('times', language)}</Typography>
+                                    <Typography variant="h6">{translate('times', language)}</Typography>
                                     <Grid2 container spacing={0.5}>
                                         <DurationPickerField name="cookTime" label={translate('cookTime', language)} />
                                         <DurationPickerField name="prepTime" label={translate('prepTime', language)} />
@@ -234,9 +238,8 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
     );
 };
 
-export default EditRecipe;
 
-const ArrayCard: React.FC<{ language: Language; field: string } & CardProps> = ({ language, field, ...cardProps }) => {
+const ArrayCard: React.FC<{ language: Language; field: string; valueSelector?: (value: unknown) => string } & CardProps> = ({ language, field, valueSelector, ...cardProps }) => {
     return (
         <Card {...cardProps}>
             <Box p={2}>
@@ -245,30 +248,116 @@ const ArrayCard: React.FC<{ language: Language; field: string } & CardProps> = (
             <Box p={2}>
                 <FieldArray name={field}>
                     {({ fields }) => (
-                        <>
-                            <IconButton onClick={() => fields.push('')}>
-                                <FontAwesomeIcon icon={faPlus} />
-                            </IconButton>
+                        <Grid2>
                             {fields.map((name, index) => (
-                                <Grid container spacing={2} key={index} alignItems="center">
-                                    <Grid item xs={10}>
+                                <Grid2 container key={index} alignItems="center">
+                                    <Grid2 size={{ xs: 10 }} >
                                         <Field name={name}>
                                             {({ input }) => (
-                                                <TextField {...input} fullWidth label={translate('keyword', language)} />
+                                                <TextField {...input} fullWidth size="small" variant="standard" value={valueSelector ? valueSelector(input.value) : input.value} />
                                             )}
                                         </Field>
-                                    </Grid>
-                                    <Grid item>
-                                        <IconButton onClick={() => fields.remove(index)}>
-                                            <FontAwesomeIcon icon={faMinus} />
+                                    </Grid2>
+                                    <Grid2 size={{ xs: 1 }}>
+                                        <IconButton onClick={() => fields.remove(index)} size="small">
+                                            <Delete />
                                         </IconButton>
-                                    </Grid>
-                                </Grid>
+                                    </Grid2>
+                                    <Grid2 size={{ xs: 1 }} />
+                                </Grid2>
                             ))}
-                        </>
+                            <Grid2 container justifyContent="flex-end">
+                                <IconButton onClick={() => fields.push('')} size="small">
+                                    <Add />
+                                </IconButton>
+                            </Grid2>
+                        </Grid2>
                     )}
                 </FieldArray>
             </Box>
         </Card>
     );
 };
+
+const ImageCard: React.FC<{ language: Language; field: string; handleSetDefaultImage: (url: string) => void } & CardProps> = ({ language, field, handleSetDefaultImage, ...cardProps }) => {
+    const [popoverOpen, setPopoverOpen] = useState<number | null>(null);
+    const [popoverAnchor, setPopoverAnchor] = useState<DOMRect | null>(null);
+
+    const handleMouseEnter = (index: number, event: React.MouseEvent<HTMLButtonElement>) => {
+        setPopoverOpen(index);
+        setPopoverAnchor(event.currentTarget.getBoundingClientRect());
+    };
+
+    const handleMouseLeave = () => {
+        setPopoverOpen(null);
+        setPopoverAnchor(null);
+    };
+
+    return (
+        <Card {...cardProps}>
+            <Box p={2}>
+                <Typography variant="h6">{translate(field, language)}</Typography>
+            </Box>
+            <Box p={2}>
+                <FieldArray name={field}>
+                    {({ fields }) => (
+                        <Grid2 container spacing={2}>
+                            {fields.map((name, index) => (
+                                <Grid2 container key={index} alignItems="center" size={{ xs: 12, md: 12 }}>
+                                    <Grid2 size={{ xs: 9, md: 9 }}>
+                                        <Field name={name}>
+                                            {({ input }) => (
+                                                <TextField {...input} fullWidth size="small" variant="standard" />
+                                            )}
+                                        </Field>
+                                    </Grid2>
+                                    <Grid2 size={{ xs: 3, md: 3 }}>
+                                        <IconButton onClick={() => fields.remove(index)} size="small">
+                                            <Delete />
+                                        </IconButton>
+                                        <IconButton
+                                            size="small"
+                                            onMouseEnter={(e) => handleMouseEnter(index, e)}
+                                            onMouseLeave={handleMouseLeave}
+                                        >
+                                            <Image />
+                                            {popoverOpen === index && popoverAnchor && (
+                                                <Portal>
+                                                    <Box
+                                                        position="fixed"
+                                                        zIndex={2000}
+                                                        bgcolor="white"
+                                                        p={1}
+                                                        boxShadow={3}
+                                                        style={{
+                                                            top: popoverAnchor.top - 10,
+                                                            left: popoverAnchor.left + popoverAnchor.width / 2,
+                                                            transform: 'translate(-50%, -100%)',
+                                                        }}
+                                                    >
+                                                        <img src={fields.value[index]} alt="Preview" width="300" />
+                                                    </Box>
+                                                </Portal>
+                                            )}
+                                        </IconButton>
+                                        <IconButton onClick={() => handleSetDefaultImage(fields.value[index])} title={translate("setAsRecipeImage", language)}>
+                                            <AddAPhoto />
+                                        </IconButton>
+                                    </Grid2>
+                                </Grid2>
+                            ))}
+                            <Grid2 size={{xs:12, md:12}} container justifyContent="flex-end">
+                                <IconButton onClick={() => fields.push('')} size="small">
+                                    <Add />
+                                </IconButton>
+                            </Grid2>
+                        </Grid2>
+                    )}
+                </FieldArray>
+            </Box>
+        </Card>
+    );
+};
+
+
+export default EditRecipe;

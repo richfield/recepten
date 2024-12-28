@@ -20,8 +20,11 @@
     "home": "Home",
     "search": "Search",
     "times": "Times",
-    "profile": "Profile"
-
+    "profile": "Profile",
+    "recipeCuisine": "Cuisine",
+    "recipeCategory": "Category",
+    "images": "Images",
+    "setAsRecipeImage": "Set as recipe image"
   },
   "nl": {
     "title": "Recepten",
@@ -44,6 +47,10 @@
     "home": "Thuis",
     "search": "Zoeken",
     "times": "Tijden",
-    "profile": "Profiel"
+    "profile": "Profiel",
+    "recipeCuisine": "Keuken",
+    "recipeCategory": "Categorie",
+    "images": "Afbeeldingen",
+    "setAsRecipeImage": "Instellen als receptafbeelding"
   }
 }
