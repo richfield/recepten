@@ -5,13 +5,13 @@ import { translate } from "../utils.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { useBusy } from "../Busy/BusyContext.js";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 
 
 const RecipeScraper: React.FC = () => {
-    const params = useParams();
-    const { url: sharedUrl } = useParams<{ url: string }>();
+    const params = new URLSearchParams(window.location.search);
+    const sharedUrl = params.get('url');
     const { language } = useApplicationContext();
     const [url, setUrl ] = useState<string>(sharedUrl || "");
     const { showBusy, hideBusy } = useBusy();
