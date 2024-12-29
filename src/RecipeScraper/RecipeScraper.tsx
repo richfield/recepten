@@ -11,9 +11,12 @@ import { useApplicationContext } from "../Components/ApplicationContext/useAppli
 
 const RecipeScraper: React.FC = () => {
     const params = new URLSearchParams(window.location.search);
-    const sharedUrl = params.get('url');
+    const shared = params.get('url');
+    const urlRegex = /(https?:\/\/[^\s]+)/g; // Match URLs starting with http or https
+    const sharedUrls = shared?.match(urlRegex);
+    const sharedUrl = sharedUrls && sharedUrls.length > 0 ? sharedUrls[0] : ""
     const { language } = useApplicationContext();
-    const [url, setUrl ] = useState<string>(sharedUrl || "");
+    const [url, setUrl ] = useState<string>(sharedUrl);
     const { showBusy, hideBusy } = useBusy();
     const navigate = useNavigate();
     const fetchData = async (url: string) => {
@@ -35,7 +38,6 @@ const RecipeScraper: React.FC = () => {
 
     return <div className="content">
         <Grid2 container spacing={2} alignItems="center">
-            {JSON.stringify(params)}
             <Grid2 size={{lg:11, xs:12}}>
                 <TextField
                     fullWidth
