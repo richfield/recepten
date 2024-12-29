@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField, Grid } from '@mui/material';
+import { Button, TextField, Grid2 } from "@mui/material";
 import { translate } from "../utils.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
@@ -10,13 +10,12 @@ import { useApplicationContext } from "../Components/ApplicationContext/useAppli
 
 
 const RecipeScraper: React.FC = () => {
-    const { language } = useApplicationContext();
-    const [url, setUrl ] = useState<string>("");
-    const { showBusy, hideBusy } = useBusy();
-    const navigate = useNavigate();
     const params = new URLSearchParams(window.location.search);
     const sharedUrl = params.get('url');
-    console.log({sharedUrl})
+    const { language } = useApplicationContext();
+    const [url, setUrl ] = useState<string>(sharedUrl || "");
+    const { showBusy, hideBusy } = useBusy();
+    const navigate = useNavigate();
     const fetchData = async (url: string) => {
         showBusy();
         try {
@@ -36,9 +35,8 @@ const RecipeScraper: React.FC = () => {
     };
 
     return <div className="content">
-        {sharedUrl || 'not defined'}
-        <Grid container spacing={2} alignItems="center">
-            <Grid item lg={11}>
+        <Grid2 container spacing={2} alignItems="center">
+            <Grid2 size={{lg:11, xs:12}}>
                 <TextField
                     fullWidth
                     type="text"
@@ -48,13 +46,13 @@ const RecipeScraper: React.FC = () => {
                     placeholder={translate("enterRecipeLink", language)}
                     variant="outlined"
                 />
-            </Grid>
-            <Grid item xs>
+            </Grid2>
+            <Grid2 size={{lg:1, xs:12}}>
                 <Button variant="contained" color="primary" onClick={() => fetchData(url)}>
                     <FontAwesomeIcon icon={faDownload} />
                 </Button>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>
     </div>
 };
 export default RecipeScraper;
