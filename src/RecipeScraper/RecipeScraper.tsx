@@ -14,7 +14,9 @@ const RecipeScraper: React.FC = () => {
     const [url, setUrl ] = useState<string>("");
     const { showBusy, hideBusy } = useBusy();
     const navigate = useNavigate();
-
+    const params = new URLSearchParams(window.location.search);
+    const sharedUrl = params.get('url');
+    console.log({sharedUrl})
     const fetchData = async (url: string) => {
         showBusy();
         try {
@@ -34,6 +36,7 @@ const RecipeScraper: React.FC = () => {
     };
 
     return <div className="content">
+        {sharedUrl || 'not defined'}
         <Grid container spacing={2} alignItems="center">
             <Grid item lg={11}>
                 <TextField

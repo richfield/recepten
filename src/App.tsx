@@ -153,9 +153,8 @@ function App() {
           )}
           <div style={{ marginLeft: "auto" }}>
             {user && user.photoURL ? (
-              <IconButton color="inherit">
+              <IconButton color="inherit" onClick={signOut}>
                 <Avatar
-                  onClick={signOut}
                   src={user.photoURL}
                   alt="User Avatar"
                   style={{ width: "40px", height: "40px", marginRight: "10px" }}

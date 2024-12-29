@@ -26,7 +26,6 @@ const RecipeView: React.FC<{edit:boolean}> = ({edit}) => {
     const handleSave = async (data: RecipeData) => {
         return await axios.post('/api/recipes/save', data)
     }
-    console.log({recipe})
     return <RecipeCard save={handleSave} recipe={recipe} language={language} edit={edit}/>
 };
 

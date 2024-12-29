@@ -61,13 +61,30 @@ const ViewRecipe: React.FC<ViewRecipeProps> = ({ recipe, language, toggleEdit })
                         </CardContent>
                     </Card>
                 )}
+                {recipe.recipeCuisine?.length !== 0 && (
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6">{translate("recipeCuisine", language)}</Typography>
+                            <Typography>{recipe.recipeCuisine?.join(', ')}</Typography>
+                        </CardContent>
+                    </Card>
+                )}
+                {recipe.recipeYield?.length !== 0 && (
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6">{translate("recipeYield", language)}</Typography>
+                            <Typography>{recipe.recipeYield}</Typography>
+                        </CardContent>
+                    </Card>
+                )}
             </Grid2>
             <Grid2 size={{ md: 9 }}>
                 <Card>
                     <CardContent>
                         {renderField(recipe, "description", language)}
-                        {renderField(recipe, "recipeIngredient", language)}
                         {renderField(recipe, "recipeInstructions", language, ({ text }) => text)}
+                        {renderField(recipe, "recipeIngredient", language)}
+                        {renderField(recipe, "recipeCategory", language)}
                     </CardContent>
                 </Card>
             </Grid2>

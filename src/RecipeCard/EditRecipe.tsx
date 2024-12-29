@@ -64,8 +64,6 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
         }
     };
 
-
-
     return (
         <Form
             initialValues={recipe}
@@ -100,7 +98,14 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                     <Grid2 size={{ xs: 12 }}>
                                         <Field name="description">
                                             {({ input }) => (
-                                                <TextField {...input} fullWidth multiline  label={translate('description', language)} variant="standard" size="small" />
+                                                <TextField {...input} fullWidth multiline label={translate('description', language)} variant="standard" size="small" />
+                                            )}
+                                        </Field>
+                                    </Grid2>
+                                    <Grid2 size={{ xs: 12 }}>
+                                        <Field name="recipeYield">
+                                            {({ input }) => (
+                                                <TextField {...input} fullWidth multiline label={translate('recipeYield', language)} variant="standard" size="small" />
                                             )}
                                         </Field>
                                     </Grid2>
@@ -124,7 +129,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
                                         <ArrayCard language={language} field={"recipeIngredient"} />
                                     </Grid2>
                                     <Grid2 size={{ md: 12 }}>
-                                        <ArrayCard language={language} field={"recipeInstructions"} multiline={true} valueSelector={({ text }) => text} />
+                                        <ArrayCard language={language} field={"recipeInstructions"} multiline={true} valueSelector={({ text }) => text} valueUpdater={(value) => ({ "@type": "HowToStep", text: value, name: value })} />
                                     </Grid2>
                                     <Grid2 size={{ md: 12 }}>
                                         <Typography variant="h6">{translate('times', language)}</Typography>
@@ -158,7 +163,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ArrayCard: React.FC<{ language: Language; field: string; valueSelector?: (value: any) => string, multiline?: boolean } & CardProps> = ({ language, field, valueSelector, multiline = false, ...cardProps }) => {
+const ArrayCard: React.FC<{ language: Language; field: string; valueSelector?: (value: any) => string, valueUpdater?: (value: string) => any, multiline?: boolean } & CardProps> = ({ language, field, valueSelector, valueUpdater, multiline = false, ...cardProps }) => {
     return (
         <Card {...cardProps}>
             <Box p={2}>
@@ -173,20 +178,28 @@ const ArrayCard: React.FC<{ language: Language; field: string; valueSelector?: (
                                     <Grid2 size={{ xs: 11 }} >
                                         <Field name={name}>
                                             {({ input }) => (
-                                                <TextField {...input} multiline={multiline} fullWidth size="small" variant="standard" value={valueSelector ? valueSelector(input.value) : input.value} />
+                                                <TextField
+                                                    {...input}
+                                                    multiline={multiline}
+                                                    fullWidth
+                                                    size="small"
+                                                    variant="standard"
+                                                    value={valueSelector ? valueSelector(input.value) : input.value}
+                                                    onChange={(e) => input.onChange(valueUpdater ? valueUpdater(e.target.value) : e.target.value)}
+                                                />
                                             )}
                                         </Field>
                                     </Grid2>
                                     <Grid2 size={{ xs: 1 }}>
                                         <IconButton onClick={() => fields.remove(index)} size="small">
-                                            <Delete />
+                                            <Delete fontSize="small" />
                                         </IconButton>
                                     </Grid2>
                                 </Grid2>
                             ))}
                             <Grid2 container justifyContent="flex-end">
                                 <IconButton onClick={() => fields.push('')} size="small">
-                                    <Add />
+                                    <Add fontSize="small" />
                                 </IconButton>
                             </Grid2>
                         </Grid2>
@@ -263,7 +276,7 @@ const ImageCard: React.FC<{ language: Language; field: string; handleSetDefaultI
                             ))}
                             <Grid2 size={{ xs: 12, md: 12 }} container justifyContent="flex-end">
                                 <IconButton onClick={() => fields.push('')} size="small">
-                                    <Add />
+                                    <Add fontSize="small" />
                                 </IconButton>
                             </Grid2>
                         </Grid2>

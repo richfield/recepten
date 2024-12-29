@@ -24,7 +24,8 @@
     "recipeCuisine": "Cuisine",
     "recipeCategory": "Category",
     "images": "Images",
-    "setAsRecipeImage": "Set as recipe image"
+    "setAsRecipeImage": "Set as recipe image",
+    "recipeYield": "Yield"
   },
   "nl": {
     "title": "Recepten",
@@ -51,6 +52,7 @@
     "recipeCuisine": "Keuken",
     "recipeCategory": "Categorie",
     "images": "Afbeeldingen",
-    "setAsRecipeImage": "Instellen als receptafbeelding"
+    "setAsRecipeImage": "Instellen als receptafbeelding",
+    "recipeYield": "Opbrengst"
   }
 }
