@@ -11,7 +11,6 @@ const RecipeList: React.FC = () => {
     const fetchData = async (url: string) => {
         try {
             const response = await axios.get(url); // API call through proxy
-            console.log(response)
             setRecipes(response.data)
         } catch (error) {
             console.error('Error fetching recipe data:', error);

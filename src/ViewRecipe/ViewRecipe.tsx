@@ -7,7 +7,7 @@ import moment from 'moment/min/moment-with-locales';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
-import { ExitToApp } from "@mui/icons-material";
+import { ArrowLeft, ArrowRight, ExitToApp } from "@mui/icons-material";
 
 
 const formatTime = (time: string | undefined, language: Language) => {
@@ -27,7 +27,6 @@ const ViewRecipe: React.FC = () => {
     const fetchData = async (url: string) => {
         try {
             const response = await axios.get(url); // API call through proxy
-            console.log(response)
             setRecipe(response.data)
         } catch (error) {
             console.error('Error fetching recipe data:', error);
@@ -37,10 +36,43 @@ const ViewRecipe: React.FC = () => {
         navigate(-1);
     }
 
+    const yieldDown = () => {
+        setNewRecipeYield((newRecipeYield) => {
+            const updatedYield = Math.max(newRecipeYield - 1, 1);
+            setMultiplication(updatedYield / recipeYield);
+            return updatedYield;
+        });
+    };
+
+    const yieldUp = () => {
+        setNewRecipeYield((newRecipeYield) => {
+            const updatedYield = newRecipeYield + 1;
+            setMultiplication(updatedYield / recipeYield);
+            return updatedYield;
+        });
+    };
+
     useEffect(() => {
         fetchData(`/api/recipes/get/${id}`)
     }, [id])
-    if(!recipe) {
+
+    const [multiplication, setMultiplication] = useState<number>(1);
+    const ingredientMultiplication: ((value: string) => string) = (value) => {
+        return value.replace(/(\d+(\.\d+)?)/g, (match) => {
+            const number = parseFloat(match);
+            return (number * multiplication).toString();
+        });
+    };
+    const [recipeYield, setRecipeYield] = useState<number>(1);
+    const [newRecipeYield, setNewRecipeYield] = useState<number>(1);
+
+    useEffect(() => {
+        const newYield = parseInt(recipe?.recipeYield?.split(',')[0] || '4')
+        setRecipeYield(newYield);
+        setNewRecipeYield(newYield);
+    }, [recipe?.recipeYield])
+
+    if (!recipe) {
         return <></>
     }
 
@@ -94,7 +126,15 @@ const ViewRecipe: React.FC = () => {
                         <Card>
                             <CardContent>
                                 <Typography variant="h6">{translate("recipeYield", language)}</Typography>
-                                <Typography>{recipe.recipeYield}</Typography>
+                                <Grid2 container justifyContent="center" alignItems="center">
+                                    <IconButton onClick={yieldDown}>
+                                        <ArrowLeft />
+                                    </IconButton>
+                                    <Typography>{newRecipeYield}</Typography>
+                                    <IconButton onClick={yieldUp}>
+                                        <ArrowRight />
+                                    </IconButton>
+                                </Grid2>
                             </CardContent>
                         </Card>
                     )}
@@ -104,7 +144,7 @@ const ViewRecipe: React.FC = () => {
                         <CardContent>
                             {renderField(recipe, "description", language)}
                             {renderField(recipe, "recipeInstructions", language, ({ text }) => text)}
-                            {renderField(recipe, "recipeIngredient", language)}
+                            {renderField(recipe, "recipeIngredient", language, ingredientMultiplication)}
                             {renderField(recipe, "recipeCategory", language)}
                         </CardContent>
                     </Card>

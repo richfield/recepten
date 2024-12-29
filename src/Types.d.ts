@@ -95,3 +95,10 @@ export interface UserProfile {
      */
     updatedAt: Date;
 }
+
+export type UserProfileData = {
+    language: string;
+    theme: string;
+    isAdmin: boolean;
+    groups: string[];
+}

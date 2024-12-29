@@ -27,6 +27,7 @@ import { signInWithGoogle } from "./main.js";
 import RecipeScraper from "./RecipeScraper/RecipeScraper.js";
 import ViewRecipe from "./ViewRecipe/ViewRecipe.js";
 import EditRecipe from "./EditRecipe/EditRecipe.js";
+import UserProfile from "./UserProfile/UserProfile.js";
 
 function App() {
   const navigate = useNavigate();
@@ -196,6 +197,7 @@ function App() {
           <Route path="/recipe/:id" element={<ViewRecipe />} />
           <Route path="/recipe/:id/edit" element={<EditRecipe />} />
           <Route path="/search/:searchQuery" element={<RecipeList />} />
+          <Route path="/profile" element={<UserProfile />} />
         </Routes>
       </Container>
     </>
