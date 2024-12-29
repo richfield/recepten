@@ -10,6 +10,7 @@ import { useApplicationContext } from "../Components/ApplicationContext/useAppli
 
 
 const RecipeScraper: React.FC = () => {
+    const params = useParams();
     const { url: sharedUrl } = useParams<{ url: string }>();
     const { language } = useApplicationContext();
     const [url, setUrl ] = useState<string>(sharedUrl || "");
@@ -34,6 +35,7 @@ const RecipeScraper: React.FC = () => {
 
     return <div className="content">
         <Grid2 container spacing={2} alignItems="center">
+            {JSON.stringify(params)}
             <Grid2 size={{lg:11, xs:12}}>
                 <TextField
                     fullWidth
