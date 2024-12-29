@@ -35,7 +35,7 @@ export default defineConfig({
       ,
       "share_target": {
         "action": "/scraper",
-        "method": "POST",
+        "method": "GET",
         "enctype": "application/x-www-form-urlencoded",
         "params": {
           "text": "url"
