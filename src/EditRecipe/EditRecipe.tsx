@@ -1,5 +1,5 @@
 // EditRecipe Component
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
 import { Card, Button, Container, TextField, IconButton, Typography, Box, CardProps, Grid2, Portal } from '@mui/material';
@@ -9,20 +9,40 @@ import myArrayMutators from './mutators.js';
 import { DurationPickerField } from '../Components/DurationPicker.js';
 import axios from 'axios';
 import { Add, AddAPhoto, Cancel, Delete, Image, Save } from "@mui/icons-material";
+import { useParams, useNavigate } from "react-router-dom";
+import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 
-type EditRecipeProps = {
-    recipe: RecipeData;
-    onSave: (recipe: RecipeData) => void;
-    language: Language;
-    toggleEdit: () => void;
-};
-
-const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggleEdit }) => {
+const EditRecipe: React.FC = () => {
+    const { language } = useApplicationContext();
+    const { id } = useParams();
+    const [recipe, setRecipe] = useState<RecipeData>()
+    const navigate = useNavigate();
+    const fetchData = async (url: string) => {
+        try {
+            const response = await axios.get(url); // API call through proxy
+            console.log(response)
+            setRecipe(response.data)
+        } catch (error) {
+            console.error('Error fetching recipe data:', error);
+        }
+    };
+    const toggleEdit = () => {
+        navigate(-1);
+    }
     const [forceRender, setForceRender] = useState<number>(0);
 
-    const handleSubmit = (values: RecipeData) => {
-        onSave(values);
+    const handleSubmit = async (values: RecipeData) => {
+        await axios.post('/api/recipes/save', values)
+        navigate(-1);
     };
+
+    useEffect(() => {
+        fetchData(`/api/recipes/get/${id}`)
+    }, [id])
+
+    if (!recipe) {
+        return <></>
+    }
 
     const uploadImage = async (recipeId: string, file: File): Promise<void> => {
         const formData = new FormData();
@@ -35,7 +55,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({ recipe, onSave, language, toggl
 
     async function handleSetDefaultImage(url: string): Promise<void> {
         try {
-            const recipeId = recipe._id;
+            const recipeId = recipe?._id;
             await axios.post(`/api/recipes/${recipeId}/image/url`, { url }, {
                 headers: { 'Content-Type': 'application/json' },
             });

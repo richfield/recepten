@@ -5,13 +5,12 @@ import { translate } from "../utils.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { useBusy } from "../Busy/BusyContext.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 
 
 const RecipeScraper: React.FC = () => {
-    const params = new URLSearchParams(window.location.search);
-    const sharedUrl = params.get('url');
+    const { url: sharedUrl } = useParams<{ url: string }>();
     const { language } = useApplicationContext();
     const [url, setUrl ] = useState<string>(sharedUrl || "");
     const { showBusy, hideBusy } = useBusy();
@@ -20,7 +19,6 @@ const RecipeScraper: React.FC = () => {
         showBusy();
         try {
             const response = await axios.get(`/api/scrape?url=${url}`); // API call through proxy
-            console.log({response})
             if(response.data._id) {
                 navigate(`/recipe/${response.data._id}`)
             }

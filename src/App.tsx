@@ -14,16 +14,19 @@ import {
   ListItem,
   ListItemText,
   useMediaQuery,
+  TextField,
+  Card,
 } from "@mui/material";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
-import { Brightness4, Brightness7, Menu as MenuIcon, Person } from "@mui/icons-material";
+import { Brightness4, Brightness7, Menu as MenuIcon, Person, Search } from "@mui/icons-material";
 import RecipeList from "./RecipeList/RecipeList.js";
-import RecipeView from "./RecipeView/RecipeView.js";
 import { useApplicationContext } from "./Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "./utils.js";
 import moment from "moment/min/moment-with-locales";
 import { signInWithGoogle } from "./main.js";
 import RecipeScraper from "./RecipeScraper/RecipeScraper.js";
+import ViewRecipe from "./ViewRecipe/ViewRecipe.js";
+import EditRecipe from "./EditRecipe/EditRecipe.js";
 
 function App() {
   const navigate = useNavigate();
@@ -63,6 +66,18 @@ function App() {
   const handleMobileMenuClose = () => {
     setMobileAnchorEl(null);
   };
+  if (!user) {
+    return <Container style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Card style={{ padding: "20px", textAlign: "center" }}>
+        <Typography variant="h5" component="div" gutterBottom>
+          {translate("login", language)}
+        </Typography>
+        <IconButton color="inherit" onClick={signInWithGoogle}>
+          <Person />
+        </IconButton>
+      </Card>
+    </Container>
+  }
 
   return (
     <>
@@ -73,8 +88,10 @@ function App() {
               {translate("title", language)}
             </Link>
           </Typography>
+
           {!isMobile && (
             <>
+              <SearchField />
               <Button color="inherit" onClick={() => navigate("/recipes")}>
                 {translate("recipes", language)}
               </Button>
@@ -138,6 +155,9 @@ function App() {
                 >
                   {translate("add", language)}
                 </MenuItem>
+                <MenuItem>
+                  <SearchField />
+                </MenuItem>
               </Menu>
               <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                 <List>
@@ -168,17 +188,56 @@ function App() {
           </div>
         </Toolbar>
       </AppBar>
-      <Container>
+      <Container style={{ marginTop: "10px" }}>
         <Routes>
           <Route path="/" element={<RecipeList />} />
           <Route path="/recipes" element={<RecipeList />} />
           <Route path="/scraper" element={<RecipeScraper />} />
-          <Route path="/recipe/:id" element={<RecipeView edit={false} />} />
-          <Route path="/recipe/:id/edit" element={<RecipeView edit={true} />} />
+          <Route path="/recipe/:id" element={<ViewRecipe />} />
+          <Route path="/recipe/:id/edit" element={<EditRecipe />} />
+          <Route path="/search/:searchQuery" element={<RecipeList />} />
         </Routes>
       </Container>
     </>
   );
 }
+
+const SearchField: React.FC = () => {
+  const navigate = useNavigate();
+  const { language } = useApplicationContext();
+  return (
+    <><TextField
+      id="mainSearch"
+      variant="outlined"
+      placeholder={translate("search", language)}
+      size="small"
+      style={{ marginRight: "10px" }}
+      onKeyPress={(event) => {
+        if (event.key === "Enter") {
+          const value = (event.target as HTMLInputElement).value;
+          if (value) {
+            navigate(`/search/${value}`);
+          } else {
+            navigate("/");
+          }
+        }
+      }} />
+      <Button
+        color="inherit"
+        onClick={() => {
+          const value = (document.getElementById('mainSearch') as HTMLInputElement).value;
+          console.log({ value });
+          if (value) {
+            navigate(`/search/${value}`);
+          } else {
+            navigate("/");
+          }
+        }}
+        size="small"
+      >
+        <Search fontSize="small"/>
+      </Button></>
+  );
+};
 
 export default App;
