@@ -7,33 +7,42 @@ const apiUrl = process.env.API_URL || 'http://debian.ten-velde.com:3005'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(),
-    VitePWA({
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'android-chrome-192x192.png', 'android-chrome-512x512.png', 'favicon-16x16.png', 'favicon-32x32.png'],
-      registerType: 'autoUpdate', // Automatically update the service worker
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,png,jpg,svg}'], // Cache these file types
-      },
-      manifest: {
-        name: 'Recepten',
-        short_name: 'Recepten',
-        description: 'Een app voor het bijhouden van recepten',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone',
-        icons: [
-          {
-            src: 'web-app-manifest-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'web-app-manifest-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
-      },
-    }),
+  VitePWA({
+    includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'android-chrome-192x192.png', 'android-chrome-512x512.png', 'favicon-16x16.png', 'favicon-32x32.png'],
+    registerType: 'autoUpdate', // Automatically update the service worker
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,png,jpg,svg}'], // Cache these file types
+    },
+    manifest: {
+      name: 'Recepten',
+      short_name: 'Recepten',
+      description: 'Een app voor het bijhouden van recepten',
+      theme_color: '#e0d4ac',
+      background_color: '#e0d4ac',
+      display: 'standalone',
+      icons: [
+        {
+          src: 'web-app-manifest-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: 'web-app-manifest-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ]
+      ,
+      "share_target": {
+        "action": "/scraper",
+        "method": "POST",
+        "enctype": "application/x-www-form-urlencoded",
+        "params": {
+          "text": "url"
+        }
+      }
+    },
+  }),
   ],
   server: {
     proxy: {
@@ -43,4 +52,5 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
-}})
+  }
+})
