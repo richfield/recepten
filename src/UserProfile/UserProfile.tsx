@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
-import { FieldArray } from 'react-final-form-arrays';
-import { TextField, Select, MenuItem, Button, Grid2, InputLabel, FormControl, IconButton } from '@mui/material';
-import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
+import { TextField, Select, MenuItem, Button, Grid2, InputLabel, FormControl } from '@mui/material';
 import { RoleData, UserProfile, GroupData } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import myArrayMutators from "./mutators.js";
