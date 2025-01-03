@@ -6,7 +6,7 @@ import { useApplicationContext } from "../Components/ApplicationContext/useAppli
 import myArrayMutators from "./mutators.js";
 import { translate } from "../utils.js";
 
-const UserProfile: React.FC = () => {
+const UserProfileComponent: React.FC = () => {
     const { apiFetch, language } = useApplicationContext();
     const [userProfile, setUserProfile] = useState<UserProfile>();
     const [roles, setRoles] = useState<RoleData[]>([]);
@@ -149,4 +149,4 @@ const UserProfile: React.FC = () => {
     );
 };
 
-export default UserProfile;
+export default UserProfileComponent;
