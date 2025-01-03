@@ -5,39 +5,46 @@ import { FieldArray } from 'react-final-form-arrays';
 import { Card, Button, Container, TextField, IconButton, Typography, Box, CardProps, Grid2, Portal } from '@mui/material';
 import { RecipeData, Language } from '../Types.js';
 import { translate } from '../utils.js';
-import myArrayMutators from './mutators.js';
 import { DurationPickerField } from '../Components/DurationPicker.js';
-import axios from 'axios';
 import { Add, AddAPhoto, Cancel, Delete, Image, Save } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
+import myArrayMutators from "./mutators.js";
 
 const EditRecipe: React.FC = () => {
-    const { language } = useApplicationContext();
+    const { language, fetchAuthenticatedImage, apiFetch } = useApplicationContext();
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
+    useEffect(() => {
+        const fetchImage = async () => {
+            const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);
+            setImageUrl(image);
+        };
+        fetchImage();
+    }, [id, fetchAuthenticatedImage]);
     const [recipe, setRecipe] = useState<RecipeData>()
     const navigate = useNavigate();
-    const fetchData = async (url: string) => {
+    const fetchData = React.useCallback(async (url: string) => {
         try {
-            const response = await axios.get(url); // API call through proxy
+            const response = await apiFetch<RecipeData>(url, 'GET'); // API call through proxy
             setRecipe(response.data)
         } catch (error) {
             console.error('Error fetching recipe data:', error);
         }
-    };
+    }, [apiFetch]);
     const toggleEdit = () => {
         navigate(-1);
     }
     const [forceRender, setForceRender] = useState<number>(0);
 
     const handleSubmit = async (values: RecipeData) => {
-        await axios.post('/api/recipes/save', values)
+        await apiFetch('/api/recipes/save', 'POST', values);
         navigate(-1);
     };
 
     useEffect(() => {
         fetchData(`/api/recipes/get/${id}`)
-    }, [id])
+    }, [fetchData, id])
 
     if (!recipe) {
         return <></>
@@ -47,7 +54,7 @@ const EditRecipe: React.FC = () => {
         const formData = new FormData();
         formData.append('image', file);
 
-        await axios.post(`/api/recipes/${recipeId}/image/upload`, formData, {
+        await apiFetch(`/api/recipes/${recipeId}/image/upload`,'POST', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
     };
@@ -55,7 +62,7 @@ const EditRecipe: React.FC = () => {
     async function handleSetDefaultImage(url: string): Promise<void> {
         try {
             const recipeId = recipe?._id;
-            await axios.post(`/api/recipes/${recipeId}/image/url`, { url }, {
+            await apiFetch(`/api/recipes/${recipeId}/image/url`,'POST', { url }, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setForceRender(forceRender + 1);
@@ -134,7 +141,7 @@ const EditRecipe: React.FC = () => {
                                         </Box>
                                         <Grid2 container spacing={2}>
                                             <Grid2 size={{ md: 4, xs: 12 }}>
-                                                {recipe._id && <img key={forceRender} src={`/api/recipes/${recipe._id}/image`} alt="Recipe" width="100%" />}
+                                                {recipe._id && <img key={forceRender} src={imageUrl} alt="Recipe" width="100%" />}
                                             </Grid2>
                                             <Grid2 size={{ md: 8, xs: 12 }}>
                                                 <Box>

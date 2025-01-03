@@ -12,11 +12,11 @@
     "remove": "Remove",
     "save": "Save",
     "edit": "Edit",
-    "enterRecipeLink": "Enter the recipe link",
-    "editimageurl": "Edit the image url",
-    "cookTime": "Cooking time",
-    "prepTime": "Preparation time",
-    "totalTime": "Total time",
+    "enterRecipeLink": "Enter recipe link here",
+    "editimageurl": "Edit image URL",
+    "cookTime": "Cook Time",
+    "prepTime": "Prep Time",
+    "totalTime": "Total Time",
     "home": "Home",
     "search": "Search",
     "times": "Times",
@@ -26,7 +26,12 @@
     "images": "Images",
     "setAsRecipeImage": "Set as recipe image",
     "recipeYield": "Yield",
-    "login": "Login"
+    "login": "Login",
+    "theme": "Theme",
+    "language": "Language",
+    "dark": "Dark",
+    "light": "Light",
+    "followOS": "Follow OS"
   },
   "nl": {
     "title": "Recepten",
@@ -55,6 +60,11 @@
     "images": "Afbeeldingen",
     "setAsRecipeImage": "Instellen als receptafbeelding",
     "recipeYield": "Aantal personen",
-    "login": "Inloggen"
+    "login": "Inloggen",
+    "theme": "Thema",
+    "language": "Taal",
+    "dark": "Donker",
+    "light": "Licht",
+    "followOS": "Volg OS"
   }
 }

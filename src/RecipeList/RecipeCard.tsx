@@ -1,11 +1,21 @@
 import { Edit, Delete, Cancel, OpenInBrowser } from "@mui/icons-material";
 import { Button, ButtonGroup, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid2, IconButton, Typography } from "@mui/material";
-import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RecipeData } from "../Types.js";
+import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 
 export const RecipeCard = ({ recipe, index, onDeleted }: { recipe: RecipeData; index: number, onDeleted: () => void }) => {
+    const { fetchAuthenticatedImage, apiFetch } = useApplicationContext();
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+    useEffect(() => {
+        const fetchImage = async () => {
+            const image = await fetchAuthenticatedImage(`/api/recipes/${recipe._id}/image`);
+            setImageUrl(image);
+        };
+        fetchImage();
+    }, [recipe._id, fetchAuthenticatedImage]);
+
     const [open, setOpen] = useState(false);
     const handleDelete = () => {
         setOpen(true); // Open the dialog
@@ -14,16 +24,17 @@ export const RecipeCard = ({ recipe, index, onDeleted }: { recipe: RecipeData; i
     const handleClose = () => setOpen(false); // Close the dialog
 
     const confirmDelete = async () => {
-        await axios.delete(`/api/recipes/${recipe._id}`); // API call through proxy
+        await apiFetch(`/api/recipes/${recipe._id}`, 'DELETE'); // API call through proxy
         onDeleted();
         setOpen(false); // Close dialog after deletion
     };
+
     return (<Grid2 size={{ md: 3, xs: 12 }} key={index}>
         <Card onDoubleClick={() => navigate(`/recipe/${recipe._id}`)}>
             <CardMedia
                 component="img"
                 height="140"
-                image={`/api/recipes/${recipe._id}/image`}
+                image={imageUrl}
                 alt={recipe.name}
             />
             <CardContent>

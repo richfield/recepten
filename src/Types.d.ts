@@ -58,13 +58,14 @@ export type Language = "en"|"nl"
  * Represents the settings associated with a user profile.
  */
 export interface UserSettings {
-    [key: string]: string; // A dictionary of settings (key-value pairs)
+    theme: string;
+    language: Language;
 }
 
 /**
  * Represents a user profile in the application.
  */
-export interface UserProfile {
+export type UserProfile = {
     /**
      * Firebase User ID.
      */
@@ -96,9 +97,11 @@ export interface UserProfile {
     updatedAt: Date;
 }
 
-export type UserProfileData = {
-    language: string;
-    theme: string;
-    isAdmin: boolean;
-    groups: string[];
+
+export interface RoleData {
+    name: string;
+}
+
+export interface GroupData {
+    name: string;
 }

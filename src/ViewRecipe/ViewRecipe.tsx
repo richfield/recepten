@@ -5,7 +5,6 @@ import { RecipeData, Language } from "../Types.js";
 import { translate } from "../utils.js";
 import moment from 'moment/min/moment-with-locales';
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { ArrowLeft, ArrowRight, ExitToApp } from "@mui/icons-material";
 
@@ -20,18 +19,28 @@ const formatTime = (time: string | undefined, language: Language) => {
 };
 
 const ViewRecipe: React.FC = () => {
-    const { language } = useApplicationContext();
+    const { language, fetchAuthenticatedImage, apiFetch } = useApplicationContext();
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
     const [recipe, setRecipe] = useState<RecipeData>()
+    useEffect(() => {
+        const fetchImage = async () => {
+            const image = await fetchAuthenticatedImage(`/api/recipes/${recipe?._id}/image`);
+            setImageUrl(image);
+        };
+        if(recipe?._id) {
+            fetchImage();
+        }
+    }, [recipe, fetchAuthenticatedImage]);
     const navigate = useNavigate();
-    const fetchData = async (url: string) => {
+    const fetchData = React.useCallback(async (url: string) => {
         try {
-            const response = await axios.get(url); // API call through proxy
+            const response = await apiFetch<RecipeData>(url, 'GET');
             setRecipe(response.data)
         } catch (error) {
             console.error('Error fetching recipe data:', error);
         }
-    };
+    }, [apiFetch]);
     const toggleEdit = () => {
         navigate(-1);
     }
@@ -53,8 +62,8 @@ const ViewRecipe: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchData(`/api/recipes/get/${id}`)
-    }, [id])
+        fetchData(`/api/recipes/get/${id}`);
+    }, [id, fetchData]);
 
     const [multiplication, setMultiplication] = useState<number>(1);
     const ingredientMultiplication: ((value: string) => string) = (value) => {
@@ -95,7 +104,7 @@ const ViewRecipe: React.FC = () => {
                             <CardMedia
                                 component="img"
                                 style={{ width: "100%" }}
-                                image={`/api/recipes/${recipe._id}/image`}
+                                image={imageUrl}
                                 alt={recipe.name} />
                         )}
                         <CardContent>

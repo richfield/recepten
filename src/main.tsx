@@ -28,14 +28,14 @@ const app = initializeApp(firebaseConfig);
 getAnalytics(app);
 
 // Initialize Firebase Authentication
-const auth = getAuth(app);
+export const firebaseAuth = getAuth(app);
 // Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
 
 // Function to handle Google Sign-In
 async function signInWithGoogle() {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
+    const result = await signInWithPopup(firebaseAuth, googleProvider);
     const user = result.user;
     console.log('User signed in:', user);
     // You can redirect or update the state based on user info
@@ -58,4 +58,4 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-export { auth, signInWithGoogle };
+export { firebaseAuth as auth, signInWithGoogle };

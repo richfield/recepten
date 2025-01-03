@@ -1,25 +1,28 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Grid2 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { RecipeData } from "../Types.js";
 import { RecipeCard } from "./RecipeCard.js";
+import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 
 const RecipeList: React.FC = () => {
+    const { apiFetch } = useApplicationContext();
     const [recipes, setRecipes] = useState<RecipeData[]>()
     const { searchQuery } = useParams();
-    const fetchData = async (url: string) => {
+    const fetchData = useCallback(async (url: string) => {
         try {
-            const response = await axios.get(url); // API call through proxy
-            setRecipes(response.data)
+            const response = await apiFetch<RecipeData[]>(url, "GET"); // API call through proxy
+            if(response.data) {
+                setRecipes(response.data)
+            }
         } catch (error) {
             console.error('Error fetching recipe data:', error);
         }
-    };
+    }, [apiFetch]);
     useEffect(() => {
         const url = searchQuery ? `/api/recipes/search?query=${searchQuery}` : "/api/recipes"
         fetchData(url)
-    }, [searchQuery])
+    }, [searchQuery, fetchData])
 
     const onDeleted = () => {
         fetchData("/api/recipes")

@@ -3,13 +3,13 @@ import { Mutator } from 'final-form'
 import { RecipeData } from "../Types.js";
 
 // Define the mutators with their appropriate types
-type MyArrayMutators = {
+type RecipeArrayMutators = {
     [key: string]: Mutator<RecipeData, object>;
     //default: Mutator<RecipeData, object>;
 };
 
 // Explicit cast to match the expected type
-const myArrayMutators: MyArrayMutators = {
+const myArrayMutators: RecipeArrayMutators = {
     insert: arrayMutators.insert,
     concat: arrayMutators.concat,
     move: arrayMutators.move,
