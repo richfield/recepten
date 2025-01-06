@@ -155,7 +155,8 @@ const EditRecipe: React.FC = () => {
                                         <ArrayCard language={language} field={"recipeIngredient"} />
                                     </Grid2>
                                     <Grid2 size={{ md: 12 }}>
-                                        <ArrayCard language={language} field={"recipeInstructions"} multiline={true} valueSelector={({ text }) => text} valueUpdater={(value) => ({ "@type": "HowToStep", text: value, name: value })} />
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                        <ArrayCard language={language} field={"recipeInstructions"} multiline={true} valueSelector={({ text }): any => text} valueUpdater={(value: any) => ({ "@type": "HowToStep", text: value, name: value })} />
                                     </Grid2>
                                     <Grid2 size={{ md: 12 }}>
                                         <Typography variant="h6">{translate('times', language)}</Typography>
@@ -271,7 +272,7 @@ const ImageCard: React.FC<{ language: Language; field: string; handleSetDefaultI
                                         </IconButton>
                                         <IconButton
                                             size="small"
-                                            onMouseEnter={(e) => handleMouseEnter(index, e)}
+                                            onMouseEnter={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleMouseEnter(index, e)}
                                             onMouseLeave={handleMouseLeave}
                                         >
                                             <Image fontSize="small" />

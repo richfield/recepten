@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Field, FieldRenderProps } from 'react-final-form';
+import { Form, Field } from 'react-final-form';
 import { Select, MenuItem, Button, Grid2, InputLabel, FormControl, Checkbox, ListItemText, OutlinedInput } from '@mui/material';
 import { RoleData, UserProfile, GroupData } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
@@ -37,7 +37,7 @@ const UserProfileComponent: React.FC = () => {
     console.log({ ur: userProfile?.roles })
     const toggleRole = (roles: RoleData[], role: RoleData) => {
         const index = roles.findIndex((r) => r._id === role._id);
-        console.log({index, role})
+        console.log({index, role, profileRoles})
         if (index >= 0) {
             // Role is already selected, so remove it
             const returnRoles = roles.filter((r) => r._id !== role._id);
@@ -121,7 +121,7 @@ const UserProfileComponent: React.FC = () => {
                                                     (role) =>
                                                         {
                                                             console.log(role)
-                                                            return !currentRoles.some((r: { _id: object; }) => r._id === role._id) ||
+                                                            return !currentRoles.some((r: { _id: string; }) => r._id === role._id) ||
                                                                 !newSelectedRoles.some((r) => r._id === role._id);
                                                         }
                                                 );
@@ -137,7 +137,7 @@ const UserProfileComponent: React.FC = () => {
                                             {roles.map((role) => (
                                                 <MenuItem
                                                     key={role._id}
-                                                    value={role}
+                                                    value={role._id}
                                                     selected={(input.value || []).some((r: RoleData) => r._id === role._id)}
                                                 >
                                                     <Checkbox checked={(input.value || []).some((r: RoleData) => r._id === role._id)} />
@@ -168,7 +168,7 @@ const UserProfileComponent: React.FC = () => {
                                                 renderValue={(selected) => selected.map((r: RoleData) => r.name).join(', ')}
                                             >
                                                 {roles.map((role) => (
-                                                    <MenuItem key={role.name} value={role}>
+                                                    <MenuItem key={role.name} value={role._id}>
                                                         {/* <Checkbox checked={input.value.map((r: RoleData) => r.name).includes(role.name)} /> */}
                                                         <ListItemText primary={role.name} />
                                                     </MenuItem>
@@ -196,7 +196,7 @@ const UserProfileComponent: React.FC = () => {
                                             renderValue={(selected) => selected.map((m: GroupData) => m.name).join(', ')}
                                         >
                                             {groups.map((group) => (
-                                                <MenuItem key={group.name} value={group}>
+                                                <MenuItem key={group.name} value={group._id}>
                                                     <Checkbox checked={input.value.map((m: GroupData) => m.name).includes(group.name)} />
                                                     <ListItemText primary={group.name} />
                                                 </MenuItem>

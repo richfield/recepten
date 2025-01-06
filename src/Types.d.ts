@@ -100,9 +100,10 @@ export type UserProfile = {
 
 export interface RoleData {
     name: string;
-    _id: object;
+    _id: string;
 }
 
 export interface GroupData {
     name: string;
+    _id: string;
 }
