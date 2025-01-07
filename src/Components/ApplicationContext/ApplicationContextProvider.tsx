@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createTheme, Theme, ThemeProvider } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import { User } from 'firebase/auth';
 import { ReactNode } from 'react';
-import { Language } from '../../Types.js';
+import { Language, RoleData, UserProfile } from '../../Types.js';
 import axios from 'axios';
 import { firebaseAuth } from '../../main.js';
 import { ApplicationContext } from "./ApplicationContext.js";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+
 const lightTheme = createTheme({
   palette: {
     mode: 'light',
@@ -29,6 +30,10 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   const [theme, setTheme] = useState<Theme>(darkTheme);
   const [language, setLanguage] = useState<Language>("nl");
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [adminRole, setAdminRole] = useState<RoleData>();
+  const [isAdmin, setIsAdmin ] = useState<boolean>(false);
+
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme.palette.mode === 'light' ? darkTheme : lightTheme));
@@ -46,7 +51,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     await firebaseAuth.signOut();
   };
 
-  const apiFetch = async <T,>(url: string, method: 'GET' | 'POST' | 'DELETE' = 'GET', body?: unknown, headers?: object): Promise<AxiosResponse<T, unknown>> => {
+  const apiFetch = useCallback(async <T,>(url: string, method: 'GET' | 'POST' | 'DELETE' = 'GET', body?: unknown, headers?: object): Promise<AxiosResponse<T, unknown>> => {
     if (!user) {
       throw new Error("not authenticated");
     }
@@ -64,7 +69,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     };
 
     return await axios(config);
-  };
+  }, [user]);
 
   const fetchAuthenticatedImage = async (url: string): Promise<string> => {
     if (!user) {
@@ -98,8 +103,52 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     return URL.createObjectURL(blob);
   };
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user?.uid !== profile?.firebaseUID) {
+        const response = await apiFetch<UserProfile>('/api/profile/me', 'GET');
+        setProfile(response.data);
+      }
+    };
+    fetchProfile();
+  }, [user, profile, apiFetch])
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user) {
+        const {data} = await apiFetch<RoleData[]>('/api/profile/roles', 'GET');
+        const adminRole = data.find(d => d.name.toLowerCase() === "admin")
+        setAdminRole(adminRole);
+      }
+    };
+    fetchProfile();
+  }, [user, apiFetch])
+
+  useEffect(() => {
+    if(adminRole) {
+      const hasAdminRole = profile?.roles.findIndex(r => r === adminRole._id) ?? -1;
+      setIsAdmin(hasAdminRole > -1)
+    }
+  }, [profile, adminRole])
+
+  useEffect(() => {
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    switch (profile?.settings.theme) {
+      case "dark":
+        setTheme(darkTheme);
+        break;
+      case "light":
+        setTheme(lightTheme);
+        break;
+      case "followOS":
+        setTheme(prefersDarkMode ? darkTheme : lightTheme);
+        break;
+    }
+    setLanguage(profile?.settings.language || "en")
+  }, [profile])
+
   return (
-    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage }}>
+    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin }}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
         <ThemeProvider theme={theme}>{children}</ThemeProvider>
       </LocalizationProvider>

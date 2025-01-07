@@ -16,9 +16,15 @@ import {
   useMediaQuery,
   TextField,
   Card,
+  ListItemIcon,
 } from "@mui/material";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
-import { Brightness4, Brightness7, Menu as MenuIcon, Person, Search } from "@mui/icons-material";
+import {
+  Add,
+  Menu as MenuIcon,
+  Person,
+  Search,
+} from "@mui/icons-material";
 import RecipeList from "./RecipeList/RecipeList.js";
 import { useApplicationContext } from "./Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "./utils.js";
@@ -31,10 +37,12 @@ import UserProfile from "./UserProfile/UserProfile.js";
 
 function App() {
   const navigate = useNavigate();
-  const { language, theme, toggleTheme, user, setLanguage, signOut } = useApplicationContext();
+  const { language, user } =
+    useApplicationContext();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [mobileAnchorEl, setMobileAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileAnchorEl, setMobileAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // Preserve original humanize
@@ -52,13 +60,7 @@ function App() {
     }
   };
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleMobileMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMobileAnchorEl(event.currentTarget);
@@ -68,16 +70,25 @@ function App() {
     setMobileAnchorEl(null);
   };
   if (!user) {
-    return <Container style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <Card style={{ padding: "20px", textAlign: "center" }}>
-        <Typography variant="h5" component="div" gutterBottom>
-          {translate("login", language)}
-        </Typography>
-        <IconButton color="inherit" onClick={signInWithGoogle}>
-          <Person />
-        </IconButton>
-      </Card>
-    </Container>
+    return (
+      <Container
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Card style={{ padding: "20px", textAlign: "center" }}>
+          <Typography variant="h5" component="div" gutterBottom>
+            {translate("login", language)}
+          </Typography>
+          <IconButton color="inherit" onClick={signInWithGoogle}>
+            <Person />
+          </IconButton>
+        </Card>
+      </Container>
+    );
   }
 
   return (
@@ -92,37 +103,11 @@ function App() {
 
           {!isMobile && (
             <>
+              <Button color="inherit" onClick={() => navigate("/scraper")} startIcon={<Add />} style={{marginRight: "10px"}}>
+                {translate("add", language)}
+              </Button>
+
               <SearchField />
-              <Button color="inherit" onClick={() => navigate("/recipes")}>
-                {translate("recipes", language)}
-              </Button>
-              <Button color="inherit" onClick={() => navigate("/scraper")}>
-                {translate("scraper", language)}
-              </Button>
-              <IconButton color="inherit" onClick={toggleTheme}>
-                {theme.palette.mode === "dark" ? <Brightness7 /> : <Brightness4 />}
-              </IconButton>
-              <Button color="inherit" onClick={handleMenuClick}>
-                {language === "en" ? "English" : "Nederlands"}
-              </Button>
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                <MenuItem
-                  onClick={() => {
-                    setLanguage("en");
-                    handleMenuClose();
-                  }}
-                >
-                  English
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    setLanguage("nl");
-                    handleMenuClose();
-                  }}
-                >
-                  Nederlands
-                </MenuItem>
-              </Menu>
             </>
           )}
           {isMobile && (
@@ -142,25 +127,26 @@ function App() {
               >
                 <MenuItem
                   onClick={() => {
-                    navigate("/");
-                    handleMobileMenuClose();
-                  }}
-                >
-                  {translate("home", language)}
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
                     navigate("/scraper");
                     handleMobileMenuClose();
                   }}
                 >
-                  {translate("add", language)}
+                  <ListItemIcon>
+                    <Add fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    {translate("add", language)}
+                  </Typography>
                 </MenuItem>
                 <MenuItem>
                   <SearchField />
                 </MenuItem>
               </Menu>
-              <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+              <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+              >
                 <List>
                   <ListItem component={Link} to="/">
                     <ListItemText primary={translate("home", language)} />
@@ -174,7 +160,7 @@ function App() {
           )}
           <div style={{ marginLeft: "auto" }}>
             {user && user.photoURL ? (
-              <IconButton color="inherit" onClick={signOut}>
+              <IconButton color="inherit" onClick={() => navigate("/profile")}>
                 <Avatar
                   src={user.photoURL}
                   alt="User Avatar"
@@ -208,26 +194,30 @@ const SearchField: React.FC = () => {
   const navigate = useNavigate();
   const { language } = useApplicationContext();
   return (
-    <><TextField
-      id="mainSearch"
-      variant="outlined"
-      placeholder={translate("search", language)}
-      size="small"
-      style={{ marginRight: "10px" }}
-      onKeyPress={(event) => {
-        if (event.key === "Enter") {
-          const value = (event.target as HTMLInputElement).value;
-          if (value) {
-            navigate(`/search/${value}`);
-          } else {
-            navigate("/");
+    <>
+      <TextField
+        id="mainSearch"
+        variant="outlined"
+        placeholder={translate("search", language)}
+        size="small"
+        style={{ marginRight: "10px" }}
+        onKeyPress={(event) => {
+          if (event.key === "Enter") {
+            const value = (event.target as HTMLInputElement).value;
+            if (value) {
+              navigate(`/search/${value}`);
+            } else {
+              navigate("/");
+            }
           }
-        }
-      }} />
+        }}
+      />
       <Button
         color="inherit"
         onClick={() => {
-          const value = (document.getElementById('mainSearch') as HTMLInputElement).value;
+          const value = (
+            document.getElementById("mainSearch") as HTMLInputElement
+          ).value;
           console.log({ value });
           if (value) {
             navigate(`/search/${value}`);
@@ -237,8 +227,9 @@ const SearchField: React.FC = () => {
         }}
         size="small"
       >
-        <Search fontSize="small"/>
-      </Button></>
+        <Search fontSize="small" />
+      </Button>
+    </>
   );
 };
 
