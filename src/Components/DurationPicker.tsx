@@ -24,7 +24,7 @@ const DurationPicker: React.FC<DurationPickerProps> = ({ label, onChange, value:
     return (
         <Grid2 size={{ md: 4, xs: 12 }}>
             <Card>
-                <CardContent component={"form"}>
+                <CardContent>
                     <TimePicker
                         label={label}
                         ampm={false}

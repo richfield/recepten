@@ -32,7 +32,8 @@
     "language": "Language",
     "dark": "Dark",
     "light": "Light",
-    "followOS": "Follow OS"
+    "followOS": "Follow OS",
+    "pasteHere" : "Paste your text here"
   },
   "nl": {
     "title": "Recepten",
@@ -67,6 +68,7 @@
     "language": "Taal",
     "dark": "Donker",
     "light": "Licht",
-    "followOS": "Volg OS"
+    "followOS": "Volg OS",
+    "pasteHere": "Plak hier meerdere regels"
   }
 }

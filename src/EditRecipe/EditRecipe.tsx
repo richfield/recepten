@@ -10,8 +10,10 @@ import { Add, AddAPhoto, Cancel, Delete, Image, Save } from "@mui/icons-material
 import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import myArrayMutators from "./mutators.js";
+import ArrayCard from "./ArrayCard.js";
 
 const EditRecipe: React.FC = () => {
+
     const { language, fetchAuthenticatedImage, apiFetch } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
@@ -155,7 +157,6 @@ const EditRecipe: React.FC = () => {
                                         <ArrayCard language={language} field={"recipeIngredient"} />
                                     </Grid2>
                                     <Grid2 size={{ md: 12 }}>
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                         <ArrayCard language={language} field={"recipeInstructions"} multiline={true} valueSelector={({ text }): any => text} valueUpdater={(value: any) => ({ "@type": "HowToStep", text: value, name: value })} />
                                     </Grid2>
                                     <Grid2 size={{ md: 12 }}>
@@ -189,53 +190,54 @@ const EditRecipe: React.FC = () => {
 };
 
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ArrayCard: React.FC<{ language: Language; field: string; valueSelector?: (value: any) => string, valueUpdater?: (value: string) => any, multiline?: boolean } & CardProps> = ({ language, field, valueSelector, valueUpdater, multiline = false, ...cardProps }) => {
-    return (
-        <Card {...cardProps}>
-            <Box p={2}>
-                <Typography variant="h6">{translate(field, language)}</Typography>
-            </Box>
-            <Box p={2}>
-                <FieldArray name={field}>
-                    {({ fields }) => (
-                        <Grid2>
-                            {fields.map((name, index) => (
-                                <Grid2 container key={index} alignItems="center">
-                                    <Grid2 size={{ xs: 11 }} >
-                                        <Field name={name}>
-                                            {({ input }) => (
-                                                <TextField
-                                                    {...input}
-                                                    multiline={multiline}
-                                                    fullWidth
-                                                    size="small"
-                                                    variant="standard"
-                                                    value={valueSelector ? valueSelector(input.value) : input.value}
-                                                    onChange={(e) => input.onChange(valueUpdater ? valueUpdater(e.target.value) : e.target.value)}
-                                                />
-                                            )}
-                                        </Field>
-                                    </Grid2>
-                                    <Grid2 size={{ xs: 1 }}>
-                                        <IconButton onClick={() => fields.remove(index)} size="small">
-                                            <Delete fontSize="small" />
-                                        </IconButton>
-                                    </Grid2>
-                                </Grid2>
-                            ))}
-                            <Grid2 container justifyContent="flex-end">
-                                <IconButton onClick={() => fields.push('')} size="small">
-                                    <Add fontSize="small" />
-                                </IconButton>
-                            </Grid2>
-                        </Grid2>
-                    )}
-                </FieldArray>
-            </Box>
-        </Card>
-    );
-};
+// // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// const ArrayCard: React.FC<{ language: Language; field: string; valueSelector?: (value: any) => string, valueUpdater?: (value: string) => any, multiline?: boolean } & CardProps> = ({ language, field, valueSelector, valueUpdater, multiline = false, ...cardProps }) => {
+//     return (
+//         <Card {...cardProps}>
+//             <Box p={2}>
+//                 <Typography variant="h6">{translate(field, language)}</Typography>
+//             </Box>
+//             <Box p={2}>
+
+//                 <FieldArray name={field}>
+//                     {({ fields }) => (
+//                         <Grid2>
+//                             {fields.map((name, index) => (
+//                                 <Grid2 container key={index} alignItems="center">
+//                                     <Grid2 size={{ xs: 11 }} >
+//                                         <Field name={name}>
+//                                             {({ input }) => (
+//                                                 <TextField
+//                                                     {...input}
+//                                                     multiline={multiline}
+//                                                     fullWidth
+//                                                     size="small"
+//                                                     variant="standard"
+//                                                     value={valueSelector ? valueSelector(input.value) : input.value}
+//                                                     onChange={(e) => input.onChange(valueUpdater ? valueUpdater(e.target.value) : e.target.value)}
+//                                                 />
+//                                             )}
+//                                         </Field>
+//                                     </Grid2>
+//                                     <Grid2 size={{ xs: 1 }}>
+//                                         <IconButton onClick={() => fields.remove(index)} size="small">
+//                                             <Delete fontSize="small" />
+//                                         </IconButton>
+//                                     </Grid2>
+//                                 </Grid2>
+//                             ))}
+//                             <Grid2 container justifyContent="flex-end">
+//                                 <IconButton onClick={() => fields.push('')} size="small">
+//                                     <Add fontSize="small" />
+//                                 </IconButton>
+//                             </Grid2>
+//                         </Grid2>
+//                     )}
+//                 </FieldArray>
+//             </Box>
+//         </Card>
+//     );
+// };
 
 const ImageCard: React.FC<{ language: Language; field: string; handleSetDefaultImage: (url: string) => void } & CardProps> = ({ language, field, handleSetDefaultImage, ...cardProps }) => {
     const [popoverOpen, setPopoverOpen] = useState<number | null>(null);
