@@ -99,6 +99,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      '/ical': {
+        target: apiUrl, // Proxy /ical requests to the same backend
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ical/, '/calendar/ical'), // Map /ical to the backend route
+      },
     },
   }
 })

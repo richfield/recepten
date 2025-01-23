@@ -11,6 +11,7 @@ import { RecipeData } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { LinkOff } from "@mui/icons-material";
 import { Moment } from "moment";
+import { useNavigate } from "react-router-dom";
 
 interface CalendarCardProps {
   recipe: RecipeData;
@@ -24,7 +25,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   handleUnlink,
 }) => {
   const { fetchAuthenticatedImage } = useApplicationContext();
-
+  const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   };
 
   return (
-    <Card style={{ marginTop: '16px' }}>
+    <Card style={{ marginTop: '16px' }} onDoubleClick={() => navigate(`/recipe/${recipe._id}`)}>
       <Grid2 container>
         <Grid2 size={{ xs: 4 }}>
           <CardMedia
