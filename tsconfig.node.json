@@ -4,7 +4,6 @@
     "lib": ["ESNext"],
     "module": "NodeNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "node16",
     "resolveJsonModule": true,

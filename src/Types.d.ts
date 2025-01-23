@@ -107,3 +107,15 @@ export interface GroupData {
     name: string;
     _id: string;
 }
+
+export type DateLink = {
+    date: Date; // Use the JavaScript Date object
+    recipes: RecipeData[]; // Assuming RecipeData is already defined as shown before
+};
+
+export type DatesResponse = {
+    _id: Date,
+    recipes: RecipeData[]
+}
+
+declare module 'vite-plugin-eslint';

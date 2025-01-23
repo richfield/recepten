@@ -35,10 +35,7 @@ const googleProvider = new GoogleAuthProvider();
 // Function to handle Google Sign-In
 async function signInWithGoogle() {
   try {
-    const result = await signInWithPopup(firebaseAuth, googleProvider);
-    const user = result.user;
-    console.log('User signed in:', user);
-    // You can redirect or update the state based on user info
+    await signInWithPopup(firebaseAuth, googleProvider);
   } catch (error) {
     console.error('Error during Google Sign-In:', error);
   }

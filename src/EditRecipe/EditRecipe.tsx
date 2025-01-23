@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // EditRecipe Component
 import React, { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -68,7 +69,6 @@ const EditRecipe: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
             });
             setForceRender(forceRender + 1);
-            console.log('Default image set successfully');
         } catch (error) {
             console.error('Failed to set default image', error);
         }
@@ -80,9 +80,6 @@ const EditRecipe: React.FC = () => {
             const recipeId = recipe._id; // Assuming `recipe` contains the ID
             if (recipeId) {
                 uploadImage(recipeId, file)
-                    .then(() => {
-                        console.log('Image uploaded successfully');
-                    })
                     .catch((err) => {
                         console.error('Failed to upload image', err);
                     });
@@ -188,56 +185,6 @@ const EditRecipe: React.FC = () => {
         />
     );
 };
-
-
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
-// const ArrayCard: React.FC<{ language: Language; field: string; valueSelector?: (value: any) => string, valueUpdater?: (value: string) => any, multiline?: boolean } & CardProps> = ({ language, field, valueSelector, valueUpdater, multiline = false, ...cardProps }) => {
-//     return (
-//         <Card {...cardProps}>
-//             <Box p={2}>
-//                 <Typography variant="h6">{translate(field, language)}</Typography>
-//             </Box>
-//             <Box p={2}>
-
-//                 <FieldArray name={field}>
-//                     {({ fields }) => (
-//                         <Grid2>
-//                             {fields.map((name, index) => (
-//                                 <Grid2 container key={index} alignItems="center">
-//                                     <Grid2 size={{ xs: 11 }} >
-//                                         <Field name={name}>
-//                                             {({ input }) => (
-//                                                 <TextField
-//                                                     {...input}
-//                                                     multiline={multiline}
-//                                                     fullWidth
-//                                                     size="small"
-//                                                     variant="standard"
-//                                                     value={valueSelector ? valueSelector(input.value) : input.value}
-//                                                     onChange={(e) => input.onChange(valueUpdater ? valueUpdater(e.target.value) : e.target.value)}
-//                                                 />
-//                                             )}
-//                                         </Field>
-//                                     </Grid2>
-//                                     <Grid2 size={{ xs: 1 }}>
-//                                         <IconButton onClick={() => fields.remove(index)} size="small">
-//                                             <Delete fontSize="small" />
-//                                         </IconButton>
-//                                     </Grid2>
-//                                 </Grid2>
-//                             ))}
-//                             <Grid2 container justifyContent="flex-end">
-//                                 <IconButton onClick={() => fields.push('')} size="small">
-//                                     <Add fontSize="small" />
-//                                 </IconButton>
-//                             </Grid2>
-//                         </Grid2>
-//                     )}
-//                 </FieldArray>
-//             </Box>
-//         </Card>
-//     );
-// };
 
 const ImageCard: React.FC<{ language: Language; field: string; handleSetDefaultImage: (url: string) => void } & CardProps> = ({ language, field, handleSetDefaultImage, ...cardProps }) => {
     const [popoverOpen, setPopoverOpen] = useState<number | null>(null);

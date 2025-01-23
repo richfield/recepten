@@ -21,6 +21,7 @@ import {
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import {
   Add,
+  CalendarToday,
   Menu as MenuIcon,
   Person,
   Search,
@@ -34,6 +35,7 @@ import RecipeScraper from "./RecipeScraper/RecipeScraper.js";
 import ViewRecipe from "./ViewRecipe/ViewRecipe.js";
 import EditRecipe from "./EditRecipe/EditRecipe.js";
 import UserProfile from "./UserProfile/UserProfile.js";
+import WeekCalendar from "./WeekCalendar/WeekCalendar.js";
 
 function App() {
   const navigate = useNavigate();
@@ -106,7 +108,9 @@ function App() {
               <Button color="inherit" onClick={() => navigate("/scraper")} startIcon={<Add />} style={{marginRight: "10px"}}>
                 {translate("add", language)}
               </Button>
-
+              <Button color="inherit" onClick={() => navigate("/calendar")} startIcon={<CalendarToday />} style={{ marginRight: "10px" }}>
+                {translate("calendar", language)}
+              </Button>
               <SearchField />
             </>
           )}
@@ -136,6 +140,19 @@ function App() {
                   </ListItemIcon>
                   <Typography variant="inherit">
                     {translate("add", language)}
+                  </Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate("/calendar");
+                    handleMobileMenuClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <CalendarToday fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    {translate("calendar", language)}
                   </Typography>
                 </MenuItem>
                 <MenuItem>
@@ -184,6 +201,7 @@ function App() {
           <Route path="/recipe/:id/edit" element={<EditRecipe />} />
           <Route path="/search/:searchQuery" element={<RecipeList />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/calendar" element={<WeekCalendar />} />
         </Routes>
       </Container>
     </>
@@ -218,7 +236,6 @@ const SearchField: React.FC = () => {
           const value = (
             document.getElementById("mainSearch") as HTMLInputElement
           ).value;
-          console.log({ value });
           if (value) {
             navigate(`/search/${value}`);
           } else {

@@ -4,6 +4,13 @@ import { User } from "firebase/auth";
 import { createContext } from "react";
 import { Language, UserProfile } from "../../Types.js";
 
+export interface ConfirmDialogProps {
+  title?: string;
+  confirmText?: string;
+  cancelText?: string;
+}
+
+
 interface ApplicationContextType {
   // Define the properties of ApplicationContextType here
   theme: Theme;
@@ -16,7 +23,8 @@ interface ApplicationContextType {
   apiFetch: <T>(url: string, method: 'GET' | 'POST' | 'DELETE', body?: unknown, headers?: object) => Promise<AxiosResponse<T, unknown>>;
   fetchAuthenticatedImage: (url: string) => Promise<string>
   setProfile: (profile: UserProfile) => void;
-  isAdmin: boolean
+  isAdmin: boolean,
+  confirm: (message: string, options?: ConfirmDialogProps) => Promise<boolean>;
 }
 
 export const ApplicationContext = createContext<ApplicationContextType | undefined>(undefined);

@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { createTheme, Theme, ThemeProvider } from '@mui/material';
+import { Button, createTheme, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Theme, ThemeProvider } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import { User } from 'firebase/auth';
 import { ReactNode } from 'react';
 import { Language, RoleData, UserProfile } from '../../Types.js';
 import axios from 'axios';
 import { firebaseAuth } from '../../main.js';
-import { ApplicationContext } from "./ApplicationContext.js";
+import { ApplicationContext, ConfirmDialogProps } from "./ApplicationContext.js";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { translate } from "../../utils.js";
 
 const lightTheme = createTheme({
   palette: {
@@ -33,6 +34,22 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [adminRole, setAdminRole] = useState<RoleData>();
   const [isAdmin, setIsAdmin ] = useState<boolean>(false);
+  const [dialog, setDialog] = React.useState<{
+    message: string;
+    resolve: (value: boolean) => void;
+    options?: ConfirmDialogProps;
+  } | null>(null);
+
+  const confirm = (message: string, options?: ConfirmDialogProps): Promise<boolean> => {
+    return new Promise<boolean>((resolve) => {
+      setDialog({ message, resolve, options });
+    });
+  };
+
+  const handleClose = (result: boolean) => {
+    dialog?.resolve(result);
+    setDialog(null);
+  };
 
 
   const toggleTheme = () => {
@@ -148,9 +165,29 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [profile])
 
   return (
-    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin }}>
+    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm }}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <ThemeProvider theme={theme}>
+          {children}
+          {dialog && (
+            <Dialog open onClose={() => handleClose(false)}>
+              <DialogTitle>{dialog.options?.title ?? translate("ConfirmTitle", language)}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>{dialog.message}</DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => handleClose(false)}> {dialog.options?.cancelText ?? translate("Cancel", language)}</Button>
+                <Button
+                  onClick={() => handleClose(true)}
+                  color="primary"
+                  variant="contained"
+                >
+                  { dialog.options?.confirmText ?? translate("Ok", language) }
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
+          </ThemeProvider>
       </LocalizationProvider>
     </ApplicationContext.Provider>
   );

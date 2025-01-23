@@ -33,7 +33,15 @@
     "dark": "Dark",
     "light": "Light",
     "followOS": "Follow OS",
-    "pasteHere" : "Paste your text here"
+    "pasteHere": "Paste your text here",
+    "searchForRecipe": "Search for a Recipe",
+    "noRecipeFound": "No Recipes found",
+    "link": "Do you want to link?",
+    "unlink": "Do you want to unlink?",
+    "Ok": "OK",
+    "Cancel": "Cancel",
+    "ConfirmTitle": "Confirm",
+    "calendar": "Calendar"
   },
   "nl": {
     "title": "Recepten",
@@ -69,6 +77,14 @@
     "dark": "Donker",
     "light": "Licht",
     "followOS": "Volg OS",
-    "pasteHere": "Plak hier meerdere regels"
+    "pasteHere": "Plak hier meerdere regels",
+    "searchForRecipe": "Zoek naar een recept",
+    "noRecipeFound": "Geen recept gevonden",
+    "link": "Wilt u koppelen?",
+    "unlink": "Wilt u de koppeling verbreken?",
+    "Ok": "OK",
+    "Cancel": "Annuleren",
+    "ConfirmTitle": "Bevestigen",
+    "calendar": "Kalender"
   }
 }
