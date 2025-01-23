@@ -117,5 +117,3 @@ export type DatesResponse = {
     _id: Date,
     recipes: RecipeData[]
 }
-
-declare module 'vite-plugin-eslint';

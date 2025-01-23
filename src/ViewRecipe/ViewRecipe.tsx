@@ -7,6 +7,7 @@ import moment from 'moment/min/moment-with-locales';
 import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { ArrowLeft, ArrowRight, ExitToApp } from "@mui/icons-material";
+import ScreenWakeLock from "../Components/ScreenWakeLock/ScreenWakeLock.js";
 
 
 const formatTime = (time: string | undefined, language: Language) => {
@@ -92,6 +93,7 @@ const ViewRecipe: React.FC = () => {
                     <Typography variant="h4">{recipe.name}</Typography>
                 </Grid2>
                 <Grid2>
+                    <ScreenWakeLock />
                     <IconButton onClick={toggleEdit}>
                         <ExitToApp />
                     </IconButton>
