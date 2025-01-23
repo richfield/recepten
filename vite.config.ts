@@ -95,15 +95,25 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: apiUrl, // Point to your Express server
+        target: apiUrl, // Your backend API URL
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         configure: (proxy) => {
-          // Set cache control headers in the proxy server
-          proxy.on('proxyRes', (_proxyRes, _req, res) => {
-            res.setHeader('Cache-Control', 'no-store');
-            res.setHeader('Pragma', 'no-cache');
-            res.setHeader('Expires', '0');
+          // Log the request being forwarded
+          proxy.on('proxyReq', (_proxyReq, req) => {
+            // eslint-disable-next-line no-console
+            console.log(`Proxying request to: ${req.url}`);
+          });
+
+          // Set cache-control for specific requests
+          proxy.on('proxyRes', (_proxyRes, req, res) => {
+            if (req?.url?.includes('/api/calendar/ical')) {
+              // eslint-disable-next-line no-console
+              console.log(`No cache for: ${req.url}`);
+              res.setHeader('Cache-Control', 'no-store');
+              res.setHeader('Pragma', 'no-cache');
+              res.setHeader('Expires', '0');
+            }
           });
         },
       },
