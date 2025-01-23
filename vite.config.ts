@@ -98,6 +98,14 @@ export default defineConfig({
         target: apiUrl, // Point to your Express server
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
+        configure: (proxy) => {
+          // Set cache control headers in the proxy server
+          proxy.on('proxyRes', (_proxyRes, _req, res) => {
+            res.setHeader('Cache-Control', 'no-store');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+          });
+        },
       },
       '/ical': {
         target: apiUrl, // Proxy /ical requests to the same backend
