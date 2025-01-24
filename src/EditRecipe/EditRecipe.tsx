@@ -38,8 +38,6 @@ const EditRecipe: React.FC = () => {
     const toggleEdit = () => {
         navigate(-1);
     }
-    const [forceRender, setForceRender] = useState<number>(0);
-
     const handleSubmit = async (values: RecipeData) => {
         await apiFetch('/api/recipes/save', 'POST', values);
         navigate(-1);
@@ -65,10 +63,12 @@ const EditRecipe: React.FC = () => {
     async function handleSetDefaultImage(url: string): Promise<void> {
         try {
             const recipeId = recipe?._id;
-            await apiFetch(`/api/recipes/${recipeId}/image/url`,'POST', { url }, {
+            await apiFetch<{image: string}>(`/api/recipes/${recipeId}/image/url`,'POST', { url }, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            setForceRender(forceRender + 1);
+            const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);
+            setImageUrl(image);
+
         } catch (error) {
             console.error('Failed to set default image', error);
         }
@@ -140,7 +140,7 @@ const EditRecipe: React.FC = () => {
                                         </Box>
                                         <Grid2 container spacing={2}>
                                             <Grid2 size={{ md: 4, xs: 12 }}>
-                                                {recipe._id && <img key={forceRender} src={imageUrl} alt="Recipe" width="100%" />}
+                                                {recipe._id && <img key={recipe._id} src={imageUrl} alt="Recipe" width="100%" />}
                                             </Grid2>
                                             <Grid2 size={{ md: 8, xs: 12 }}>
                                                 <Box>
