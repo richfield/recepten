@@ -77,8 +77,7 @@ const WeekCalendar: React.FC = () => {
 
   useEffect(() => {
     if (!openModal) {
-      const url = `/api/calendar/dates-with-recipes`;
-      fetchData(url);
+      fetchData(`/api/calendar/dates-with-recipes`);
     }
   }, [openModal, fetchData]);
 
@@ -102,15 +101,25 @@ const WeekCalendar: React.FC = () => {
   const handleNextWeek = () =>
     setCurrentDate(currentDate.clone().add(1, "week"));
 
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
+  const handleOpenModal = () => {
+    if(!openModal) {
+      setOpenModal(true);
+    }
+  };
+  const handleCloseModal = () => {
+    if(openModal) {
+      setOpenModal(false);
+    }
+  };
 
   const handleRecipeSearch = () => {
     setSearchQuery(instantSearch);
   };
 
   const recipeSelected = () => {
-    setOpenModal(false);
+    if(openModal) {
+      setOpenModal(false);
+    }
   };
 
   const handleSearchForDate = (
