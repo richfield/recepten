@@ -11,19 +11,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { translate } from "../../utils.js";
 
-// const lightTheme = createTheme({
-//   palette: {
-//     mode: 'light',
-//   },
-// });
-
-// const darkTheme = createTheme({
-//   palette: {
-//     mode: 'dark',
-//   },
-// });
-
-export const lightTheme = createTheme({
+const lightTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
@@ -46,7 +34,7 @@ export const lightTheme = createTheme({
   },
 });
 
-export const darkTheme = createTheme({
+const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
