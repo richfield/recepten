@@ -11,18 +11,63 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { translate } from "../../utils.js";
 
-const lightTheme = createTheme({
+// const lightTheme = createTheme({
+//   palette: {
+//     mode: 'light',
+//   },
+// });
+
+// const darkTheme = createTheme({
+//   palette: {
+//     mode: 'dark',
+//   },
+// });
+
+export const lightTheme = createTheme({
   palette: {
     mode: 'light',
+    primary: {
+      main: '#FF6F3C',  // Orange from the image
+    },
+    secondary: {
+      main: '#41BFB3',  // Teal from the image
+    },
+    background: {
+      default: '#E5D4B2',  // Beige/Tan from the image
+      paper: '#F6EAD7',    // Slightly lighter beige
+    },
+    text: {
+      primary: '#2D2D2D',  // Dark gray for contrast
+      secondary: '#757575',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   },
 });
 
-const darkTheme = createTheme({
+export const darkTheme = createTheme({
   palette: {
     mode: 'dark',
+    primary: {
+      main: '#FF6F3C',  // Same orange
+    },
+    secondary: {
+      main: '#41BFB3',  // Same teal
+    },
+    background: {
+      default: '#1A1E26',  // Deep navy blue (similar to phone outline)
+      paper: '#232A35',    // Slightly lighter navy
+    },
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#B0B0B0',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   },
 });
-
 interface ApplicationContextProviderProps {
   children: ReactNode;
 }
