@@ -18,10 +18,11 @@ import {
   Card,
   ListItemIcon,
 } from "@mui/material";
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import {
   Add,
   CalendarToday,
+  DiningSharp,
   Menu as MenuIcon,
   Person,
   Search,
@@ -39,7 +40,7 @@ import WeekCalendar from "./WeekCalendar/WeekCalendar.js";
 
 function App() {
   const navigate = useNavigate();
-  const { language, user } =
+  const { language, user, apiFetch } =
     useApplicationContext();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileAnchorEl, setMobileAnchorEl] = useState<null | HTMLElement>(
@@ -61,8 +62,15 @@ function App() {
       return originalHumanize.call(this, withSuffix);
     }
   };
-
-
+  const [todaysRecipe, setTodaysRecipe] = useState<string>("");
+  const fetchData = React.useCallback(async () => {
+    try {
+      const response = await apiFetch<string>('/api/calendar/today', 'GET');
+      setTodaysRecipe(response.data);
+    } catch (error) {
+      console.error('Error fetching recipe data:', error);
+    }
+  }, [apiFetch]);
 
   const handleMobileMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMobileAnchorEl(event.currentTarget);
@@ -71,7 +79,22 @@ function App() {
   const handleMobileMenuClose = () => {
     setMobileAnchorEl(null);
   };
-  if (!user) {
+  const [showLogin, setShowLogin] = useState(false);
+
+  // Delay showing the login prompt to avoid a brief flicker while auth state initializes
+  React.useEffect(() => {
+    const timer = setTimeout(() => setShowLogin(true), 400);
+    if (user) {
+      setShowLogin(false);
+    }
+    return () => clearTimeout(timer);
+  }, [user]);
+
+  React.useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  if (user === null && showLogin) {
     return (
       <Container
         style={{
@@ -105,6 +128,11 @@ function App() {
 
           {!isMobile && (
             <>
+              {
+                todaysRecipe && <Button color="inherit" onClick={() => navigate(`/recipe/${todaysRecipe}`)} startIcon={<DiningSharp />} style={{ marginRight: "10px" }}>
+                  {translate("todaysRecipe", language)}
+                </Button>
+              }
               <Button color="inherit" onClick={() => navigate("/scraper")} startIcon={<Add />} style={{marginRight: "10px"}}>
                 {translate("add", language)}
               </Button>
@@ -129,6 +157,21 @@ function App() {
                 open={Boolean(mobileAnchorEl)}
                 onClose={handleMobileMenuClose}
               >
+                {
+                  todaysRecipe && <MenuItem
+                  onClick={() => {
+                    navigate(`/recipe/${todaysRecipe}`);
+                    handleMobileMenuClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <DiningSharp fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    {translate("todaysRecipe", language)}
+                  </Typography>
+                </MenuItem>
+                }
                 <MenuItem
                   onClick={() => {
                     navigate("/scraper");
@@ -251,3 +294,7 @@ const SearchField: React.FC = () => {
 };
 
 export default App;
+function apiFetch<T>(url: string, arg1: string) {
+  throw new Error("Function not implemented.");
+}
+
