@@ -68,7 +68,8 @@ function App() {
       if (!user) {
         return;
       }
-      const response = await apiFetch<string>('/api/calendar/today', 'GET');
+      const today = moment().startOf('day');
+      const response = await apiFetch<string>('/api/calendar/today', 'POST', { date: today.toDate() });
       setTodaysRecipe(response.data);
     } catch (error) {
       console.error('Error fetching recipe data:', error);
