@@ -18,7 +18,7 @@ import {
   Card,
   ListItemIcon,
 } from "@mui/material";
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import {
   Add,
   CalendarToday,
@@ -234,6 +234,7 @@ function App() {
           <Route path="/search/:searchQuery" element={<RecipeList />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/calendar" element={<WeekCalendar />} />
+          <Route path="/today" element={todaysRecipe ? <Navigate to={`/recipe/${todaysRecipe}`} /> : <RecipeList />} />
         </Routes>
       </Container>
     </>
