@@ -20,7 +20,7 @@ import { useBusy } from "../Busy/BusyContext.js";
 import CalendarCard from "./CalendarCard.js";
 
 const WeekCalendar: React.FC = () => {
-  const { language, theme, apiFetch, confirm } = useApplicationContext();
+  const { language, theme, apiFetch, confirm, user } = useApplicationContext();
   const { showBusy, hideBusy } = useBusy();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
@@ -31,6 +31,10 @@ const WeekCalendar: React.FC = () => {
 
   const fetchData = useCallback(
     async (url: string) => {
+
+      if (!user) {
+        return;
+      }
       showBusy();
       try {
         const response = await apiFetch<DatesResponse[]>(url, "GET");
@@ -43,7 +47,7 @@ const WeekCalendar: React.FC = () => {
         hideBusy();
       }
     },
-    [apiFetch, hideBusy, showBusy]
+    [apiFetch, hideBusy, showBusy, user]
   );
 
   const onUnlink = useCallback(
