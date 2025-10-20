@@ -18,7 +18,7 @@ import {
   Card,
   ListItemIcon,
 } from "@mui/material";
-import { Link, Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import {
   Add,
   CalendarToday,
@@ -294,7 +294,4 @@ const SearchField: React.FC = () => {
 };
 
 export default App;
-function apiFetch<T>(url: string, arg1: string) {
-  throw new Error("Function not implemented.");
-}
 
