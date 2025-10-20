@@ -75,7 +75,7 @@ function App() {
 
   // Delay showing the login prompt to avoid a brief flicker while auth state initializes
   React.useEffect(() => {
-    const timer = setTimeout(() => setShowLogin(true), 400);
+    const timer = setTimeout(() => setShowLogin(true), 1);
     if (user) {
       setShowLogin(false);
     }
