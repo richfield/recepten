@@ -65,12 +65,15 @@ function App() {
   const [todaysRecipe, setTodaysRecipe] = useState<string>("");
   const fetchData = React.useCallback(async () => {
     try {
+      if (!user) {
+        return;
+      }
       const response = await apiFetch<string>('/api/calendar/today', 'GET');
       setTodaysRecipe(response.data);
     } catch (error) {
       console.error('Error fetching recipe data:', error);
     }
-  }, [apiFetch]);
+  }, [apiFetch, user]);
 
   const handleMobileMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMobileAnchorEl(event.currentTarget);
