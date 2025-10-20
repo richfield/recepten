@@ -6,10 +6,13 @@ import { RecipeCard } from "./RecipeCard.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 
 const RecipeList: React.FC = () => {
-    const { apiFetch } = useApplicationContext();
+    const { apiFetch, user } = useApplicationContext();
     const [recipes, setRecipes] = useState<RecipeData[]>()
     const { searchQuery } = useParams();
     const fetchData = useCallback(async (url: string) => {
+        if (!user) {
+            return;
+        }
         try {
             const response = await apiFetch<RecipeData[]>(url, "GET"); // API call through proxy
             if(response.data) {
@@ -18,7 +21,7 @@ const RecipeList: React.FC = () => {
         } catch (error) {
             console.error('Error fetching recipe data:', error);
         }
-    }, [apiFetch]);
+    }, [apiFetch, user]);
     useEffect(() => {
         const url = searchQuery ? `/api/recipes/search?query=${searchQuery}` : "/api/recipes"
         fetchData(url)
