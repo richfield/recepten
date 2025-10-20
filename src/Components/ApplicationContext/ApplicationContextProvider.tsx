@@ -10,6 +10,7 @@ import { ApplicationContext, ConfirmDialogProps } from "./ApplicationContext.js"
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { translate } from "../../utils.js";
+import moment from "moment";
 
 const lightTheme = createTheme({
   palette: {
@@ -67,6 +68,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [adminRole, setAdminRole] = useState<RoleData>();
   const [isAdmin, setIsAdmin ] = useState<boolean>(false);
+  const [todaysRecipe, setTodaysRecipe] = useState<string>("");
   const [dialog, setDialog] = React.useState<{
     message: string;
     resolve: (value: boolean) => void;
@@ -162,7 +164,21 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     };
     fetchProfile();
   }, [user, profile, apiFetch])
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!user) {
+          return;
+        }
+        const today = moment().startOf('day');
+        const response = await apiFetch<string>('/api/calendar/today', 'POST', { date: today.toDate() });
+        setTodaysRecipe(response.data);
+      } catch (error) {
+        console.error('Error fetching recipe data:', error);
+      }
+    };
+  fetchData();
+}, [apiFetch, user]);
   useEffect(() => {
     const fetchProfile = async () => {
       if (user) {
@@ -198,7 +214,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [profile])
 
   return (
-    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm }}>
+    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe }}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
         <ThemeProvider theme={theme}>
           {children}

@@ -25,6 +25,7 @@ interface ApplicationContextType {
   setProfile: (profile: UserProfile) => void;
   isAdmin: boolean,
   confirm: (message: string, options?: ConfirmDialogProps) => Promise<boolean>;
+  todaysRecipe: string;
 }
 
 export const ApplicationContext = createContext<ApplicationContextType | undefined>(undefined);

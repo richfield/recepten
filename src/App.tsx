@@ -40,7 +40,7 @@ import WeekCalendar from "./WeekCalendar/WeekCalendar.js";
 
 function App() {
   const navigate = useNavigate();
-  const { language, user, apiFetch } =
+  const { language, user, todaysRecipe } =
     useApplicationContext();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileAnchorEl, setMobileAnchorEl] = useState<null | HTMLElement>(
@@ -62,19 +62,7 @@ function App() {
       return originalHumanize.call(this, withSuffix);
     }
   };
-  const [todaysRecipe, setTodaysRecipe] = useState<string>("");
-  const fetchData = React.useCallback(async () => {
-    try {
-      if (!user) {
-        return;
-      }
-      const today = moment().startOf('day');
-      const response = await apiFetch<string>('/api/calendar/today', 'POST', { date: today.toDate() });
-      setTodaysRecipe(response.data);
-    } catch (error) {
-      console.error('Error fetching recipe data:', error);
-    }
-  }, [apiFetch, user]);
+
 
   const handleMobileMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMobileAnchorEl(event.currentTarget);
@@ -94,9 +82,6 @@ function App() {
     return () => clearTimeout(timer);
   }, [user]);
 
-  React.useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   if (user === null && showLogin) {
     return (
