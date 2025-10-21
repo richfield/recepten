@@ -1,6 +1,6 @@
 
 import { createTheme, PaletteMode } from "@mui/material";
-import translations from "./translations.json" assert { type: "json" };
+import translations from "./translations.json";
 import { Language } from "./Types.js";
 
 export const isArrayField = <T>(field: unknown): field is T[] => Array.isArray(field);
