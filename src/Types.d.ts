@@ -52,6 +52,10 @@ export interface Translations {
     [key: string]: string;
 }
 
+export interface TranslationFile {
+    [languageCode: string]: Record<Translations>;
+}
+
 export type Language = "en"|"nl"
 
 /**
