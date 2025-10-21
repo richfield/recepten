@@ -42,7 +42,8 @@
     "Cancel": "Cancel",
     "ConfirmTitle": "Confirm",
     "calendar": "Calendar",
-    "todaysRecipe": "Today's Recipe"
+    "todaysRecipe": "Today's Recipe",
+    "listView": "List View"
   },
   "nl": {
     "title": "Recepten",
@@ -87,6 +88,7 @@
     "Cancel": "Annuleren",
     "ConfirmTitle": "Bevestigen",
     "calendar": "Kalender",
-    "todaysRecipe": "Recept van vandaag"
+    "todaysRecipe": "Recept van vandaag",
+    "listView": "Lijstweergave"
   }
 }

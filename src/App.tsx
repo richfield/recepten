@@ -22,7 +22,7 @@ import { Link, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import {
   Add,
   CalendarToday,
-  DiningSharp,
+  ListAltTwoTone,
   Menu as MenuIcon,
   Person,
   Search,
@@ -118,8 +118,8 @@ function App() {
           {!isMobile && (
             <>
               {
-                todaysRecipe && <Button color="inherit" onClick={() => navigate(`/recipe/${todaysRecipe}`)} startIcon={<DiningSharp />} style={{ marginRight: "10px" }}>
-                  {translate("todaysRecipe", language)}
+                <Button color="inherit" onClick={() => navigate("/list")} startIcon={<ListAltTwoTone />} style={{ marginRight: "10px" }}>
+                  {translate("listView", language)}
                 </Button>
               }
               <Button color="inherit" onClick={() => navigate("/scraper")} startIcon={<Add />} style={{marginRight: "10px"}}>
@@ -149,15 +149,15 @@ function App() {
                 {
                   todaysRecipe && <MenuItem
                   onClick={() => {
-                    navigate(`/recipe/${todaysRecipe}`);
+                    navigate("/list");
                     handleMobileMenuClose();
                   }}
                 >
                   <ListItemIcon>
-                    <DiningSharp fontSize="small" />
+                      <ListAltTwoTone fontSize="small" />
                   </ListItemIcon>
                   <Typography variant="inherit">
-                    {translate("todaysRecipe", language)}
+                    {translate("listView", language)}
                   </Typography>
                 </MenuItem>
                 }
@@ -226,7 +226,8 @@ function App() {
       </AppBar>
       <Container style={{ marginTop: "10px" }}>
         <Routes>
-          <Route path="/" element={<RecipeList />} />
+          <Route path="/" element={todaysRecipe ? <Navigate to={`/recipe/${todaysRecipe}`} /> : <RecipeList />} />
+          <Route path="/list" element={<RecipeList />} />
           <Route path="/recipes" element={<RecipeList />} />
           <Route path="/scraper" element={<RecipeScraper />} />
           <Route path="/recipe/:id" element={<ViewRecipe />} />
@@ -234,7 +235,6 @@ function App() {
           <Route path="/search/:searchQuery" element={<RecipeList />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/calendar" element={<WeekCalendar />} />
-          <Route path="/today" element={todaysRecipe ? <Navigate to={`/recipe/${todaysRecipe}`} /> : <RecipeList />} />
         </Routes>
       </Container>
     </>
