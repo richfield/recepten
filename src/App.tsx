@@ -37,6 +37,7 @@ import ViewRecipe from "./ViewRecipe/ViewRecipe.js";
 import EditRecipe from "./EditRecipe/EditRecipe.js";
 import UserProfile from "./UserProfile/UserProfile.js";
 import WeekCalendar from "./WeekCalendar/WeekCalendar.js";
+import { useBusy } from "./Busy/BusyContext.js";
 
 function App() {
   const navigate = useNavigate();
@@ -47,6 +48,8 @@ function App() {
     null
   );
   const isMobile = useMediaQuery("(max-width:600px)");
+
+  const { showBusy, hideBusy } = useBusy();
 
   // Preserve original humanize
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,12 +78,16 @@ function App() {
 
   // Delay showing the login prompt to avoid a brief flicker while auth state initializes
   React.useEffect(() => {
-    const timer = setTimeout(() => setShowLogin(true), 1);
+    showBusy();
+    const timer = setTimeout(() => {
+      setShowLogin(true);
+      hideBusy();
+    }, 1);
     if (user) {
       setShowLogin(false);
     }
     return () => clearTimeout(timer);
-  }, [user]);
+  }, [user, showBusy, hideBusy]);
 
 
   if (user === null && showLogin) {
