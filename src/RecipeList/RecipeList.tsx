@@ -4,24 +4,31 @@ import { useParams } from "react-router-dom";
 import { RecipeData } from "../Types.js";
 import { RecipeCard } from "./RecipeCard.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
+import { useBusy } from "../Busy/BusyContext.js";
 
 const RecipeList: React.FC = () => {
-    const { apiFetch, user } = useApplicationContext();
+    const { apiFetch, user, showError } = useApplicationContext();
+    const { showBusy, hideBusy } = useBusy();
     const [recipes, setRecipes] = useState<RecipeData[]>()
     const { searchQuery } = useParams();
     const fetchData = useCallback(async (url: string) => {
         if (!user) {
             return;
         }
+        showBusy();
         try {
             const response = await apiFetch<RecipeData[]>(url, "GET"); // API call through proxy
-            if(response.data) {
+            if (response.data) {
                 setRecipes(response.data)
             }
         } catch (error) {
+            showError(error)
             console.error('Error fetching recipe data:', error);
+        } finally {
+            hideBusy();
         }
-    }, [apiFetch, user]);
+    }, [apiFetch, hideBusy, showBusy, showError, user]);
+
     useEffect(() => {
         const url = searchQuery ? `/api/recipes/search?query=${searchQuery}` : "/api/recipes"
         fetchData(url)
@@ -32,10 +39,10 @@ const RecipeList: React.FC = () => {
     };
 
     return <Grid2 container spacing={2}> {
-            recipes && recipes.map((recipe, index) => (
-                <RecipeCard key={recipe._id} recipe={recipe} index={index} onDeleted={onDeleted} />
-            ))
-        }
+        recipes && recipes.map((recipe, index) => (
+            <RecipeCard key={recipe._id} recipe={recipe} index={index} onDeleted={onDeleted} />
+        ))
+    }
     </Grid2>
 };
 

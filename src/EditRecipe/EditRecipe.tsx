@@ -15,18 +15,16 @@ import ArrayCard from "./ArrayCard.js";
 
 const EditRecipe: React.FC = () => {
 
-    const { language, fetchAuthenticatedImage, apiFetch, user } = useApplicationContext();
+    const { language, fetchAuthenticatedImage, apiFetch } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
     useEffect(() => {
         const fetchImage = async () => {
-            if (user) {
-                const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);
-                setImageUrl(image);
-            }
+            const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);
+            setImageUrl(image);
         };
         fetchImage();
-    }, [id, fetchAuthenticatedImage, user]);
+    }, [id, fetchAuthenticatedImage]);
     const [recipe, setRecipe] = useState<RecipeData>()
     const navigate = useNavigate();
     const fetchData = React.useCallback(async (url: string) => {
@@ -57,7 +55,7 @@ const EditRecipe: React.FC = () => {
         const formData = new FormData();
         formData.append('image', file);
 
-        await apiFetch(`/api/recipes/${recipeId}/image/upload`,'POST', formData, {
+        await apiFetch(`/api/recipes/${recipeId}/image/upload`, 'POST', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
     };
@@ -65,7 +63,7 @@ const EditRecipe: React.FC = () => {
     async function handleSetDefaultImage(url: string): Promise<void> {
         try {
             const recipeId = recipe?._id;
-            await apiFetch<{image: string}>(`/api/recipes/${recipeId}/image/url`,'POST', { url }, {
+            await apiFetch<{ image: string }>(`/api/recipes/${recipeId}/image/url`, 'POST', { url }, {
                 headers: { 'Content-Type': 'application/json' },
             });
             const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);

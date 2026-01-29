@@ -20,7 +20,7 @@ import { useBusy } from "../Busy/BusyContext.js";
 import CalendarCard from "./CalendarCard.js";
 
 const WeekCalendar: React.FC = () => {
-  const { language, theme, apiFetch, confirm, user } = useApplicationContext();
+  const { language, theme, apiFetch, confirm, user, showError } = useApplicationContext();
   const { showBusy, hideBusy } = useBusy();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
@@ -42,12 +42,13 @@ const WeekCalendar: React.FC = () => {
           setDates(response.data);
         }
       } catch (error) {
+        showError(error);
         console.error("Error fetching recipe data:", error);
       } finally {
         hideBusy();
       }
     },
-    [apiFetch, hideBusy, showBusy, user]
+    [apiFetch, hideBusy, showBusy, showError, user]
   );
 
   const onUnlink = useCallback(
