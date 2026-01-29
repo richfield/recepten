@@ -140,9 +140,9 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     return await axios(config);
   }, [user]);
 
-  const fetchAuthenticatedImage = async (url: string): Promise<string> => {
+  const fetchAuthenticatedImage = useCallback(async (url: string): Promise<string> => {
     if (!user) {
-      throw new Error("not authenticated");
+      return "";
     }
 
     const token = await user.getIdToken();
@@ -170,7 +170,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
 
     const blob = await response.blob();
     return URL.createObjectURL(blob);
-  };
+  }, [user]);
 
   useEffect(() => {
     const fetchProfile = async () => {

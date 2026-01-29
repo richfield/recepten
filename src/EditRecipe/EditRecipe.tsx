@@ -15,16 +15,18 @@ import ArrayCard from "./ArrayCard.js";
 
 const EditRecipe: React.FC = () => {
 
-    const { language, fetchAuthenticatedImage, apiFetch } = useApplicationContext();
+    const { language, fetchAuthenticatedImage, apiFetch, user } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
     useEffect(() => {
         const fetchImage = async () => {
-            const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);
-            setImageUrl(image);
+            if (user) {
+                const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);
+                setImageUrl(image);
+            }
         };
         fetchImage();
-    }, [id, fetchAuthenticatedImage]);
+    }, [id, fetchAuthenticatedImage, user]);
     const [recipe, setRecipe] = useState<RecipeData>()
     const navigate = useNavigate();
     const fetchData = React.useCallback(async (url: string) => {
