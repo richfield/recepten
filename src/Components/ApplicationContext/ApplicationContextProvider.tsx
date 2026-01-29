@@ -67,12 +67,16 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [adminRole, setAdminRole] = useState<RoleData>();
-  const [isAdmin, setIsAdmin ] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [todaysRecipe, setTodaysRecipe] = useState<string>("");
   const [dialog, setDialog] = React.useState<{
     message: string;
     resolve: (value: boolean) => void;
     options?: ConfirmDialogProps;
+  } | null>(null);
+
+  const [errorDialog, setErrorDialog] = React.useState<{
+    message: string;
   } | null>(null);
 
   const confirm = (message: string, options?: ConfirmDialogProps): Promise<boolean> => {
@@ -81,10 +85,23 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     });
   };
 
+  const showError = (message: unknown): Promise<void> => {
+    let errorMessage: string;
+    if (message instanceof Error) {
+      errorMessage = message.message
+    } else {
+      errorMessage = JSON.stringify(message);
+    }
+    return new Promise<void>(() => {
+      setErrorDialog({ message: errorMessage })
+    })
+  }
+
   const handleClose = (result: boolean) => {
     dialog?.resolve(result);
     setDialog(null);
   };
+
 
 
   const toggleTheme = () => {
@@ -177,12 +194,12 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
         console.error('Error fetching recipe data:', error);
       }
     };
-  fetchData();
-}, [apiFetch, user]);
+    fetchData();
+  }, [apiFetch, user]);
   useEffect(() => {
     const fetchProfile = async () => {
       if (user) {
-        const {data} = await apiFetch<RoleData[]>('/api/profile/roles', 'GET');
+        const { data } = await apiFetch<RoleData[]>('/api/profile/roles', 'GET');
         const adminRole = data.find(d => d.name.toLowerCase() === "admin")
         setAdminRole(adminRole);
       }
@@ -191,7 +208,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [user, apiFetch])
 
   useEffect(() => {
-    if(adminRole) {
+    if (adminRole) {
       const hasAdminRole = profile?.roles.findIndex(r => r === adminRole._id) ?? -1;
       setIsAdmin(hasAdminRole > -1)
     }
@@ -214,7 +231,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [profile])
 
   return (
-    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe }}>
+    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe, showError }}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
         <ThemeProvider theme={theme}>
           {children}
@@ -231,12 +248,25 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
                   color="primary"
                   variant="contained"
                 >
-                  { dialog.options?.confirmText ?? translate("Ok", language) }
+                  {dialog.options?.confirmText ?? translate("Ok", language)}
                 </Button>
               </DialogActions>
             </Dialog>
           )}
-          </ThemeProvider>
+          {
+            errorDialog && (
+              <Dialog open onClose={() => setErrorDialog(null)}>
+                <DialogTitle>{translate("error", language)}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>{errorDialog.message}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setErrorDialog(null)}> {translate("Ok", language)}</Button>
+                </DialogActions>
+              </Dialog>
+            )
+          }
+        </ThemeProvider>
       </LocalizationProvider>
     </ApplicationContext.Provider>
   );

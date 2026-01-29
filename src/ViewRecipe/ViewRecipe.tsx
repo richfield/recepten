@@ -8,6 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { ArrowLeft, ArrowRight, Edit, ExitToApp } from "@mui/icons-material";
 import ScreenWakeLock from "../Components/ScreenWakeLock/ScreenWakeLock.js";
+import { useBusy } from '../Busy/BusyContext.js';
 
 
 const formatTime = (time: string | undefined, language: Language) => {
@@ -20,7 +21,8 @@ const formatTime = (time: string | undefined, language: Language) => {
 };
 
 const ViewRecipe: React.FC = () => {
-    const { language, fetchAuthenticatedImage, apiFetch } = useApplicationContext();
+    const { showBusy, hideBusy } = useBusy();
+    const { language, fetchAuthenticatedImage, apiFetch, showError } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
     const [recipe, setRecipe] = useState<RecipeData>()
@@ -39,9 +41,11 @@ const ViewRecipe: React.FC = () => {
             const response = await apiFetch<RecipeData>(url, 'GET');
             setRecipe(response.data)
         } catch (error) {
+            hideBusy()
+            showError(error)
             console.error('Error fetching recipe data:', error);
         }
-    }, [apiFetch]);
+    }, [apiFetch, hideBusy, showError]);
     const toggleEdit = () => {
         navigate(-1);
     }
@@ -63,8 +67,10 @@ const ViewRecipe: React.FC = () => {
     };
 
     useEffect(() => {
+        showBusy();
         fetchData(`/api/recipes/get/${id}`);
-    }, [id, fetchData]);
+        hideBusy();
+    }, [id, fetchData, showBusy, hideBusy]);
 
     const [multiplication, setMultiplication] = useState<number>(1);
     const ingredientMultiplication: ((value: string) => string) = (value) => {

@@ -43,7 +43,8 @@
     "ConfirmTitle": "Confirm",
     "calendar": "Calendar",
     "todaysRecipe": "Today's Recipe",
-    "listView": "List View"
+    "listView": "List View",
+    "error": "Error"
   },
   "nl": {
     "title": "Recepten",
@@ -89,6 +90,7 @@
     "ConfirmTitle": "Bevestigen",
     "calendar": "Kalender",
     "todaysRecipe": "Recept van vandaag",
-    "listView": "Lijstweergave"
+    "listView": "Lijstweergave",
+    "error": "Fout"
   }
 }

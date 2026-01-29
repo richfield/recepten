@@ -49,7 +49,6 @@ const RecipeScraper: React.FC = () => {
     };
 
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event)
         setName(event.target.value);
     };
 

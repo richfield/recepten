@@ -25,6 +25,7 @@ interface ApplicationContextType {
   setProfile: (profile: UserProfile) => void;
   isAdmin: boolean,
   confirm: (message: string, options?: ConfirmDialogProps) => Promise<boolean>;
+  showError: (message: unknown) => Promise<void>;
   todaysRecipe: string;
 }
 
