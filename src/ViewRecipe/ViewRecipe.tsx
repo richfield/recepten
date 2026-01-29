@@ -2,13 +2,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardMedia, List, ListItem, Container, Typography, IconButton, Grid2, ListSubheader } from "@mui/material";
 import { RecipeData, Language } from "../Types.js";
-import { translate, ingredientMultiplication } from "../utils.js";
+import { translate } from "../utils.js";
 import moment from 'moment/min/moment-with-locales';
 import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { ArrowLeft, ArrowRight, Edit, ExitToApp } from "@mui/icons-material";
 import ScreenWakeLock from "../Components/ScreenWakeLock/ScreenWakeLock.js";
 import { useBusy } from '../Busy/BusyContext.js';
+import { ingredientMultiplication } from '../multiplier.js';
 
 
 const formatTime = (time: string | undefined, language: Language) => {
