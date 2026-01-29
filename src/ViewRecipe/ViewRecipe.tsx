@@ -6,7 +6,7 @@ import { translate } from "../utils.js";
 import moment from 'moment/min/moment-with-locales';
 import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
-import { ArrowLeft, ArrowRight, ExitToApp } from "@mui/icons-material";
+import { ArrowLeft, ArrowRight, Edit, ExitToApp } from "@mui/icons-material";
 import ScreenWakeLock from "../Components/ScreenWakeLock/ScreenWakeLock.js";
 
 
@@ -83,7 +83,11 @@ const ViewRecipe: React.FC = () => {
     }, [recipe?.recipeYield])
 
     if (!recipe) {
-        return <></>
+        return <>{translate("noRecipeFound", language)}</>
+    }
+
+    const goToEdit = (): void => {
+        navigate(`/recipe/${recipe._id}/edit`)
     }
 
     return (
@@ -96,6 +100,9 @@ const ViewRecipe: React.FC = () => {
                     <ScreenWakeLock />
                     <IconButton onClick={toggleEdit}>
                         <ExitToApp />
+                    </IconButton>
+                    <IconButton onClick={goToEdit}>
+                        <Edit />
                     </IconButton>
                 </Grid2>
             </Grid2>
