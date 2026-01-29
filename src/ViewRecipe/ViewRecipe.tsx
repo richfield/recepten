@@ -1,8 +1,8 @@
 // ViewRecipe Component
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardMedia, List, ListItem, Container, Typography, IconButton, Grid2, ListSubheader } from "@mui/material";
 import { RecipeData, Language } from "../Types.js";
-import { translate } from "../utils.js";
+import { translate, ingredientMultiplication } from "../utils.js";
 import moment from 'moment/min/moment-with-locales';
 import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
@@ -75,12 +75,17 @@ const ViewRecipe: React.FC = () => {
     }, [id, fetchData, showBusy, hideBusy]);
 
     const [multiplication, setMultiplication] = useState<number>(1);
-    const ingredientMultiplication: ((value: string) => string) = (value) => {
-        return value.replace(/(\d+(\.\d+)?)/g, (match) => {
-            const number = parseFloat(match);
-            return (number * multiplication).toString();
-        });
-    };
+
+    const multiplyQuantities = useCallback(
+        (value: string) =>
+            ingredientMultiplication(value, multiplication, {
+                formatAsFraction: true,   // set to false for decimals like 1.5
+                fractionTolerance: 1e-3,  // tweak if you want stricter/looser snapping
+                maxDecimals: 2,           // used when formatAsFraction=false or fallback
+            }),
+        [multiplication]
+    );
+
     const [recipeYield, setRecipeYield] = useState<number>(1);
     const [newRecipeYield, setNewRecipeYield] = useState<number>(1);
 
@@ -170,7 +175,7 @@ const ViewRecipe: React.FC = () => {
                         <CardContent>
                             {renderField(recipe, "description", language)}
                             {renderField(recipe, "recipeInstructions", language, ({ text }) => text)}
-                            {renderField(recipe, "recipeIngredient", language, ingredientMultiplication)}
+                            {renderField(recipe, "recipeIngredient", language, multiplyQuantities)}
                             {renderField(recipe, "recipeCategory", language)}
                         </CardContent>
                     </Card>
