@@ -22,7 +22,7 @@ const formatTime = (time: string | undefined, language: Language) => {
 
 const ViewRecipe: React.FC = () => {
     const { showBusy, hideBusy } = useBusy();
-    const { language, fetchAuthenticatedImage, apiFetch, showError } = useApplicationContext();
+    const { language, fetchAuthenticatedImage, apiFetch, showError, user } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
     const [recipe, setRecipe] = useState<RecipeData>()
@@ -31,21 +31,23 @@ const ViewRecipe: React.FC = () => {
             const image = await fetchAuthenticatedImage(`/api/recipes/${recipe?._id}/image`);
             setImageUrl(image);
         };
-        if(recipe?._id) {
+        if (recipe?._id) {
             fetchImage();
         }
     }, [recipe, fetchAuthenticatedImage]);
     const navigate = useNavigate();
     const fetchData = React.useCallback(async (url: string) => {
-        try {
-            const response = await apiFetch<RecipeData>(url, 'GET');
-            setRecipe(response.data)
-        } catch (error) {
-            hideBusy()
-            showError(error)
-            console.error('Error fetching recipe data:', error);
+        if (user) {
+            try {
+                const response = await apiFetch<RecipeData>(url, 'GET');
+                setRecipe(response.data)
+            } catch (error) {
+                hideBusy()
+                showError(error)
+                console.error('Error fetching recipe data:', error);
+            }
         }
-    }, [apiFetch, hideBusy, showError]);
+    }, [apiFetch, hideBusy, showError, user]);
     const toggleEdit = () => {
         navigate(-1);
     }

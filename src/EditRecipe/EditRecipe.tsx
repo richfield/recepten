@@ -15,9 +15,10 @@ import ArrayCard from "./ArrayCard.js";
 
 const EditRecipe: React.FC = () => {
 
-    const { language, fetchAuthenticatedImage, apiFetch } = useApplicationContext();
+    const { language, fetchAuthenticatedImage, apiFetch, user } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
+
     useEffect(() => {
         const fetchImage = async () => {
             const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);
@@ -28,13 +29,15 @@ const EditRecipe: React.FC = () => {
     const [recipe, setRecipe] = useState<RecipeData>()
     const navigate = useNavigate();
     const fetchData = React.useCallback(async (url: string) => {
-        try {
-            const response = await apiFetch<RecipeData>(url, 'GET'); // API call through proxy
-            setRecipe(response.data)
-        } catch (error) {
-            console.error('Error fetching recipe data:', error);
+        if (user) {
+            try {
+                const response = await apiFetch<RecipeData>(url, 'GET'); // API call through proxy
+                setRecipe(response.data)
+            } catch (error) {
+                console.error('Error fetching recipe data:', error);
+            }
         }
-    }, [apiFetch]);
+    }, [apiFetch, user]);
     const toggleEdit = () => {
         navigate(-1);
     }

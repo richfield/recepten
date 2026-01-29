@@ -31,7 +31,6 @@ const WeekCalendar: React.FC = () => {
 
   const fetchData = useCallback(
     async (url: string) => {
-
       if (!user) {
         return;
       }
