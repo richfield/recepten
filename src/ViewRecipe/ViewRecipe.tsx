@@ -38,6 +38,7 @@ const ViewRecipe: React.FC = () => {
     }, [recipe, fetchAuthenticatedImage]);
     const navigate = useNavigate();
     const fetchData = React.useCallback(async (url: string) => {
+        showBusy()
         if (user) {
             try {
                 const response = await apiFetch<RecipeData>(url, 'GET');
@@ -48,7 +49,7 @@ const ViewRecipe: React.FC = () => {
                 console.error('Error fetching recipe data:', error);
             }
         }
-    }, [apiFetch, hideBusy, showError, user]);
+    }, [apiFetch, hideBusy, showBusy, showError, user]);
     const toggleEdit = () => {
         navigate(-1);
     }
@@ -80,9 +81,9 @@ const ViewRecipe: React.FC = () => {
     const multiplyQuantities = useCallback(
         (value: string) =>
             ingredientMultiplication(value, multiplication, {
-                formatAsFraction: true,   // set to false for decimals like 1.5
-                fractionTolerance: 1e-3,  // tweak if you want stricter/looser snapping
-                maxDecimals: 2,           // used when formatAsFraction=false or fallback
+                formatAsFraction: true,
+                fractionTolerance: 1e-3,
+                maxDecimals: 2,
             }),
         [multiplication]
     );
