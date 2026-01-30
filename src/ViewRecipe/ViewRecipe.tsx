@@ -72,7 +72,11 @@ const ViewRecipe: React.FC = () => {
 
     useEffect(() => {
         showBusy();
+        // eslint-disable-next-line no-console
+        console.log("fetching recipe")
         fetchData(`/api/recipes/get/${id}`);
+        // eslint-disable-next-line no-console
+        console.log("fetched recipe")
         hideBusy();
     }, [id, fetchData, showBusy, hideBusy]);
 
