@@ -29,6 +29,10 @@
     "react-final-form-arrays": "^3.1.4",
     "react-router-dom": "^7.0.2"
   },
+  "overrides": {
+    "sourcemap-codec": "@jridgewell/sourcemap-codec@1.4.15",
+    "workbox-build": "7.4.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@types/node": "^22.7.5",
