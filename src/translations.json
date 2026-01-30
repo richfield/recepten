@@ -26,14 +26,6 @@
     "images": "Images",
     "setAsRecipeImage": "Set as recipe image",
     "recipeYield": "Yield",
-    "updateAvailable": "Update Available",
-    "later": "Later",
-    "reload": "Reload",
-    "updateMessage": "A new update is available, would you like to reload the application?",
-    "updateAvailable": "Update Available",
-    "later": "Later",
-    "reload": "Reload",
-    "updateMessage": "A new update is available, would you like to reload the application?",
     "login": "Login",
     "logoff": "Logoff",
     "theme": "Theme",
@@ -52,7 +44,11 @@
     "calendar": "Calendar",
     "todaysRecipe": "Today's Recipe",
     "listView": "List View",
-    "error": "Error"
+    "error": "Error",
+    "updateAvailable": "Update Available",
+    "later": "Later",
+    "reload": "Reload",
+    "updateMessage": "A new update is available for this application, would you like to reload the page?"
   },
   "nl": {
     "title": "Recepten",
@@ -99,6 +95,10 @@
     "calendar": "Kalender",
     "todaysRecipe": "Recept van vandaag",
     "listView": "Lijstweergave",
-    "error": "Fout"
+    "error": "Fout",
+    "updateAvailable": "Update beschikbaar",
+    "later": "Later",
+    "reload": "Herladen",
+    "updateMessage": "Er is een nieuwe update beschikbaar voor deze applicatie, wilt u de pagina herladen?"
   }
 }

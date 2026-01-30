@@ -82,7 +82,7 @@ function App() {
 
   const reloadApp = () => {
     // eslint-disable-next-line no-console
-    console.log("reloading");
+    console.log({"reloading": waitingWorker});
     waitingWorker?.postMessage({ type: "SKIP_WAITING" });
 
     navigator.serviceWorker.addEventListener("controllerchange", () => {
