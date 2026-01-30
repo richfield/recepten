@@ -84,6 +84,7 @@ function App() {
     // eslint-disable-next-line no-console
     console.log({"reloading": waitingWorker});
     waitingWorker?.postMessage({ type: "SKIP_WAITING" });
+    window.location.reload();
 
     navigator.serviceWorker.addEventListener("controllerchange", () => {
       window.location.reload();
