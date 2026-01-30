@@ -6,6 +6,8 @@ import {
   Button,
   Typography
 } from "@mui/material";
+import { useApplicationContext } from "../ApplicationContext/useApplicationContext.js";
+import { translate } from "../../utils.js";
 
 interface UpdatePopupProps {
   open: boolean;
@@ -14,22 +16,23 @@ interface UpdatePopupProps {
 }
 
 export default function UpdatePopup({ open, onReload, onClose }: UpdatePopupProps) {
+    const { language } = useApplicationContext();
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Update Available</DialogTitle>
+      <DialogTitle>{translate("updateAvailable", language)}</DialogTitle>
       <DialogContent>
         <Typography>
-          A new version of this app is available. Reload to update?
+          {translate("updateMessage", language)}
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Later</Button>
+        <Button onClick={onClose}>{translate("later", language)}</Button>
         <Button
           onClick={onReload}
           variant="contained"
           color="primary"
         >
-          Reload
+          {translate("reload", language)}
         </Button>
       </DialogActions>
     </Dialog>
