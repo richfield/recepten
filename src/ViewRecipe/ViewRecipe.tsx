@@ -99,6 +99,14 @@ const ViewRecipe: React.FC = () => {
         setNewRecipeYield(newYield);
     }, [recipe?.recipeYield])
 
+    useEffect(() => {
+        if (!recipe) {
+            showBusy()
+        } else {
+            hideBusy()
+        }
+    }, [hideBusy, recipe, showBusy])
+
     if (!recipe) {
         return <>{translate("noRecipeFound", language)}</>
     }
