@@ -9,8 +9,8 @@ export const BusyIndicator: React.FC = () => {
 
     return (
         <Dialog open={isBusy}  disableEscapeKeyDown>
-            <DialogContent style={{ textAlign: 'center' }}>
-                <CircularProgress onClick={() => window.location.reload()}/>
+            <DialogContent style={{ textAlign: 'center' }} onClick={() => window.location.reload()}>
+                <CircularProgress />
             </DialogContent>
         </Dialog>
     );
