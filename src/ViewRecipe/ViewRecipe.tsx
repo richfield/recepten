@@ -42,8 +42,6 @@ const ViewRecipe: React.FC = () => {
         if (user) {
             try {
                 const response = await apiFetch<RecipeData>(url, 'GET');
-                // eslint-disable-next-line no-console
-                console.log({response})
                 setRecipe(response.data)
             } catch (error) {
                 hideBusy()
@@ -108,7 +106,7 @@ const ViewRecipe: React.FC = () => {
     }, [hideBusy, recipe, showBusy])
 
     if (!recipe) {
-        return <>{translate("noRecipeFound", language)}</>
+        return <></>
     }
 
     const goToEdit = (): void => {
