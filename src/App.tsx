@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -38,8 +38,13 @@ import EditRecipe from "./EditRecipe/EditRecipe.js";
 import UserProfile from "./UserProfile/UserProfile.js";
 import WeekCalendar from "./WeekCalendar/WeekCalendar.js";
 import { useBusy } from "./Busy/BusyContext.js";
+import UpdatePopup from "./Components/UpdatePopup/UpdatePopup.js";
 
 function App() {
+
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
+
   const navigate = useNavigate();
   const { language, user, todaysRecipe } =
     useApplicationContext();
@@ -50,6 +55,39 @@ function App() {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const { showBusy, hideBusy } = useBusy();
+
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistration().then((reg) => {
+        if (!reg) return;
+
+        reg.onupdatefound = () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+
+          newWorker.onstatechange = () => {
+            if (
+              newWorker.state === "installed" &&
+              navigator.serviceWorker.controller
+            ) {
+              setWaitingWorker(newWorker);
+              setUpdateAvailable(true);
+            }
+          };
+        };
+      });
+    }
+  }, []);
+
+  const reloadApp = () => {
+    waitingWorker?.postMessage({ type: "SKIP_WAITING" });
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      window.location.reload();
+    });
+  };
+
 
   // Preserve original humanize
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,6 +152,11 @@ function App() {
 
   return (
     <>
+      <UpdatePopup
+        open={updateAvailable}
+        onReload={reloadApp}
+        onClose={() => setUpdateAvailable(false)}
+      />
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -129,7 +172,7 @@ function App() {
                   {translate("listView", language)}
                 </Button>
               }
-              <Button color="inherit" onClick={() => navigate("/scraper")} startIcon={<Add />} style={{marginRight: "10px"}}>
+              <Button color="inherit" onClick={() => navigate("/scraper")} startIcon={<Add />} style={{ marginRight: "10px" }}>
                 {translate("add", language)}
               </Button>
               <Button color="inherit" onClick={() => navigate("/calendar")} startIcon={<CalendarToday />} style={{ marginRight: "10px" }}>
@@ -155,18 +198,18 @@ function App() {
               >
                 {
                   todaysRecipe && <MenuItem
-                  onClick={() => {
-                    navigate("/list");
-                    handleMobileMenuClose();
-                  }}
-                >
-                  <ListItemIcon>
+                    onClick={() => {
+                      navigate("/list");
+                      handleMobileMenuClose();
+                    }}
+                  >
+                    <ListItemIcon>
                       <ListAltTwoTone fontSize="small" />
-                  </ListItemIcon>
-                  <Typography variant="inherit">
-                    {translate("listView", language)}
-                  </Typography>
-                </MenuItem>
+                    </ListItemIcon>
+                    <Typography variant="inherit">
+                      {translate("listView", language)}
+                    </Typography>
+                  </MenuItem>
                 }
                 <MenuItem
                   onClick={() => {
@@ -245,6 +288,7 @@ function App() {
         </Routes>
       </Container>
     </>
+
   );
 }
 
