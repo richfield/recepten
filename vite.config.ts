@@ -8,9 +8,11 @@ export default defineConfig({
   plugins: [react(),
   VitePWA({
     includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'android-chrome-192x192.png', 'android-chrome-512x512.png', 'favicon-16x16.png', 'favicon-32x32.png'],
-    registerType: 'autoUpdate', // Automatically update the service worker
+    registerType: 'prompt', // Automatically update the service worker
     workbox: {
       globPatterns: ['**/*.{js,css,html,png,jpg,svg}'], // Cache these file types
+      skipWaiting: true,
+      clientsClaim: true,
     },
     manifest: {
       name: 'Recepten',
@@ -78,7 +80,7 @@ export default defineConfig({
           type: 'image/png',
           purpose: 'maskable',
         },
-]
+      ]
 
       ,
       "share_target": {
