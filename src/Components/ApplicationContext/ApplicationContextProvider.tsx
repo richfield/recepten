@@ -142,7 +142,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
 
   const fetchAuthenticatedImage = useCallback(async (url: string): Promise<string> => {
     if (!user) {
-      return "";
+      return "/default.jpg";
     }
 
     const token = await user.getIdToken();
