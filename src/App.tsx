@@ -57,6 +57,7 @@ function App() {
   const { showBusy, hideBusy } = useBusy();
 
 
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistration().then((reg) => {
@@ -71,6 +72,7 @@ function App() {
               newWorker.state === "installed" &&
               navigator.serviceWorker.controller
             ) {
+              // NEW UPDATE READY
               setWaitingWorker(newWorker);
               setUpdateAvailable(true);
             }
@@ -79,6 +81,7 @@ function App() {
       });
     }
   }, []);
+
 
   const reloadApp = () => {
     waitingWorker?.postMessage({ type: "SKIP_WAITING" });
