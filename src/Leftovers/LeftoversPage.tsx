@@ -19,7 +19,8 @@ const LeftoversPage: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
-      const url = recipeId ? `/api/leftovers?recipeId=${recipeId}` : '/api/leftovers';
+      // Explicitly request inFreezer status to avoid relying on defaults
+      const url = recipeId ? `/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=inFreezer` : '/api/leftovers?status=inFreezer';
       const res = await apiFetch<LeftoverData[]>(url, 'GET');
       setLeftovers(res.data || []);
     } catch (err) {
@@ -31,7 +32,7 @@ const LeftoversPage: React.FC = () => {
 
   useEffect(() => {
     fetchLeftovers();
-  }, []);
+  }, [recipeId, user]);
 
   const handleClaim = async (id: string) => {
     if (!(await confirm('Claim this leftover?'))) return;
