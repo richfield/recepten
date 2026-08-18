@@ -14,7 +14,7 @@ import {
   Box
 } from "@mui/material";
 import { RecipeData, LeftoverData } from "../Types.js";
-import { CheckCircle, Add } from '@mui/icons-material';
+import { CheckCircle, Add, DeleteForever } from '@mui/icons-material';
 import { IconButton, Tooltip, Avatar } from '@mui/material';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
@@ -35,7 +35,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   handleUnlink,
   onLeftoverAdded
 }) => {
-  const { fetchAuthenticatedImage, apiFetch, confirm, showError, showMessage, user, language, getProfileNames } = useApplicationContext();
+  const { fetchAuthenticatedImage, apiFetch, confirm, showError, showMessage, user, language, getProfileNames, isAdmin } = useApplicationContext();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [openLeftoverDialog, setOpenLeftoverDialog] = useState(false);
@@ -274,12 +274,32 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                             // refresh list
                             fetchCountAndClaims();
                             if (onLeftoverAdded) onLeftoverAdded();
-                          try { showMessage(translate('claimSuccess', language)); } catch (e) { /* ignore */ }
+                            try { showMessage(translate('claimSuccess', language)); } catch (e) { /* ignore */ }
                           } catch (e) {
-                          showError(e);
+                            showError(e);
                           }
                         }}>
                           <CheckCircle color="success" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    {/* Admin remove button */}
+                    {isAdmin && (
+                      <Tooltip title={translate('remove', language)}>
+                        <IconButton size="small" onClick={async () => {
+                          const ok = await confirm(translate('removeConfirm', language));
+                          if (!ok) return;
+                          try {
+                            await apiFetch(`/api/leftovers/${c._id}`, 'DELETE');
+                            fetchCountAndClaims();
+                            if (onLeftoverAdded) onLeftoverAdded();
+                            try { showMessage(translate('removeSuccess', language)); } catch (e) { }
+                          } catch (e) {
+                            showError(e);
+                          }
+                        }}>
+                          <DeleteForever color="error" />
                         </IconButton>
                       </Tooltip>
                     )}

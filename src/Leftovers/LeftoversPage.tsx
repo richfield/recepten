@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, IconButton, Card, CardContent, CardMedia, Grid, Tooltip, Avatar } from '@mui/material';
-import { CheckCircle } from '@mui/icons-material';
+import { CheckCircle, DeleteForever } from '@mui/icons-material';
 import { useApplicationContext } from '../Components/ApplicationContext/useApplicationContext.js';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { translate } from '../utils.js';
 import { LeftoverData } from '../Types.js';
 
 const LeftoversPage: React.FC = () => {
-  const { apiFetch, confirm, showError, showMessage, user, language, getProfileNames } = useApplicationContext();
+  const { apiFetch, confirm, showError, showMessage, user, language, getProfileNames, isAdmin } = useApplicationContext();
   const [leftovers, setLeftovers] = useState<LeftoverData[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -131,6 +131,25 @@ const LeftoversPage: React.FC = () => {
                       <Tooltip title={translate('claim', language)}>
                         <IconButton color="primary" onClick={() => handleClaim(l._id)}>
                           <CheckCircle />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    {/* Admin remove */}
+                    {isAdmin && (
+                      <Tooltip title={translate('remove', language)}>
+                        <IconButton color="error" onClick={async () => {
+                          const ok = await confirm(translate('removeConfirm', language));
+                          if (!ok) return;
+                          try {
+                            await apiFetch(`/api/leftovers/${l._id}`, 'DELETE');
+                            await fetchLeftovers();
+                            try { showMessage(translate('removeSuccess', language)); } catch (e) {}
+                          } catch (err) {
+                            showError(err);
+                          }
+                        }}>
+                          <DeleteForever />
                         </IconButton>
                       </Tooltip>
                     )}
