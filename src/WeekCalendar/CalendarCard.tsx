@@ -208,9 +208,11 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
             <Typography variant="h6" sx={{ marginTop: '25px' }}>
               {recipe.name}
             </Typography>
-                    <Typography variant="caption" color="textSecondary" sx={{ display: 'block', marginTop: '4px' }}>
-                      {translate('inFreezer', language)} {leftoverCount}
-            </Typography>
+            {!recipe.isLeftover && (
+              <Typography variant="caption" color="textSecondary" sx={{ display: 'block', marginTop: '4px' }}>
+                {translate('inFreezer', language)} {leftoverCount}
+              </Typography>
+            )}
             <Typography variant="body2" color="textSecondary">
               {recipe.description}
             </Typography>
@@ -280,26 +282,6 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                           }
                         }}>
                           <CheckCircle color="success" />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-
-                    {/* Admin remove button */}
-                    {isAdmin && (
-                      <Tooltip title={translate('remove', language)}>
-                        <IconButton size="small" onClick={async () => {
-                          const ok = await confirm(translate('removeConfirm', language));
-                          if (!ok) return;
-                          try {
-                            await apiFetch(`/api/leftovers/${c._id}`, 'DELETE');
-                            fetchCountAndClaims();
-                            if (onLeftoverAdded) onLeftoverAdded();
-                            try { showMessage(translate('removeSuccess', language)); } catch (e) { }
-                          } catch (e) {
-                            showError(e);
-                          }
-                        }}>
-                          <DeleteForever color="error" />
                         </IconButton>
                       </Tooltip>
                     )}
