@@ -19,8 +19,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
 import { LinkOff } from "@mui/icons-material";
-import { Moment } from "moment";
-import moment from 'moment';
+import type { Moment } from "moment";
 import { useNavigate } from "react-router-dom";
 
 interface CalendarCardProps {
