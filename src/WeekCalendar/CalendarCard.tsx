@@ -107,7 +107,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       } catch (err) {
         // ignore errors for count/claims
         setLeftoverCount(0);
-        setClaimedList([]);
+        setDisplayList([]);
       }
     };
     fetchCountAndClaims();
