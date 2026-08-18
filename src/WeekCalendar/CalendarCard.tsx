@@ -37,6 +37,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   const [openLeftoverDialog, setOpenLeftoverDialog] = useState(false);
   const [portionText, setPortionText] = useState('');
   const [adding, setAdding] = useState(false);
+  const [leftoverCount, setLeftoverCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -47,6 +48,29 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
     };
     fetchImage();
   }, [recipe._id, fetchAuthenticatedImage]);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        if (!recipe._id) return;
+        const res = await apiFetch(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
+        if (Array.isArray(res)) {
+          setLeftoverCount(res.length);
+        } else if (res && res.data && Array.isArray(res.data)) {
+          setLeftoverCount(res.data.length);
+        } else if (res && Array.isArray(res.items)) {
+          setLeftoverCount(res.items.length);
+        } else {
+          // fallback if APIFetch returns object
+          setLeftoverCount((res && res.length) || 0);
+        }
+      } catch (err) {
+        // ignore errors for count
+        setLeftoverCount(0);
+      }
+    };
+    fetchCount();
+  }, [recipe._id, apiFetch]);
 
   const handleClick = (day: Moment) => {
     if (recipe._id) {
@@ -82,6 +106,14 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       if (!ok) { closeAddLeftover(); return; }
       setAdding(true);
       await apiFetch('/api/leftovers', 'POST', { recipeId: recipe._id, portion: portionText });
+      // refresh local count
+      try {
+        const res2 = await apiFetch(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
+        if (Array.isArray(res2)) setLeftoverCount(res2.length);
+        else if (res2 && res2.data && Array.isArray(res2.data)) setLeftoverCount(res2.data.length);
+      } catch (e) {
+        // ignore
+      }
       setAdding(false);
       closeAddLeftover();
       if (onLeftoverAdded) onLeftoverAdded();
@@ -131,6 +163,9 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
             </Button>
             <Typography variant="h6" sx={{ marginTop: '25px' }}>
               {recipe.name}
+            </Typography>
+            <Typography variant="caption" color="textSecondary" sx={{ display: 'block', marginTop: '4px' }}>
+              In freezer: {leftoverCount}
             </Typography>
             <Typography variant="body2" color="textSecondary">
               {recipe.description}
