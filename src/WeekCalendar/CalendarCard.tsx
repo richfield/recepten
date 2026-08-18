@@ -53,16 +53,12 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
     const fetchCount = async () => {
       try {
         if (!recipe._id) return;
-        const res = await apiFetch(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
-        if (Array.isArray(res)) {
-          setLeftoverCount(res.length);
-        } else if (res && res.data && Array.isArray(res.data)) {
-          setLeftoverCount(res.data.length);
-        } else if (res && Array.isArray(res.items)) {
-          setLeftoverCount(res.items.length);
+        const res = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
+        const data = res?.data ?? [];
+        if (Array.isArray(data)) {
+          setLeftoverCount(data.length);
         } else {
-          // fallback if APIFetch returns object
-          setLeftoverCount((res && res.length) || 0);
+          setLeftoverCount(0);
         }
       } catch (err) {
         // ignore errors for count
@@ -108,9 +104,9 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       await apiFetch('/api/leftovers', 'POST', { recipeId: recipe._id, portion: portionText });
       // refresh local count
       try {
-        const res2 = await apiFetch(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
-        if (Array.isArray(res2)) setLeftoverCount(res2.length);
-        else if (res2 && res2.data && Array.isArray(res2.data)) setLeftoverCount(res2.data.length);
+        const res2 = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
+        const data2 = res2?.data ?? [];
+        if (Array.isArray(data2)) setLeftoverCount(data2.length);
       } catch (e) {
         // ignore
       }
