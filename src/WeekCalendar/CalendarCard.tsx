@@ -228,7 +228,11 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                 <Typography variant="subtitle2">{translate('freezerItems', language)}</Typography>
                 {displayList.map((c) => (
                   <Typography key={c._id} variant="caption" display="block">
-                    {c.portion || ''} — {c.inFreezer ? translate('inFreezer', language) : translate('claimed', language)} {c.inFreezer ? `(${translate('addedBy', language)} ${c.addedBy || 'Unknown'})` : `(${translate('addedBy', language)} ${c.claimedByName || c.claimedBy || 'Unknown'})`} {c.claimedAt ? `- ${moment(c.claimedAt).format('LLL')}` : ''}
+                    {/* Show recipe name for the leftover item */}
+                    {c.recipe?.name || recipe.name} — {c.portion || ''} — {c.inFreezer ? translate('inFreezer', language) : translate('claimed', language)}
+                    {/* Show only name of person who claimed (if claimed) */}
+                    {!c.inFreezer && c.claimedByName ? ` (${c.claimedByName})` : ''}
+                    {c.claimedAt ? ` - ${moment(c.claimedAt).format('LLL')}` : ''}
                   </Typography>
                 ))}
               </Box>
