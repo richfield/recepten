@@ -41,7 +41,9 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   const [portionText, setPortionText] = useState('');
   const [adding, setAdding] = useState(false);
   const [leftoverCount, setLeftoverCount] = useState<number>(0);
-  const [claimedList, setClaimedList] = useState<any[]>([]);
+  const [claimedList, setClaimedList] = useState<LeftoverData[]>([]);
+  const [inFreezerList, setInFreezerList] = useState<LeftoverData[]>([]);
+  const [displayList, setDisplayList] = useState<LeftoverData[]>([]);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -62,8 +64,10 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         const data = res?.data ?? [];
         if (Array.isArray(data)) {
           setLeftoverCount(data.length);
+          setInFreezerList(data as LeftoverData[]);
         } else {
           setLeftoverCount(0);
+          setInFreezerList([]);
         }
 
         // fetch claimed on this day using start/end ISO to avoid timezone issues
@@ -81,16 +85,29 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
               const nameMap: Record<string, string> = {};
               profiles.forEach((p: ProfileInfo) => { nameMap[p.uid] = p.displayName || p.email || p.uid; });
               const claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
-              setClaimedList(claimedWithNames as any[]);
+              setClaimedList(claimedWithNames as LeftoverData[]);
             } catch (e) {
-              setClaimedList(claimed as any[]);
+              setClaimedList(claimed as LeftoverData[]);
             }
           } else {
-            setClaimedList(claimed as any[]);
+            setClaimedList(claimed as LeftoverData[]);
           }
         } else {
           setClaimedList([]);
         }
+
+        // Combine inFreezer items with claimed items for display; include claimed items even though not in freezer
+        const combined: LeftoverData[] = [];
+        // Show inFreezer items first
+        if (Array.isArray(data)) {
+          combined.push(...(data as LeftoverData[]));
+        }
+        // Then add claimed items for the day (avoid duplicates by _id)
+        const seen = new Set(combined.map(i => i._id));
+        (claimed as LeftoverData[]).forEach((c) => {
+          if (!seen.has(c._id)) combined.push(c);
+        });
+        setDisplayList(combined);
       } catch (err) {
         // ignore errors for count/claims
         setLeftoverCount(0);
@@ -213,12 +230,12 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
             <Typography variant="body2" color="textSecondary">
               {recipe.description}
             </Typography>
-            {recipe.isLeftover && claimedList.length > 0 && (
+            {recipe.isLeftover && displayList.length > 0 && (
               <Box sx={{ mt: 1 }}>
-                <Typography variant="subtitle2">Claims on this day:</Typography>
-                {claimedList.map((c) => (
+                <Typography variant="subtitle2">{translate('freezerItems', language)}</Typography>
+                {displayList.map((c) => (
                   <Typography key={c._id} variant="caption" display="block">
-                    {c.portion || ''} — {translate('addedBy', language)} {c.claimedByName || c.claimedBy || 'Unknown'} ({moment(c.claimedAt).format('LLL')})
+                    {c.portion || ''} — {c.inFreezer ? translate('inFreezer', language) : translate('claimed', language)} {c.inFreezer ? `(${translate('addedBy', language)} ${c.addedBy || 'Unknown'})` : `(${translate('addedBy', language)} ${c.claimedByName || c.claimedBy || 'Unknown'})`} {c.claimedAt ? `- ${moment(c.claimedAt).format('LLL')}` : ''}
                   </Typography>
                 ))}
               </Box>
