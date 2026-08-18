@@ -37,6 +37,7 @@ import ViewRecipe from "./ViewRecipe/ViewRecipe.js";
 import EditRecipe from "./EditRecipe/EditRecipe.js";
 import UserProfile from "./UserProfile/UserProfile.js";
 import WeekCalendar from "./WeekCalendar/WeekCalendar.js";
+import LeftoversPage from './Leftovers/LeftoversPage.js';
 import { useBusy } from "./Busy/BusyContext.js";
 import UpdatePopup from "./Components/UpdatePopup/UpdatePopup.js";
 
@@ -180,9 +181,12 @@ function App() {
               <Button color="inherit" onClick={() => navigate("/calendar")} startIcon={<CalendarToday />} style={{ marginRight: "10px" }}>
                 {translate("calendar", language)}
               </Button>
-              <SearchField />
-            </>
-          )}
+                        <Button color="inherit" onClick={() => navigate("/leftovers")} startIcon={<ListAltTwoTone />} style={{ marginRight: "10px" }}>
+                          Leftovers
+                        </Button>
+                        <SearchField />
+                      </>
+                    )}
           {isMobile && (
             <>
               <IconButton
@@ -287,6 +291,7 @@ function App() {
           <Route path="/search/:searchQuery" element={<RecipeList />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/calendar" element={<WeekCalendar />} />
+          <Route path="/leftovers" element={<LeftoversPage />} />
         </Routes>
       </Container>
     </>

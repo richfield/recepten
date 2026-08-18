@@ -44,8 +44,16 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
     }
   };
 
+  const handleDouble = () => {
+    if (recipe.name && recipe.name.toLowerCase() === 'leftovers') {
+      navigate('/leftovers');
+    } else if (recipe._id) {
+      navigate(`/recipe/${recipe._id}`);
+    }
+  }
+
   return (
-    <Card style={{ marginTop: '16px' }} onDoubleClick={() => navigate(`/recipe/${recipe._id}`)}>
+    <Card style={{ marginTop: '16px' }} onDoubleClick={handleDouble}>
       <Grid2 container>
         <Grid2 size={{ xs: 4 }}>
           <CardMedia
