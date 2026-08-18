@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
-import { Card, Button, Container, TextField, IconButton, Typography, Box, CardProps, Grid2, Portal } from '@mui/material';
+import { Card, Button, Container, TextField, IconButton, Typography, Box, CardProps, Grid2, Portal, Switch, FormControlLabel } from '@mui/material';
 import { RecipeData, Language } from '../Types.js';
 import { translate } from '../utils.js';
 import { DurationPickerField } from '../Components/DurationPicker.js';
@@ -117,6 +117,14 @@ const EditRecipe: React.FC = () => {
                             <Field name="name">
                                 {({ input }) => (
                                     <TextField {...input} fullWidth label={translate('name', language)} variant="standard" size="small" />
+                                )}
+                            </Field>
+                            <Field name="isLeftover">
+                                {({ input }) => (
+                                    <FormControlLabel
+                                        control={<Switch checked={!!input.value} onChange={(e) => input.onChange(e.target.checked)} />}
+                                        label={translate('isLeftover', language) || 'Show freezer contents'}
+                                    />
                                 )}
                             </Field>
                         </Box>
