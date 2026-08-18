@@ -34,7 +34,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   handleUnlink,
   onLeftoverAdded
 }) => {
-  const { fetchAuthenticatedImage, apiFetch, confirm, showError, user, language, getProfilesByUids } = useApplicationContext();
+  const { fetchAuthenticatedImage, apiFetch, confirm, showError, user, language, getProfileNames } = useApplicationContext();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [openLeftoverDialog, setOpenLeftoverDialog] = useState(false);
@@ -77,12 +77,10 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
           const uids = Array.from(new Set(claimed.map((c: LeftoverData) => c.claimedBy).filter(Boolean))) as string[];
           if (uids.length > 0) {
             try {
-            const profileMap = await getProfilesByUids(uids);
-            const nameMap: Record<string, string> = {};
-            Object.values(profileMap).forEach((p) => { nameMap[p.uid] = p.displayName || p.email || p.uid; });
-            claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
+              const nameMap = await getProfileNames(uids);
+              claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
             } catch (e) {
-            claimedWithNames = claimed as LeftoverData[];
+              claimedWithNames = claimed as LeftoverData[];
             }
           } else {
             claimedWithNames = claimed as LeftoverData[];

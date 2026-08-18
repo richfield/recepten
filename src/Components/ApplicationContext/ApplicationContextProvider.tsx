@@ -97,35 +97,6 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     })
   }
 
-  // Profile cache to avoid repeated /api/profile/batch calls
-  const profileCacheRef = React.useRef<Record<string, { uid: string; displayName?: string; email?: string }>>({});
-
-  const getProfilesByUids = React.useCallback(async (uids: string[]) => {
-    const result: Record<string, { uid: string; displayName?: string; email?: string }> = {};
-    const missing: string[] = [];
-    uids.forEach(u => {
-      if (profileCacheRef.current[u]) {
-        result[u] = profileCacheRef.current[u];
-      } else {
-        missing.push(u);
-      }
-    });
-    if (missing.length > 0) {
-      try {
-        const resp = await apiFetch(`/api/profile/batch?uids=${missing.join(',')}`, 'GET');
-        const profiles = resp.data || [];
-        profiles.forEach((p: any) => {
-          profileCacheRef.current[p.uid] = { uid: p.uid, displayName: p.displayName, email: p.email };
-          result[p.uid] = profileCacheRef.current[p.uid];
-        });
-      } catch (e) {
-        // On error, populate missing uids with uid as fallback
-        missing.forEach(u => { result[u] = { uid: u, displayName: u }; });
-      }
-    }
-    return result;
-  }, [apiFetch]);
-
   const handleClose = (result: boolean) => {
     dialog?.resolve(result);
     setDialog(null);
@@ -201,11 +172,39 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     return URL.createObjectURL(blob);
   }, [user]);
 
+  // Profile cache for display names
+  const profileNameCache = React.useRef<Record<string, string>>({});
+
+  const getProfileNames = useCallback(async (uids: string[]) => {
+    const result: Record<string, string> = {};
+    const missing: string[] = [];
+    uids.forEach(u => {
+      if (profileNameCache.current[u]) result[u] = profileNameCache.current[u];
+      else missing.push(u);
+    });
+    if (missing.length === 0) return result;
+
+    try {
+      // fetch batch from backend
+      const res = await apiFetch<{ uid: string; displayName?: string; email?: string }[]>(`/api/profile/batch?uids=${missing.join(',')}`, 'GET');
+      const profiles = res.data || [];
+      profiles.forEach(p => {
+        const name = p.displayName || p.email || p.uid;
+        profileNameCache.current[p.uid] = name;
+        result[p.uid] = name;
+      });
+    } catch (e) {
+      // fallback: use uid
+      missing.forEach(u => { result[u] = u; });
+    }
+    return result;
+  }, [apiFetch]);
+
   useEffect(() => {
     const fetchProfile = async () => {
       if (user?.uid !== profile?.firebaseUID) {
         const response = await apiFetch<UserProfile>('/api/profile/me', 'GET');
-        setProfile(response.data);
+        setProfile(response.data)
       }
     };
     fetchProfile();
@@ -236,6 +235,10 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     fetchProfile();
   }, [user, apiFetch])
 
+  // Expose profile name cache fetcher for components to reuse
+  
+
+
   useEffect(() => {
     if (adminRole) {
       const hasAdminRole = profile?.roles.findIndex(r => r === adminRole._id) ?? -1;
@@ -260,7 +263,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [profile])
 
   return (
-    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe, showError, getProfilesByUids }}>
+    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe, showError, getProfileNames }}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
         <ThemeProvider theme={theme}>
           {children}
