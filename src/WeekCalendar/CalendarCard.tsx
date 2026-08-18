@@ -14,7 +14,7 @@ import {
   Box
 } from "@mui/material";
 import { RecipeData, LeftoverData } from "../Types.js";
-import { CheckCircle, Undo, Add } from '@mui/icons-material';
+import { CheckCircle, Add } from '@mui/icons-material';
 import { IconButton, Tooltip, Avatar } from '@mui/material';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
@@ -35,7 +35,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   handleUnlink,
   onLeftoverAdded
 }) => {
-  const { fetchAuthenticatedImage, apiFetch, confirm, showError, user, language, getProfileNames } = useApplicationContext();
+  const { fetchAuthenticatedImage, apiFetch, confirm, showError, showMessage, user, language, getProfileNames } = useApplicationContext();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [openLeftoverDialog, setOpenLeftoverDialog] = useState(false);
@@ -224,14 +224,42 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                     </Typography>
 
                     {/* Show claimant avatar instead of name when claimed */}
+                    {/* Claimed avatar: clickable to unclaim if it's the current user's claim, otherwise just show avatar with tooltip */}
                     {!c.inFreezer && (
-                      <Avatar
-                        src={c.claimedByPhoto}
-                        alt={c.claimedByName || ''}
-                        sx={{ width: 28, height: 28 }}
-                      >
-                        {(!c.claimedByPhoto && c.claimedByName) ? (c.claimedByName.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase()) : null}
-                      </Avatar>
+                      user && c.claimedBy === user.uid ? (
+                        <Tooltip title={translate('unclaimClick', language)}>
+                          <Avatar
+                            src={c.claimedByPhoto}
+                            alt={c.claimedByName || ''}
+                            sx={{ width: 28, height: 28, cursor: 'pointer' }}
+                            onClick={async () => {
+                              const ok = await confirm(translate('unclaimConfirm', language));
+                              if (!ok) return;
+                              try {
+                                await apiFetch(`/api/leftovers/${c._id}/unclaim`, 'POST');
+                                fetchCountAndClaims();
+                                if (onLeftoverAdded) onLeftoverAdded();
+                                // show non-blocking success message
+                                try { showMessage(translate('unclaimSuccess', language)); } catch (e) { /* ignore */ }
+                              } catch (e) {
+                                showError(e);
+                              }
+                            }}
+                          >
+                            {(!c.claimedByPhoto && c.claimedByName) ? (c.claimedByName.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase()) : null}
+                          </Avatar>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title={c.claimedByName || ''}>
+                          <Avatar
+                            src={c.claimedByPhoto}
+                            alt={c.claimedByName || ''}
+                            sx={{ width: 28, height: 28 }}
+                          >
+                            {(!c.claimedByPhoto && c.claimedByName) ? (c.claimedByName.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase()) : null}
+                          </Avatar>
+                        </Tooltip>
+                      )
                     )}
 
                     {/* Claim button for in-freezer items */}
@@ -246,30 +274,12 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                             // refresh list
                             fetchCountAndClaims();
                             if (onLeftoverAdded) onLeftoverAdded();
+                          try { showMessage(translate('claimSuccess', language)); } catch (e) { /* ignore */ }
                           } catch (e) {
-                            showError(e);
+                          showError(e);
                           }
                         }}>
                           <CheckCircle color="success" />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-
-                    {/* Unclaim button for items claimed by current user */}
-                    {!c.inFreezer && user && c.claimedBy === user.uid && (
-                      <Tooltip title={translate('unclaim', language)}>
-                        <IconButton size="small" onClick={async () => {
-                          const ok = await confirm(translate('unclaimConfirm', language));
-                          if (!ok) return;
-                          try {
-                            await apiFetch(`/api/leftovers/${c._id}/unclaim`, 'POST');
-                            fetchCountAndClaims();
-                            if (onLeftoverAdded) onLeftoverAdded();
-                          } catch (e) {
-                            showError(e);
-                          }
-                        }}>
-                          <Undo color="warning" />
                         </IconButton>
                       </Tooltip>
                     )}

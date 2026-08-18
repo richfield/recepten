@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, IconButton, Card, CardContent, CardMedia, Grid, Tooltip } from '@mui/material';
-import { CheckCircle, Undo } from '@mui/icons-material';
+import { Box, Typography, IconButton, Card, CardContent, CardMedia, Grid, Tooltip, Avatar } from '@mui/material';
+import { CheckCircle } from '@mui/icons-material';
 import { useApplicationContext } from '../Components/ApplicationContext/useApplicationContext.js';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { translate } from '../utils.js';
 import { LeftoverData } from '../Types.js';
 
 const LeftoversPage: React.FC = () => {
-  const { apiFetch, confirm, showError, user, language, getProfileNames } = useApplicationContext();
+  const { apiFetch, confirm, showError, showMessage, user, language, getProfileNames } = useApplicationContext();
   const [leftovers, setLeftovers] = useState<LeftoverData[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -53,6 +53,7 @@ const LeftoversPage: React.FC = () => {
     try {
       await apiFetch(`/api/leftovers/${id}/claim`, 'POST');
       await fetchLeftovers();
+      try { showMessage(translate('claimSuccess', language)); } catch (e) { /* ignore */ }
     } catch (err) {
       showError(err);
     }
@@ -63,6 +64,7 @@ const LeftoversPage: React.FC = () => {
     try {
       await apiFetch(`/api/leftovers/${id}/unclaim`, 'POST');
       await fetchLeftovers();
+      try { showMessage(translate('unclaimSuccess', language)); } catch (e) { /* ignore */ }
     } catch (err) {
       showError(err);
     }
@@ -96,27 +98,41 @@ const LeftoversPage: React.FC = () => {
                       <Typography variant="h6">{l.recipe?.name}</Typography>
                       <Typography variant="body2">{l.portion || translate('portion', language)}</Typography>
                       <Typography variant="caption" display="block">{translate('addedAt', language)} {moment(l.addedAt).format('LL')}</Typography>
-                      {/* If claimed, show claimant name */}
+                      {/* If claimed, show claimant name and avatar */}
                       {!l.inFreezer && l.claimedByName && (
-                        <Typography variant="caption" display="block">{l.claimedByName}</Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="caption" display="block">{l.claimedByName}</Typography>
+                          {l.claimedBy && (
+                            user && l.claimedBy === user.uid ? (
+                              <Tooltip title={translate('unclaimClick', language)}>
+                                <Avatar
+                                  src={l.claimedByPhoto}
+                                  alt={l.claimedByName || ''}
+                                  sx={{ width: 28, height: 28, cursor: 'pointer' }}
+                                  onClick={() => handleUnclaim(l._id)}
+                                />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title={l.claimedByName || ''}>
+                                <Avatar
+                                  src={l.claimedByPhoto}
+                                  alt={l.claimedByName || ''}
+                                  sx={{ width: 28, height: 28 }}
+                                />
+                              </Tooltip>
+                            )
+                          )}
+                        </Box>
                       )}
                     </Box>
 
-                    {/* Actions: claim if inFreezer, unclaim only if claimed by current user */}
-                    {l.inFreezer ? (
+                    {/* Actions: claim if inFreezer */}
+                    {l.inFreezer && (
                       <Tooltip title={translate('claim', language)}>
                         <IconButton color="primary" onClick={() => handleClaim(l._id)}>
                           <CheckCircle />
                         </IconButton>
                       </Tooltip>
-                    ) : (
-                      user && l.claimedBy === user.uid ? (
-                        <Tooltip title={translate('unclaim', language)}>
-                          <IconButton color="inherit" onClick={() => handleUnclaim(l._id)}>
-                            <Undo />
-                          </IconButton>
-                        </Tooltip>
-                      ) : null
                     )}
 
                   </CardContent>

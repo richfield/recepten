@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, createTheme, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Theme, ThemeProvider } from '@mui/material';
+import { Button, createTheme, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Theme, ThemeProvider, Snackbar, Alert } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import { User } from 'firebase/auth';
 import { ReactNode } from 'react';
@@ -79,6 +79,9 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     message: string;
   } | null>(null);
 
+  // Snackbar state for non-blocking messages
+  const [snackbar, setSnackbar] = React.useState<{ open: boolean; message: string; severity?: 'success' | 'error' | 'info' } | null>(null);
+
   const confirm = (message: string, options?: ConfirmDialogProps): Promise<boolean> => {
     return new Promise<boolean>((resolve) => {
       setDialog({ message, resolve, options });
@@ -95,6 +98,10 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     return new Promise<void>(() => {
       setErrorDialog({ message: errorMessage })
     })
+  }
+
+  const showMessage = (message: string) => {
+    setSnackbar({ open: true, message, severity: 'success' });
   }
 
   const handleClose = (result: boolean) => {
@@ -264,7 +271,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [profile])
 
   return (
-    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe, showError, getProfileNames }}>
+    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe, showError, showMessage, getProfileNames }}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
         <ThemeProvider theme={theme}>
           {children}
@@ -300,6 +307,15 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
               </Dialog>
             )
           }
+
+          {/* Snackbar for non-blocking messages */}
+          {snackbar && (
+            <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar(null)}>
+              <Alert onClose={() => setSnackbar(null)} severity={snackbar.severity || 'info'} sx={{ width: '100%' }}>
+                {snackbar.message}
+              </Alert>
+            </Snackbar>
+          )}
         </ThemeProvider>
       </LocalizationProvider>
     </ApplicationContext.Provider>

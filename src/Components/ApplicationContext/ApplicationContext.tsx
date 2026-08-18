@@ -26,6 +26,7 @@ interface ApplicationContextType {
   isAdmin: boolean,
   confirm: (message: string, options?: ConfirmDialogProps) => Promise<boolean>;
   showError: (message: unknown) => Promise<void>;
+  showMessage: (message: string) => void;
   todaysRecipe: string;
   // Fetch/display name lookup with caching: returns a map uid->displayName
   getProfileNames: (uids: string[]) => Promise<Record<string, { displayName?: string; email?: string; photoURL?: string }>>;
