@@ -14,6 +14,8 @@ import {
   Box
 } from "@mui/material";
 import { RecipeData, LeftoverData } from "../Types.js";
+import { CheckCircle, Undo } from '@mui/icons-material';
+import { IconButton, Tooltip } from '@mui/material';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
 import { LinkOff } from "@mui/icons-material";
@@ -53,60 +55,61 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
     fetchImage();
   }, [recipe._id, fetchAuthenticatedImage]);
 
-  useEffect(() => {
-    const fetchCountAndClaims = async () => {
-      try {
-        if (!recipe._id) return;
-        // fetch inFreezer count
-        const res = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}&status=inFreezer`, 'GET');
-        const data = res?.data ?? [];
-        if (Array.isArray(data)) {
-          setLeftoverCount(data.length);
-        } else {
-          setLeftoverCount(0);
-        }
+  const fetchCountAndClaims = async () => {
+    try {
+      if (!recipe._id) return;
+      // fetch inFreezer count
+      const res = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}&status=inFreezer`, 'GET');
+      const data = res?.data ?? [];
+      if (Array.isArray(data)) {
+        setLeftoverCount(data.length);
+      } else {
+        setLeftoverCount(0);
+      }
 
-        // fetch claimed on this day using start/end ISO to avoid timezone issues
-        const startISO = day.clone().startOf('day').toISOString();
-        const endISO = day.clone().endOf('day').toISOString();
-        const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
-        const claimed = res2?.data ?? [] as LeftoverData[];
-        let claimedWithNames: LeftoverData[] = [];
-        if (Array.isArray(claimed) && claimed.length > 0) {
-          // resolve user display names via profile batch
-          const uids = Array.from(new Set(claimed.map((c: LeftoverData) => c.claimedBy).filter(Boolean))) as string[];
-          if (uids.length > 0) {
-            try {
-              const nameMap = await getProfileNames(uids);
-              claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
-            } catch (e) {
-              claimedWithNames = claimed as LeftoverData[];
-            }
-          } else {
+      // fetch claimed on this day using start/end ISO to avoid timezone issues
+      const startISO = day.clone().startOf('day').toISOString();
+      const endISO = day.clone().endOf('day').toISOString();
+      const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
+      const claimed = res2?.data ?? [] as LeftoverData[];
+      let claimedWithNames: LeftoverData[] = [];
+      if (Array.isArray(claimed) && claimed.length > 0) {
+        // resolve user display names via profile batch
+        const uids = Array.from(new Set(claimed.map((c: LeftoverData) => c.claimedBy).filter(Boolean))) as string[];
+        if (uids.length > 0) {
+          try {
+            const nameMap = await getProfileNames(uids);
+            claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
+          } catch (e) {
             claimedWithNames = claimed as LeftoverData[];
           }
+        } else {
+          claimedWithNames = claimed as LeftoverData[];
         }
-
-        // Combine inFreezer items with claimed items for display; include claimed items even though not in freezer
-        const combined: LeftoverData[] = [];
-        // fetch all inFreezer items (full freezer contents)
-        const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?status=inFreezer`, 'GET');
-        const dataIn = resIn?.data ?? [] as LeftoverData[];
-        if (Array.isArray(dataIn)) {
-          combined.push(...dataIn);
-        }
-        // Then add claimed items for the day (avoid duplicates by _id)
-        const seen = new Set(combined.map(i => i._id));
-        claimedWithNames.forEach((c) => {
-          if (!seen.has(c._id)) combined.push(c);
-        });
-        setDisplayList(combined);
-      } catch (err) {
-        // ignore errors for count/claims
-        setLeftoverCount(0);
-        setDisplayList([]);
       }
-    };
+
+      // Combine inFreezer items with claimed items for display; include claimed items even though not in freezer
+      const combined: LeftoverData[] = [];
+      // fetch all inFreezer items (full freezer contents)
+      const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?status=inFreezer`, 'GET');
+      const dataIn = resIn?.data ?? [] as LeftoverData[];
+      if (Array.isArray(dataIn)) {
+        combined.push(...dataIn);
+      }
+      // Then add claimed items for the day (avoid duplicates by _id)
+      const seen = new Set(combined.map(i => i._id));
+      claimedWithNames.forEach((c) => {
+        if (!seen.has(c._id)) combined.push(c);
+      });
+      setDisplayList(combined);
+    } catch (err) {
+      // ignore errors for count/claims
+      setLeftoverCount(0);
+      setDisplayList([]);
+    }
+  };
+
+  useEffect(() => {
     fetchCountAndClaims();
   }, [recipe._id, apiFetch, day]);
 
@@ -227,13 +230,54 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
               <Box sx={{ mt: 1 }}>
                 <Typography variant="subtitle2">{translate('freezerItems', language)}</Typography>
                 {displayList.map((c) => (
-                  <Typography key={c._id} variant="caption" display="block">
-                    {/* Show recipe name for the leftover item */}
-                    {c.recipe?.name || recipe.name} — {c.portion || ''} — {c.inFreezer ? translate('inFreezer', language) : translate('claimed', language)}
-                    {/* Show only name of person who claimed (if claimed) */}
-                    {!c.inFreezer && c.claimedByName ? ` (${c.claimedByName})` : ''}
-                    {c.claimedAt ? ` - ${moment(c.claimedAt).format('LLL')}` : ''}
-                  </Typography>
+                  <Box key={c._id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="caption" sx={{ flex: 1 }}>
+                      {c.recipe?.name || recipe.name} — {c.portion || ''} — {c.inFreezer ? translate('inFreezer', language) : translate('claimed', language)}
+                      {!c.inFreezer && c.claimedByName ? ` (${c.claimedByName})` : ''}
+                      {c.claimedAt ? ` - ${moment(c.claimedAt).format('LLL')}` : ''}
+                    </Typography>
+
+                    {/* Claim button for in-freezer items */}
+                    {c.inFreezer && (
+                      <Tooltip title={translate('claim', language)}>
+                        <IconButton size="small" onClick={async () => {
+                          if (!user) { showError('Not authenticated'); return; }
+                          const ok = await confirm(translate('claimConfirm', language));
+                          if (!ok) return;
+                          try {
+                            await apiFetch(`/api/leftovers/${c._id}/claim`, 'POST');
+                            // refresh list
+                            fetchCountAndClaims();
+                            if (onLeftoverAdded) onLeftoverAdded();
+                          } catch (e) {
+                            showError(e);
+                          }
+                        }}>
+                          <CheckCircle color="success" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    {/* Unclaim button for items claimed by current user */}
+                    {!c.inFreezer && user && c.claimedBy === user.uid && (
+                      <Tooltip title={translate('unclaim', language)}>
+                        <IconButton size="small" onClick={async () => {
+                          const ok = await confirm(translate('unclaimConfirm', language));
+                          if (!ok) return;
+                          try {
+                            await apiFetch(`/api/leftovers/${c._id}/unclaim`, 'POST');
+                            fetchCountAndClaims();
+                            if (onLeftoverAdded) onLeftoverAdded();
+                          } catch (e) {
+                            showError(e);
+                          }
+                        }}>
+                          <Undo color="warning" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                  </Box>
                 ))}
               </Box>
             )}
