@@ -4,7 +4,7 @@ import { useApplicationContext } from '../Components/ApplicationContext/useAppli
 import moment from 'moment';
 
 const LeftoversPage: React.FC = () => {
-  const { apiFetch, confirm, showError, language, user } = useApplicationContext();
+  const { apiFetch, confirm, showError, user } = useApplicationContext();
   const [leftovers, setLeftovers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +28,7 @@ const LeftoversPage: React.FC = () => {
   const handleClaim = async (id: string) => {
     if (!(await confirm('Claim this leftover?'))) return;
     try {
-      const res = await apiFetch(`/api/leftovers/${id}/claim`, 'POST');
+      await apiFetch(`/api/leftovers/${id}/claim`, 'POST');
       // remove from list
       setLeftovers((prev) => prev.filter((l) => l._id !== id));
     } catch (err) {
