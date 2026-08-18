@@ -49,7 +49,7 @@ const LeftoversPage: React.FC = () => {
   }, [recipeId, user]);
 
   const handleClaim = async (id: string) => {
-    if (!(await confirm('Claim this leftover?'))) return;
+    if (!(await confirm(translate('claimConfirm', language)))) return;
     try {
       await apiFetch(`/api/leftovers/${id}/claim`, 'POST');
       await fetchLeftovers();
@@ -59,7 +59,7 @@ const LeftoversPage: React.FC = () => {
   };
 
   const handleUnclaim = async (id: string) => {
-    if (!(await confirm('Remove your claim?'))) return;
+    if (!(await confirm(translate('unclaimConfirm', language)))) return;
     try {
       await apiFetch(`/api/leftovers/${id}/unclaim`, 'POST');
       await fetchLeftovers();

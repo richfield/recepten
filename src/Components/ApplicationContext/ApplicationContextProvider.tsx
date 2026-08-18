@@ -280,6 +280,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
                   onClick={() => handleClose(true)}
                   color="primary"
                   variant="contained"
+                  autoFocus
                 >
                   {dialog.options?.confirmText ?? translate("Ok", language)}
                 </Button>
