@@ -2,17 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button, Card, CardContent, CardMedia, Grid } from '@mui/material';
 import { useApplicationContext } from '../Components/ApplicationContext/useApplicationContext.js';
 import moment from 'moment';
+import { useLocation } from 'react-router-dom';
 
 const LeftoversPage: React.FC = () => {
   const { apiFetch, confirm, showError, user } = useApplicationContext();
   const [leftovers, setLeftovers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const recipeId = params.get('recipeId');
+
   const fetchLeftovers = async () => {
     if (!user) return;
     setLoading(true);
     try {
-      const res = await apiFetch<any[]>('/api/leftovers', 'GET');
+      const url = recipeId ? `/api/leftovers?recipeId=${recipeId}` : '/api/leftovers';
+      const res = await apiFetch<any[]>(url, 'GET');
       setLeftovers(res.data || []);
     } catch (err) {
       showError(err);

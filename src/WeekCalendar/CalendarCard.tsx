@@ -76,7 +76,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
 
   const handleDouble = () => {
     if (recipe.isLeftover) {
-      navigate('/leftovers');
+      navigate(`/leftovers?recipeId=${recipe._id}`);
     } else if (recipe._id) {
       navigate(`/recipe/${recipe._id}`);
     }
@@ -145,18 +145,33 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
             >
               <LinkOff />
             </Button>
-            <Button
-              onClick={openAddLeftover}
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 56,
-                zIndex: 1
-              }}
-              variant="outlined"
-            >
-              Add Leftover
-            </Button>
+            {recipe.isLeftover ? (
+              <Button
+                onClick={() => navigate(`/leftovers?recipeId=${recipe._id}`)}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 56,
+                  zIndex: 1
+                }}
+                variant="outlined"
+              >
+                View Freezer
+              </Button>
+            ) : (
+              <Button
+                onClick={openAddLeftover}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 56,
+                  zIndex: 1
+                }}
+                variant="outlined"
+              >
+                Add Leftover
+              </Button>
+            )}
             <Typography variant="h6" sx={{ marginTop: '25px' }}>
               {recipe.name}
             </Typography>
