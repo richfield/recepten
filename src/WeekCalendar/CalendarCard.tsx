@@ -69,7 +69,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         // fetch claimed on this day using start/end ISO to avoid timezone issues
         const startISO = day.clone().startOf('day').toISOString();
         const endISO = day.clone().endOf('day').toISOString();
-        const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
+        const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
         const claimed = res2?.data ?? [] as LeftoverData[];
         let claimedWithNames: LeftoverData[] = [];
         if (Array.isArray(claimed) && claimed.length > 0) {
@@ -89,8 +89,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
 
         // Combine inFreezer items with claimed items for display; include claimed items even though not in freezer
         const combined: LeftoverData[] = [];
-        // fetch inFreezer items explicitly
-        const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}&status=inFreezer`, 'GET');
+        // fetch all inFreezer items (full freezer contents)
+        const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?status=inFreezer`, 'GET');
         const dataIn = resIn?.data ?? [] as LeftoverData[];
         if (Array.isArray(dataIn)) {
           combined.push(...dataIn);
