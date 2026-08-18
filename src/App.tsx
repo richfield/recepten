@@ -282,7 +282,7 @@ function App() {
       </AppBar>
       <Container style={{ marginTop: "10px" }}>
         <Routes>
-          <Route path="/" element={todaysRecipe ? <Navigate to={`/recipe/${todaysRecipe}`} /> : <RecipeList />} />
+          <Route path="/" element={todaysRecipe ? (todaysRecipe === 'leftovers' ? <Navigate to="/leftovers" /> : <Navigate to={`/recipe/${todaysRecipe}`} />) : <RecipeList />} />
           <Route path="/list" element={<RecipeList />} />
           <Route path="/recipes" element={<RecipeList />} />
           <Route path="/scraper" element={<RecipeScraper />} />

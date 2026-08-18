@@ -45,7 +45,8 @@ export type RecipeData = {
     recipeCuisine?: string[];
     aggregateRating?: string; // Optional field
     video?: string; // Optional field
-    _id?: string;
+   isLeftover?: boolean;
+   _id?: string;
 };
 
 export interface Translations {

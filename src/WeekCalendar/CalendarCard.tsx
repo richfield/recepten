@@ -45,7 +45,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   };
 
   const handleDouble = () => {
-    if (recipe.name && recipe.name.toLowerCase() === 'leftovers') {
+    if (recipe.isLeftover) {
       navigate('/leftovers');
     } else if (recipe._id) {
       navigate(`/recipe/${recipe._id}`);
