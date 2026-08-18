@@ -72,8 +72,7 @@ const LeftoversPage: React.FC = () => {
                   <CardContent>
                     <Typography variant="h6">{l.recipe?.name}</Typography>
                     <Typography variant="body2">{l.portion || translate('portion', language)}</Typography>
-                    <Typography variant="caption" display="block">{translate('addedBy', language)} {l.addedBy || 'Unknown'}</Typography>
-                    <Typography variant="caption" display="block">{translate('addedAt', language)} {moment(l.addedAt).format('LLL')}</Typography>
+                    <Typography variant="caption" display="block">{translate('addedAt', language)} {moment(l.addedAt).format('LL')}</Typography>
                     <Box sx={{ mt: 1 }}>
                       <Tooltip title={translate('claim', language)}>
                         <IconButton color="primary" onClick={() => handleClaim(l._id)}>
