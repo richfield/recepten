@@ -97,6 +97,35 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     })
   }
 
+  // Profile cache to avoid repeated /api/profile/batch calls
+  const profileCacheRef = React.useRef<Record<string, { uid: string; displayName?: string; email?: string }>>({});
+
+  const getProfilesByUids = React.useCallback(async (uids: string[]) => {
+    const result: Record<string, { uid: string; displayName?: string; email?: string }> = {};
+    const missing: string[] = [];
+    uids.forEach(u => {
+      if (profileCacheRef.current[u]) {
+        result[u] = profileCacheRef.current[u];
+      } else {
+        missing.push(u);
+      }
+    });
+    if (missing.length > 0) {
+      try {
+        const resp = await apiFetch(`/api/profile/batch?uids=${missing.join(',')}`, 'GET');
+        const profiles = resp.data || [];
+        profiles.forEach((p: any) => {
+          profileCacheRef.current[p.uid] = { uid: p.uid, displayName: p.displayName, email: p.email };
+          result[p.uid] = profileCacheRef.current[p.uid];
+        });
+      } catch (e) {
+        // On error, populate missing uids with uid as fallback
+        missing.forEach(u => { result[u] = { uid: u, displayName: u }; });
+      }
+    }
+    return result;
+  }, [apiFetch]);
+
   const handleClose = (result: boolean) => {
     dialog?.resolve(result);
     setDialog(null);
@@ -231,7 +260,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [profile])
 
   return (
-    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe, showError }}>
+    <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe, showError, getProfilesByUids }}>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
         <ThemeProvider theme={theme}>
           {children}

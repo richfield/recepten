@@ -27,6 +27,8 @@ interface ApplicationContextType {
   confirm: (message: string, options?: ConfirmDialogProps) => Promise<boolean>;
   showError: (message: unknown) => Promise<void>;
   todaysRecipe: string;
+  // Resolve profile display names for a set of Firebase UIDs. Caches results to avoid repeated network requests.
+  getProfilesByUids: (uids: string[]) => Promise<Record<string, { uid: string; displayName?: string; email?: string }>>;
 }
 
 export const ApplicationContext = createContext<ApplicationContextType | undefined>(undefined);
