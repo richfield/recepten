@@ -4,6 +4,7 @@ import { useApplicationContext } from '../Components/ApplicationContext/useAppli
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
 import { translate } from '../utils.js';
+import { LeftoverData } from '../Types.js';
 
 const LeftoversPage: React.FC = () => {
   const { apiFetch, confirm, showError, user, language } = useApplicationContext();

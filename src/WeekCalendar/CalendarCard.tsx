@@ -13,7 +13,7 @@ import {
   DialogActions,
   Box
 } from "@mui/material";
-import { RecipeData } from "../Types.js";
+import { RecipeData, LeftoverData, ProfileInfo } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
 import { LinkOff } from "@mui/icons-material";
