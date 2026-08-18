@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { RecipeData, LeftoverData } from "../Types.js";
 import { CheckCircle, Undo, Add } from '@mui/icons-material';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton, Tooltip, Avatar } from '@mui/material';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
 import { LinkOff } from "@mui/icons-material";
@@ -77,8 +77,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         const uids = Array.from(new Set(claimed.map((c: LeftoverData) => c.claimedBy).filter(Boolean))) as string[];
         if (uids.length > 0) {
           try {
-            const nameMap = await getProfileNames(uids);
-            claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
+            const profileMap = await getProfileNames(uids);
+            claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: profileMap[c.claimedBy || '']?.displayName, claimedByPhoto: profileMap[c.claimedBy || '']?.photoURL }));
           } catch (e) {
             claimedWithNames = claimed as LeftoverData[];
           }
@@ -86,7 +86,6 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
           claimedWithNames = claimed as LeftoverData[];
         }
       }
-
       // Combine inFreezer items with claimed items for display; include claimed items even though not in freezer
       const combined: LeftoverData[] = [];
       // fetch all inFreezer items (full freezer contents)
@@ -221,9 +220,19 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                 {displayList.map((c) => (
                   <Box key={c._id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="caption" sx={{ flex: 1 }}>
-                      {c.recipe?.name || recipe.name} {c.portion || ''}
-                      {!c.inFreezer && c.claimedByName ? ` (${c.claimedByName})` : ''}                      
+                      {c.recipe?.name || recipe.name} — {c.portion || ''}
                     </Typography>
+
+                    {/* Show claimant avatar instead of name when claimed */}
+                    {!c.inFreezer && (
+                      <Avatar
+                        src={c.claimedByPhoto}
+                        alt={c.claimedByName || ''}
+                        sx={{ width: 28, height: 28 }}
+                      >
+                        {(!c.claimedByPhoto && c.claimedByName) ? (c.claimedByName.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase()) : null}
+                      </Avatar>
+                    )}
 
                     {/* Claim button for in-freezer items */}
                     {c.inFreezer && (

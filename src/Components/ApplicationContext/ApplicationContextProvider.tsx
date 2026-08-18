@@ -172,30 +172,30 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     return URL.createObjectURL(blob);
   }, [user]);
 
-  // Profile cache for display names
-  const profileNameCache = React.useRef<Record<string, string>>({});
+  // Profile cache for profile info (displayName, email, photoURL)
+  const profileCache = React.useRef<Record<string, { displayName?: string; email?: string; photoURL?: string }>>({});
 
   const getProfileNames = useCallback(async (uids: string[]) => {
-    const result: Record<string, string> = {};
+    const result: Record<string, { displayName?: string; email?: string; photoURL?: string }> = {};
     const missing: string[] = [];
     uids.forEach(u => {
-      if (profileNameCache.current[u]) result[u] = profileNameCache.current[u];
+      if (profileCache.current[u]) result[u] = profileCache.current[u];
       else missing.push(u);
     });
     if (missing.length === 0) return result;
 
     try {
       // fetch batch from backend
-      const res = await apiFetch<{ uid: string; displayName?: string; email?: string }[]>(`/api/profile/batch?uids=${missing.join(',')}`, 'GET');
+      const res = await apiFetch<{ uid: string; displayName?: string; email?: string; photoURL?: string }[]>(`/api/profile/batch?uids=${missing.join(',')}`, 'GET');
       const profiles = res.data || [];
       profiles.forEach(p => {
-        const name = p.displayName || p.email || p.uid;
-        profileNameCache.current[p.uid] = name;
-        result[p.uid] = name;
+        const info = { displayName: p.displayName || p.email || p.uid, email: p.email, photoURL: p.photoURL };
+        profileCache.current[p.uid] = info;
+        result[p.uid] = info;
       });
     } catch (e) {
       // fallback: use uid
-      missing.forEach(u => { result[u] = u; });
+      missing.forEach(u => { result[u] = { displayName: u }; });
     }
     return result;
   }, [apiFetch]);

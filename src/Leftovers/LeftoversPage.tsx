@@ -29,8 +29,8 @@ const LeftoversPage: React.FC = () => {
       const claimedUids = Array.from(new Set(items.filter(i => !i.inFreezer && i.claimedBy).map(i => i.claimedBy as string)));
       if (claimedUids.length > 0) {
         try {
-          const nameMap = await getProfileNames(claimedUids);
-          items = items.map(i => ({ ...i, claimedByName: i.claimedBy ? nameMap[i.claimedBy as string] : undefined }));
+          const profileMap = await getProfileNames(claimedUids);
+          items = items.map(i => ({ ...i, claimedByName: i.claimedBy ? profileMap[i.claimedBy as string]?.displayName : undefined, claimedByPhoto: i.claimedBy ? profileMap[i.claimedBy as string]?.photoURL : undefined }));
         } catch (e) {
           // ignore name lookup failures
         }

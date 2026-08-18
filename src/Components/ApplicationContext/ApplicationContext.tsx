@@ -28,7 +28,7 @@ interface ApplicationContextType {
   showError: (message: unknown) => Promise<void>;
   todaysRecipe: string;
   // Fetch/display name lookup with caching: returns a map uid->displayName
-  getProfileNames: (uids: string[]) => Promise<Record<string, string>>;
+  getProfileNames: (uids: string[]) => Promise<Record<string, { displayName?: string; email?: string; photoURL?: string }>>;
 }
 
 export const ApplicationContext = createContext<ApplicationContextType | undefined>(undefined);

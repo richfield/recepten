@@ -127,16 +127,18 @@ export type ProfileInfo = {
     uid: string;
     displayName?: string;
     email?: string;
+photoURL?: string;
 }
 
 export type LeftoverData = {
-    _id: string;
-    recipe?: RecipeData;
-    addedBy?: string;
-    addedAt?: string | Date;
-    portion?: string;
-    inFreezer?: boolean;
-    claimedBy?: string;
-    claimedAt?: string | Date;
-    claimedByName?: string;
+_id: string;
+recipe?: RecipeData;
+addedBy?: string;
+addedAt?: string | Date;
+portion?: string;
+inFreezer?: boolean;
+claimedBy?: string;
+claimedAt?: string | Date;
+claimedByName?: string;
+claimedByPhoto?: string;
 }
