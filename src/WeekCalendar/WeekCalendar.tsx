@@ -226,6 +226,7 @@ const WeekCalendar: React.FC = () => {
                         recipe={recipe}
                         day={day}
                         handleUnlink={onUnlink}
+                        onLeftoverAdded={() => fetchData(`/api/calendar/dates-with-recipes`)}
                       />
                   ))}
                 </Grid2>
