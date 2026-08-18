@@ -14,7 +14,7 @@ import {
   Box
 } from "@mui/material";
 import { RecipeData, LeftoverData } from "../Types.js";
-import { CheckCircle, Add, DeleteForever } from '@mui/icons-material';
+import { CheckCircle, Add } from '@mui/icons-material';
 import { IconButton, Tooltip, Avatar } from '@mui/material';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
@@ -35,7 +35,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   handleUnlink,
   onLeftoverAdded
 }) => {
-  const { fetchAuthenticatedImage, apiFetch, confirm, showError, showMessage, user, language, getProfileNames, isAdmin } = useApplicationContext();
+  const { fetchAuthenticatedImage, apiFetch, confirm, showError, showMessage, user, language, getProfileNames } = useApplicationContext();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [openLeftoverDialog, setOpenLeftoverDialog] = useState(false);
