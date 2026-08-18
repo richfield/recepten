@@ -10,13 +10,15 @@ import {
   DialogTitle,
   DialogContent,
   TextField,
-  DialogActions
+  DialogActions,
+  Box
 } from "@mui/material";
 import { RecipeData } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
 import { LinkOff } from "@mui/icons-material";
 import { Moment } from "moment";
+import moment from 'moment';
 import { useNavigate } from "react-router-dom";
 
 interface CalendarCardProps {
@@ -39,6 +41,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   const [portionText, setPortionText] = useState('');
   const [adding, setAdding] = useState(false);
   const [leftoverCount, setLeftoverCount] = useState<number>(0);
+  const [claimedList, setClaimedList] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -51,23 +54,35 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   }, [recipe._id, fetchAuthenticatedImage]);
 
   useEffect(() => {
-    const fetchCount = async () => {
+    const fetchCountAndClaims = async () => {
       try {
         if (!recipe._id) return;
-        const res = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
+        // fetch inFreezer count
+        const res = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}&status=inFreezer`, 'GET');
         const data = res?.data ?? [];
         if (Array.isArray(data)) {
           setLeftoverCount(data.length);
         } else {
           setLeftoverCount(0);
         }
+
+        // fetch claimed on this day
+        const dateStr = day.format('YYYY-MM-DD');
+        const res2 = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&date=${dateStr}`, 'GET');
+        const claimed = res2?.data ?? [];
+        if (Array.isArray(claimed)) {
+          setClaimedList(claimed);
+        } else {
+          setClaimedList([]);
+        }
       } catch (err) {
-        // ignore errors for count
+        // ignore errors for count/claims
         setLeftoverCount(0);
+        setClaimedList([]);
       }
     };
-    fetchCount();
-  }, [recipe._id, apiFetch]);
+    fetchCountAndClaims();
+  }, [recipe._id, apiFetch, day]);
 
   const handleClick = (day: Moment) => {
     if (recipe._id) {
@@ -182,6 +197,16 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
             <Typography variant="body2" color="textSecondary">
               {recipe.description}
             </Typography>
+            {recipe.isLeftover && claimedList.length > 0 && (
+              <Box sx={{ mt: 1 }}>
+                <Typography variant="subtitle2">Claims on this day:</Typography>
+                {claimedList.map((c) => (
+                  <Typography key={c._id} variant="caption" display="block">
+                    {c.portion || ''} — {translate('addedBy', language)} {c.claimedBy || 'Unknown'} ({moment(c.claimedAt).format('LLL')})
+                  </Typography>
+                ))}
+              </Box>
+            )}
           </CardContent>
         </Grid2>
       </Grid2>
