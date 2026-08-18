@@ -41,8 +41,6 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   const [portionText, setPortionText] = useState('');
   const [adding, setAdding] = useState(false);
   const [leftoverCount, setLeftoverCount] = useState<number>(0);
-  const [claimedList, setClaimedList] = useState<LeftoverData[]>([]);
-  const [inFreezerList, setInFreezerList] = useState<LeftoverData[]>([]);
   const [displayList, setDisplayList] = useState<LeftoverData[]>([]);
 
   useEffect(() => {
@@ -64,10 +62,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         const data = res?.data ?? [];
         if (Array.isArray(data)) {
           setLeftoverCount(data.length);
-          setInFreezerList(data as LeftoverData[]);
         } else {
           setLeftoverCount(0);
-          setInFreezerList([]);
         }
 
         // fetch claimed on this day using start/end ISO to avoid timezone issues
@@ -75,7 +71,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         const endISO = day.clone().endOf('day').toISOString();
         const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
         const claimed = res2?.data ?? [] as LeftoverData[];
-        if (Array.isArray(claimed)) {
+        let claimedWithNames: LeftoverData[] = [];
+        if (Array.isArray(claimed) && claimed.length > 0) {
           // resolve user display names via profile batch
           const uids = Array.from(new Set(claimed.map((c: LeftoverData) => c.claimedBy).filter(Boolean))) as string[];
           if (uids.length > 0) {
@@ -84,27 +81,26 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
               const profiles = profilesRes.data || [];
               const nameMap: Record<string, string> = {};
               profiles.forEach((p: ProfileInfo) => { nameMap[p.uid] = p.displayName || p.email || p.uid; });
-              const claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
-              setClaimedList(claimedWithNames as LeftoverData[]);
+              claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
             } catch (e) {
-              setClaimedList(claimed as LeftoverData[]);
+              claimedWithNames = claimed as LeftoverData[];
             }
           } else {
-            setClaimedList(claimed as LeftoverData[]);
+            claimedWithNames = claimed as LeftoverData[];
           }
-        } else {
-          setClaimedList([]);
         }
 
         // Combine inFreezer items with claimed items for display; include claimed items even though not in freezer
         const combined: LeftoverData[] = [];
-        // Show inFreezer items first
-        if (Array.isArray(data)) {
-          combined.push(...(data as LeftoverData[]));
+        // fetch inFreezer items explicitly
+        const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}&status=inFreezer`, 'GET');
+        const dataIn = resIn?.data ?? [] as LeftoverData[];
+        if (Array.isArray(dataIn)) {
+          combined.push(...dataIn);
         }
         // Then add claimed items for the day (avoid duplicates by _id)
         const seen = new Set(combined.map(i => i._id));
-        (claimed as LeftoverData[]).forEach((c) => {
+        claimedWithNames.forEach((c) => {
           if (!seen.has(c._id)) combined.push(c);
         });
         setDisplayList(combined);
