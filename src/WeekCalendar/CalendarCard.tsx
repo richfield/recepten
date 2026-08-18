@@ -66,12 +66,28 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
           setLeftoverCount(0);
         }
 
-        // fetch claimed on this day
-        const dateStr = day.format('YYYY-MM-DD');
-        const res2 = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&date=${dateStr}`, 'GET');
+        // fetch claimed on this day using start/end ISO to avoid timezone issues
+        const startISO = day.clone().startOf('day').toISOString();
+        const endISO = day.clone().endOf('day').toISOString();
+        const res2 = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
         const claimed = res2?.data ?? [];
         if (Array.isArray(claimed)) {
-          setClaimedList(claimed);
+          // resolve user display names via profile batch
+          const uids = Array.from(new Set(claimed.map((c: any) => c.claimedBy).filter(Boolean)));
+          if (uids.length > 0) {
+            try {
+              const profilesRes = await apiFetch(`/api/profile/batch?uids=${uids.join(',')}`, 'GET');
+              const profiles = profilesRes.data || [];
+              const nameMap: Record<string, string> = {};
+              profiles.forEach((p: any) => { nameMap[p.uid] = p.displayName; });
+              const claimedWithNames = claimed.map((c: any) => ({ ...c, claimedByName: nameMap[c.claimedBy] || c.claimedBy }));
+              setClaimedList(claimedWithNames);
+            } catch (e) {
+              setClaimedList(claimed);
+            }
+          } else {
+            setClaimedList(claimed);
+          }
         } else {
           setClaimedList([]);
         }
@@ -202,7 +218,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                 <Typography variant="subtitle2">Claims on this day:</Typography>
                 {claimedList.map((c) => (
                   <Typography key={c._id} variant="caption" display="block">
-                    {c.portion || ''} — {translate('addedBy', language)} {c.claimedBy || 'Unknown'} ({moment(c.claimedAt).format('LLL')})
+                    {c.portion || ''} — {translate('addedBy', language)} {c.claimedByName || c.claimedBy || 'Unknown'} ({moment(c.claimedAt).format('LLL')})
                   </Typography>
                 ))}
               </Box>
