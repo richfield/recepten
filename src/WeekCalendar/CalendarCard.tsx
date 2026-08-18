@@ -77,7 +77,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
           if (uids.length > 0) {
             try {
               const profilesRes = await apiFetch(`/api/profile/batch?uids=${uids.join(',')}`, 'GET');
-              const profiles = profilesRes.data || [];
+              const profiles = (profilesRes.data || []) as any[];
               const nameMap: Record<string, string> = {};
               profiles.forEach((p: any) => { nameMap[p.uid] = p.displayName; });
               const claimedWithNames = claimed.map((c: any) => ({ ...c, claimedByName: nameMap[c.claimedBy] || c.claimedBy }));
