@@ -3,9 +3,10 @@ import { Box, Typography, Button, Card, CardContent, CardMedia, Grid } from '@mu
 import { useApplicationContext } from '../Components/ApplicationContext/useApplicationContext.js';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
+import { translate } from '../utils.js';
 
 const LeftoversPage: React.FC = () => {
-  const { apiFetch, confirm, showError, user } = useApplicationContext();
+  const { apiFetch, confirm, showError, user, language } = useApplicationContext();
   const [leftovers, setLeftovers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -45,11 +46,11 @@ const LeftoversPage: React.FC = () => {
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h5" gutterBottom>
-        Leftovers in freezer
+        {translate('leftoversInFreezer', language)}
       </Typography>
-      {loading && <Typography>Loading...</Typography>}
+      {loading && <Typography>{translate('loading', language)}</Typography>}
       {leftovers.length === 0 && !loading && (
-        <Typography>No leftovers currently in the freezer.</Typography>
+        <Typography>{translate('noLeftovers', language)}</Typography>
       )}
       <Grid container spacing={2}>
         {leftovers.map((l) => (
@@ -67,12 +68,12 @@ const LeftoversPage: React.FC = () => {
                 <Grid item xs={8}>
                   <CardContent>
                     <Typography variant="h6">{l.recipe?.name}</Typography>
-                    <Typography variant="body2">{l.portion || 'Portion'}</Typography>
-                    <Typography variant="caption" display="block">Added by: {l.addedBy || 'Unknown'}</Typography>
-                    <Typography variant="caption" display="block">Added: {moment(l.addedAt).format('LLL')}</Typography>
+                    <Typography variant="body2">{l.portion || translate('portion', language)}</Typography>
+                    <Typography variant="caption" display="block">{translate('addedBy', language)} {l.addedBy || 'Unknown'}</Typography>
+                    <Typography variant="caption" display="block">{translate('addedAt', language)} {moment(l.addedAt).format('LLL')}</Typography>
                     <Box sx={{ mt: 1 }}>
                       <Button variant="contained" color="primary" onClick={() => handleClaim(l._id)}>
-                        Claim
+                        {translate('claim', language)}
                       </Button>
                     </Box>
                   </CardContent>

@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { RecipeData } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
+import { translate } from "../utils.js";
 import { LinkOff } from "@mui/icons-material";
 import { Moment } from "moment";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +32,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   handleUnlink,
   onLeftoverAdded
 }) => {
-  const { fetchAuthenticatedImage, apiFetch, confirm, showError, user } = useApplicationContext();
+  const { fetchAuthenticatedImage, apiFetch, confirm, showError, user, language } = useApplicationContext();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [openLeftoverDialog, setOpenLeftoverDialog] = useState(false);
@@ -156,7 +157,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                 }}
                 variant="outlined"
               >
-                View Freezer
+              {translate('viewFreezer', language)}
               </Button>
             ) : (
               <Button
@@ -169,14 +170,14 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                 }}
                 variant="outlined"
               >
-                Add Leftover
+              {translate('addLeftover', language)}
               </Button>
             )}
             <Typography variant="h6" sx={{ marginTop: '25px' }}>
               {recipe.name}
             </Typography>
-            <Typography variant="caption" color="textSecondary" sx={{ display: 'block', marginTop: '4px' }}>
-              In freezer: {leftoverCount}
+                    <Typography variant="caption" color="textSecondary" sx={{ display: 'block', marginTop: '4px' }}>
+                      {translate('inFreezer', language)} {leftoverCount}
             </Typography>
             <Typography variant="body2" color="textSecondary">
               {recipe.description}
@@ -187,12 +188,12 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
     </Card>
 
     <Dialog open={openLeftoverDialog} onClose={closeAddLeftover}>
-      <DialogTitle>Add leftover to freezer</DialogTitle>
+      <DialogTitle>{translate('addLeftover', language)}</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
-          label="Portion description"
+          label={translate('portion', language)}
           type="text"
           fullWidth
           value={portionText}
@@ -200,8 +201,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeAddLeftover}>Cancel</Button>
-        <Button onClick={submitLeftover} disabled={adding} variant="contained">Add</Button>
+        <Button onClick={closeAddLeftover}>{translate('Cancel', language)}</Button>
+        <Button onClick={submitLeftover} disabled={adding} variant="contained">{translate('add', language)}</Button>
       </DialogActions>
     </Dialog>
     </>
