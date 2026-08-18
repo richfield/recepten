@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, Card, CardContent, CardMedia, Grid } from '@mui/material';
+import { Box, Typography, IconButton, Button, Card, CardContent, CardMedia, Grid, Tooltip } from '@mui/material';
+import { CheckCircle, Undo } from '@mui/icons-material';
 import { useApplicationContext } from '../Components/ApplicationContext/useApplicationContext.js';
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
@@ -74,9 +75,11 @@ const LeftoversPage: React.FC = () => {
                     <Typography variant="caption" display="block">{translate('addedBy', language)} {l.addedBy || 'Unknown'}</Typography>
                     <Typography variant="caption" display="block">{translate('addedAt', language)} {moment(l.addedAt).format('LLL')}</Typography>
                     <Box sx={{ mt: 1 }}>
-                      <Button variant="contained" color="primary" onClick={() => handleClaim(l._id)}>
-                        {translate('claim', language)}
-                      </Button>
+                      <Tooltip title={translate('claim', language)}>
+                        <IconButton color="primary" onClick={() => handleClaim(l._id)}>
+                          <CheckCircle />
+                        </IconButton>
+                      </Tooltip>
                     </Box>
                   </CardContent>
                 </Grid>
