@@ -182,7 +182,7 @@ function App() {
                 {translate("calendar", language)}
               </Button>
                         <Button color="inherit" onClick={() => navigate("/leftovers")} startIcon={<ListAltTwoTone />} style={{ marginRight: "10px" }}>
-                          Leftovers
+                                    {translate('leftovers', language)}
                         </Button>
                         <SearchField />
                       </>
@@ -243,6 +243,19 @@ function App() {
                     {translate("calendar", language)}
                   </Typography>
                 </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate("/leftovers");
+                    handleMobileMenuClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <ListAltTwoTone fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    {translate("leftovers", language)}
+                  </Typography>
+                </MenuItem>
                 <MenuItem>
                   <SearchField />
                 </MenuItem>
@@ -259,7 +272,10 @@ function App() {
                   <ListItem component={Link} to="/scraper">
                     <ListItemText primary={translate("add", language)} />
                   </ListItem>
-                </List>
+                    <ListItem component={Link} to="/leftovers">
+                      <ListItemText primary={translate("leftovers", language)} />
+                    </ListItem>
+                  </List>
               </Drawer>
             </>
           )}
