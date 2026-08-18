@@ -232,9 +232,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                 {displayList.map((c) => (
                   <Box key={c._id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="caption" sx={{ flex: 1 }}>
-                      {c.recipe?.name || recipe.name} — {c.portion || ''} — {c.inFreezer ? translate('inFreezer', language) : translate('claimed', language)}
-                      {!c.inFreezer && c.claimedByName ? ` (${c.claimedByName})` : ''}
-                      {c.claimedAt ? ` - ${moment(c.claimedAt).format('LLL')}` : ''}
+                      {c.recipe?.name || recipe.name} — {c.portion || ''}
+                      {!c.inFreezer && c.claimedByName ? ` (${c.claimedByName})` : ''}                      
                     </Typography>
 
                     {/* Claim button for in-freezer items */}
