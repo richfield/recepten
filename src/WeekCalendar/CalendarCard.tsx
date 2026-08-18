@@ -222,7 +222,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                 {displayList.map((c) => (
                   <Box key={c._id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="caption" sx={{ flex: 1 }}>
-                      {c.recipe?.name || recipe.name} — {c.portion || ''}
+                      {c.recipe?.name || recipe.name} {c.portion || ''}
                     </Typography>
 
                     {/* Show claimant avatar instead of name when claimed */}
