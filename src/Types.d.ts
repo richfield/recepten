@@ -122,3 +122,21 @@ export type DatesResponse = {
     _id: Date,
     recipes: RecipeData[]
 }
+
+export type ProfileInfo = {
+    uid: string;
+    displayName?: string;
+    email?: string;
+}
+
+export type LeftoverData = {
+    _id: string;
+    recipe?: RecipeData;
+    addedBy?: string;
+    addedAt?: string | Date;
+    portion?: string;
+    inFreezer?: boolean;
+    claimedBy?: string;
+    claimedAt?: string | Date;
+    claimedByName?: string;
+}

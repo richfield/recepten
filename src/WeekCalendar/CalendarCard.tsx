@@ -69,24 +69,24 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         // fetch claimed on this day using start/end ISO to avoid timezone issues
         const startISO = day.clone().startOf('day').toISOString();
         const endISO = day.clone().endOf('day').toISOString();
-        const res2 = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
-        const claimed = res2?.data ?? [];
+        const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
+        const claimed = res2?.data ?? [] as LeftoverData[];
         if (Array.isArray(claimed)) {
           // resolve user display names via profile batch
-          const uids = Array.from(new Set(claimed.map((c: any) => c.claimedBy).filter(Boolean)));
+          const uids = Array.from(new Set(claimed.map((c: LeftoverData) => c.claimedBy).filter(Boolean))) as string[];
           if (uids.length > 0) {
             try {
-              const profilesRes = await apiFetch(`/api/profile/batch?uids=${uids.join(',')}`, 'GET');
-              const profiles = (profilesRes.data || []) as any[];
+              const profilesRes = await apiFetch<ProfileInfo[]>(`/api/profile/batch?uids=${uids.join(',')}`, 'GET');
+              const profiles = profilesRes.data || [];
               const nameMap: Record<string, string> = {};
-              profiles.forEach((p: any) => { nameMap[p.uid] = p.displayName; });
-              const claimedWithNames = claimed.map((c: any) => ({ ...c, claimedByName: nameMap[c.claimedBy] || c.claimedBy }));
-              setClaimedList(claimedWithNames);
+              profiles.forEach((p: ProfileInfo) => { nameMap[p.uid] = p.displayName || p.email || p.uid; });
+              const claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: nameMap[c.claimedBy || ''] }));
+              setClaimedList(claimedWithNames as any[]);
             } catch (e) {
-              setClaimedList(claimed);
+              setClaimedList(claimed as any[]);
             }
           } else {
-            setClaimedList(claimed);
+            setClaimedList(claimed as any[]);
           }
         } else {
           setClaimedList([]);

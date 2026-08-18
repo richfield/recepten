@@ -19,7 +19,7 @@ const LeftoversPage: React.FC = () => {
     setLoading(true);
     try {
       const url = recipeId ? `/api/leftovers?recipeId=${recipeId}` : '/api/leftovers';
-      const res = await apiFetch<any[]>(url, 'GET');
+      const res = await apiFetch<LeftoverData[]>(url, 'GET');
       setLeftovers(res.data || []);
     } catch (err) {
       showError(err);
