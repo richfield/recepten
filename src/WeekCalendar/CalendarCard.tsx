@@ -14,7 +14,7 @@ import {
   Box
 } from "@mui/material";
 import { RecipeData, LeftoverData } from "../Types.js";
-import { CheckCircle, Undo } from '@mui/icons-material';
+import { CheckCircle, Undo, Add } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "../utils.js";
@@ -189,32 +189,22 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
             >
               <LinkOff />
             </Button>
-            {recipe.isLeftover ? (
-              <Button
-                onClick={() => navigate(`/leftovers?recipeId=${recipe._id}`)}
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 56,
-                  zIndex: 1
-                }}
-                variant="outlined"
-              >
-              {translate('viewFreezer', language)}
-              </Button>
-            ) : (
-              <Button
-                onClick={openAddLeftover}
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 56,
-                  zIndex: 1
-                }}
-                variant="outlined"
-              >
-              {translate('addLeftover', language)}
-              </Button>
+            {/* Remove 'View Freezer' button because the card already shows freezer contents */}
+            {!recipe.isLeftover && (
+              <Tooltip title={translate('addLeftover', language)}>
+                <IconButton
+                  onClick={openAddLeftover}
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    right: 56,
+                    zIndex: 1
+                  }}
+                  size="small"
+                >
+                  <Add />
+                </IconButton>
+              </Tooltip>
             )}
             <Typography variant="h6" sx={{ marginTop: '25px' }}>
               {recipe.name}
