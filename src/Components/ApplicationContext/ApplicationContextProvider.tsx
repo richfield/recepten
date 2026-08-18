@@ -216,7 +216,8 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
           return;
         }
         const today = moment().startOf('day');
-        const response = await apiFetch<string>('/api/calendar/today', 'POST', { date: today.toDate() });
+                // send an ISO timestamp (UTC) to make date handling explicit and consistent with other calls
+                const response = await apiFetch<string>('/api/calendar/today', 'POST', { date: today.toISOString() });
         setTodaysRecipe(response.data);
       } catch (error) {
         console.error('Error fetching recipe data:', error);
