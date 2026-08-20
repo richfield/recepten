@@ -21,7 +21,7 @@ const LeftoversPage: React.FC = () => {
     setLoading(true);
     try {
       // Request all leftovers (both inFreezer and claimed) for the optional recipeId
-      const url = recipeId ? `/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=all` : '/api/leftovers?status=all';
+      const url = recipeId ? `/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=all` : '/api/leftovers?status=allFuture';
       const res = await apiFetch<LeftoverData[]>(url, 'GET');
       let items = res.data || [];
 
