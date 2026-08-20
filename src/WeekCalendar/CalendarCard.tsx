@@ -272,7 +272,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                           const ok = await confirm(translate('claimConfirm', language));
                           if (!ok) return;
                           try {
-                            await apiFetch(`/api/leftovers/${c._id}/claim`, 'POST');
+                            await apiFetch(`/api/leftovers/${c._id}/claim`, 'POST', JSON.stringify({ day }));
                             // refresh list
                             fetchCountAndClaims();
                             if (onLeftoverAdded) onLeftoverAdded();
