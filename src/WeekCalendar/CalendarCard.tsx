@@ -253,6 +253,7 @@ const fetchCountAndClaims = useCallback(async () => {
               <Tooltip title={translate('addLeftover', language)}>
                 <IconButton
                   onClick={openAddLeftover}
+                  color="primary"
                   sx={{
                     position: "absolute",
                     top: 8,

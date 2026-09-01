@@ -5,16 +5,29 @@ import { useApplicationContext } from '../Components/ApplicationContext/useAppli
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
 import { translate } from '../utils.js';
-import { LeftoverData } from '../Types.js';
+import { LeftoverData, RecipeData } from '../Types.js';
 
 const LeftoversPage: React.FC = () => {
   const { apiFetch, confirm, showError, showMessage, user, language, getProfileNames, isAdmin } = useApplicationContext();
   const [leftovers, setLeftovers] = useState<LeftoverData[]>([]);
+  const [recipe, setRecipe] = useState<RecipeData | null>(null);
   const [loading, setLoading] = useState(false);
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const recipeId = params.get('recipeId');
+
+  const fetchRecipe = useCallback(async () => {
+    if (!recipeId || !user) return;
+
+    try {
+      const res = await apiFetch<RecipeData>(`/api/recipes/get/${recipeId}`, 'GET');
+      setRecipe(res.data ?? null);
+    } catch (err) {
+      console.error('Error fetching recipe for leftovers page:', err);
+      setRecipe(null);
+    }
+  }, [apiFetch, recipeId, user]);
 
   const fetchLeftovers = useCallback(async () => {
     if (!user) return;
@@ -46,7 +59,8 @@ const LeftoversPage: React.FC = () => {
 
   useEffect(() => {
     fetchLeftovers();
-  }, [fetchLeftovers]);
+    fetchRecipe();
+  }, [fetchLeftovers, fetchRecipe]);
 
   const handleClaim = async (id: string) => {
     if (!(await confirm(translate('claimConfirm', language)))) return;
@@ -72,6 +86,34 @@ const LeftoversPage: React.FC = () => {
 
   return (
     <Box sx={{ padding: 2 }}>
+      {recipe && (
+        <Card sx={{ mb: 3 }}>
+          <Grid container>
+            <Grid item xs={4} md={3}>
+              <CardMedia
+                component="img"
+                image={recipe.images?.[0] || '/default.jpg'}
+                alt={recipe.name}
+                sx={{ width: '100%', height: 180, objectFit: 'cover' }}
+              />
+            </Grid>
+            <Grid item xs={8} md={9}>
+              <CardContent>
+                <Typography variant="h5" gutterBottom>{recipe.name}</Typography>
+                {recipe.description && (
+                  <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                    {recipe.description}
+                  </Typography>
+                )}
+                <Typography variant="caption" color="textSecondary">
+                  {translate('leftoversInFreezer', language)}
+                </Typography>
+              </CardContent>
+            </Grid>
+          </Grid>
+        </Card>
+      )}
+
       <Typography variant="h5" gutterBottom>
         {translate('leftoversInFreezer', language)}
       </Typography>
