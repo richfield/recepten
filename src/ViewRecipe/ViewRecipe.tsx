@@ -30,15 +30,15 @@ const ratingStyles = (theme: Theme) => ({
     },
     '& .MuiRating-iconEmpty': {
         color: 'transparent',
-        stroke: theme.palette.text.primary,
-        strokeWidth: 1.4,
+        stroke: theme.palette.text.secondary,
+        strokeWidth: 1.2,
         fill: 'transparent',
-        opacity: 0.8,
+        opacity: 0.7,
     },
     '& .MuiRating-iconEmpty svg': {
         fill: 'transparent',
-        stroke: theme.palette.text.primary,
-        strokeWidth: 1.4,
+        stroke: theme.palette.text.secondary,
+        strokeWidth: 1.2,
     },
 });
 
@@ -250,7 +250,7 @@ const ViewRecipe: React.FC = () => {
                                 <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Rating</Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                                     <Rating value={ratingSummary.average || 0} precision={0.5} readOnly sx={ratingStyles} />
-                                    <Typography variant="body2">{ratingSummary.count ? ratingSummary.average.toFixed(1) : '0.0'} / 5</Typography>
+                                    <Typography variant="body2">{ratingSummary.count ? Number.isInteger(ratingSummary.average) ? ratingSummary.average.toString() : ratingSummary.average.toFixed(1) : '0'} / 5</Typography>
                                 </Box>
                                 <Typography variant="caption" color="text.secondary">{ratingSummary.count} rating{ratingSummary.count === 1 ? '' : 's'}</Typography>
                                 {user && (

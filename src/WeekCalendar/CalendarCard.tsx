@@ -37,15 +37,15 @@ const ratingStyles = (theme: Theme) => ({
   },
   '& .MuiRating-iconEmpty': {
     color: 'transparent',
-    stroke: theme.palette.text.primary,
-    strokeWidth: 1.4,
+    stroke: theme.palette.text.secondary,
+    strokeWidth: 1.2,
     fill: 'transparent',
-    opacity: 0.8,
+    opacity: 0.7,
   },
   '& .MuiRating-iconEmpty svg': {
     fill: 'transparent',
-    stroke: theme.palette.text.primary,
-    strokeWidth: 1.4,
+    stroke: theme.palette.text.secondary,
+    strokeWidth: 1.2,
   },
 });
 
@@ -275,7 +275,7 @@ const fetchCountAndClaims = useCallback(async () => {
             )}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, flexWrap: 'wrap' }}>
               <Rating value={ratingSummary.average || 0} precision={0.5} readOnly size="small" sx={ratingStyles} />
-              <Typography variant="caption" color="textSecondary">{ratingSummary.count ? ratingSummary.average.toFixed(1) : '0.0'} / 5</Typography>
+              <Typography variant="caption" color="textSecondary">{ratingSummary.count ? Number.isInteger(ratingSummary.average) ? ratingSummary.average.toString() : ratingSummary.average.toFixed(1) : '0'} / 5</Typography>
             </Box>
             {user && (
               <Box sx={{ mt: 1 }}>
