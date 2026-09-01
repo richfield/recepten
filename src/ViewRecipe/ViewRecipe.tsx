@@ -122,11 +122,10 @@ const ViewRecipe: React.FC = () => {
         }
     }, [hideBusy, recipe, showBusy])
 
-    if (!recipe) {
-        return <></>
-    }
-
     const goToEdit = (): void => {
+        if (!recipe?._id) {
+            return;
+        }
         navigate(`/recipe/${recipe._id}/edit`)
     }
 
@@ -197,6 +196,10 @@ const ViewRecipe: React.FC = () => {
             showError(error);
         }
     };
+
+    if (!recipe) {
+        return <Container />;
+    }
 
     return (
         <Container>
