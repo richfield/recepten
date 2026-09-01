@@ -33,10 +33,14 @@ const LeftoversPage: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
-      // Request all leftovers (both inFreezer and claimed) for the optional recipeId
-      const url = recipeId ? `/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=all` : '/api/leftovers?status=allFuture';
-      const res = await apiFetch<LeftoverData[]>(url, 'GET');
+      const recipeSpecificUrl = recipeId ? `/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=all` : '/api/leftovers?status=allFuture';
+      const res = await apiFetch<LeftoverData[]>(recipeSpecificUrl, 'GET');
       let items = res.data || [];
+
+      if (items.length === 0 && recipeId) {
+        const fallbackRes = await apiFetch<LeftoverData[]>('/api/leftovers?status=all', 'GET');
+        items = fallbackRes.data || [];
+      }
 
       // Resolve claimant display names for claimed items so we can show names for others
       const claimedUids = Array.from(new Set(items.filter(i => !i.inFreezer && i.claimedBy).map(i => i.claimedBy as string)));
