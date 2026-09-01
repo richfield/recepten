@@ -1,12 +1,13 @@
 // ViewRecipe Component
 import React, { useCallback, useEffect, useState } from 'react';
-import { Card, CardContent, CardMedia, List, ListItem, Container, Typography, IconButton, Grid2, ListSubheader } from "@mui/material";
+import { Button, Card, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, Container, Typography, IconButton, Grid2, ListSubheader } from "@mui/material";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { RecipeData, Language } from "../Types.js";
 import { translate } from "../utils.js";
-import moment from 'moment/min/moment-with-locales';
+import moment, { Moment } from 'moment/min/moment-with-locales';
 import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
-import { ArrowLeft, ArrowRight, Edit, ExitToApp } from "@mui/icons-material";
+import { ArrowLeft, ArrowRight, CalendarMonth, Edit, ExitToApp } from "@mui/icons-material";
 import ScreenWakeLock from "../Components/ScreenWakeLock/ScreenWakeLock.js";
 import { useBusy } from '../Busy/BusyContext.js';
 import { ingredientMultiplication } from '../multiplier.js';
@@ -26,7 +27,9 @@ const ViewRecipe: React.FC = () => {
     const { language, fetchAuthenticatedImage, apiFetch, showError, user } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
-    const [recipe, setRecipe] = useState<RecipeData>()
+    const [recipe, setRecipe] = useState<RecipeData>();
+    const [selectedDate, setSelectedDate] = useState<Moment | null>(moment());
+    const [calendarDialogOpen, setCalendarDialogOpen] = useState(false);
     useEffect(() => {
         const fetchImage = async () => {
             const image = await fetchAuthenticatedImage(`/api/recipes/${recipe?._id}/image`);
@@ -113,6 +116,22 @@ const ViewRecipe: React.FC = () => {
         navigate(`/recipe/${recipe._id}/edit`)
     }
 
+    const handleAddToCalendar = async () => {
+        if (!recipe?._id || !selectedDate) {
+            return;
+        }
+
+        try {
+            await apiFetch(`/api/calendar/link`, 'POST', { date: selectedDate.toDate(), recipeId: recipe._id }, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            setCalendarDialogOpen(false);
+        } catch (error) {
+            showError(error);
+            console.error('Error adding recipe to calendar:', error);
+        }
+    };
+
     return (
         <Container>
             <Grid2 container spacing={2} justifyContent="space-between" alignItems="center">
@@ -121,6 +140,15 @@ const ViewRecipe: React.FC = () => {
                 </Grid2>
                 <Grid2>
                     <ScreenWakeLock />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<CalendarMonth />}
+                        onClick={() => setCalendarDialogOpen(true)}
+                        sx={{ mr: 1 }}
+                    >
+                        Add to calendar
+                    </Button>
                     <IconButton onClick={toggleEdit}>
                         <ExitToApp />
                     </IconButton>
@@ -191,6 +219,22 @@ const ViewRecipe: React.FC = () => {
                     </Card>
                 </Grid2>
             </Grid2>
+
+            <Dialog open={calendarDialogOpen} onClose={() => setCalendarDialogOpen(false)}>
+                <DialogTitle>Select a date</DialogTitle>
+                <DialogContent>
+                    <DatePicker
+                        value={selectedDate}
+                        onChange={(newValue) => setSelectedDate(newValue)}
+                        format="DD-MM-YYYY"
+                        slotProps={{ textField: { fullWidth: true, margin: 'normal' } }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setCalendarDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={handleAddToCalendar} variant="contained">Add to calendar</Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 };
