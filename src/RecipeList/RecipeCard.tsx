@@ -44,6 +44,7 @@ export const RecipeCard = ({ recipe, index, onDeleted }: { recipe: RecipeData; i
             headers: { 'Content-Type': 'application/json' },
         });
         setCalendarDialogOpen(false);
+        navigate('/calendar', { state: { selectedDate: normalizedDate } });
     };
 
     return (<Grid2 size={{ md: 3, xs: 12 }} key={index}>

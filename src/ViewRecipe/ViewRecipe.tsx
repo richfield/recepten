@@ -128,6 +128,7 @@ const ViewRecipe: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
             });
             setCalendarDialogOpen(false);
+            navigate('/calendar', { state: { selectedDate: normalizedDate } });
         } catch (error) {
             showError(error);
             console.error('Error adding recipe to calendar:', error);

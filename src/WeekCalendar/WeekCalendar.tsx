@@ -18,10 +18,12 @@ import { translate } from "../utils.js";
 import { DatesResponse } from "../Types.js";
 import { useBusy } from "../Busy/BusyContext.js";
 import CalendarCard from "./CalendarCard.js";
+import { useLocation } from "react-router-dom";
 
 const WeekCalendar: React.FC = () => {
   const { language, theme, apiFetch, confirm, user, showError } = useApplicationContext();
   const { showBusy, hideBusy } = useBusy();
+  const location = useLocation();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -81,6 +83,13 @@ const WeekCalendar: React.FC = () => {
     },
     [apiFetch, confirm, fetchData, hideBusy, language, showBusy]
   );
+
+  useEffect(() => {
+    const stateDate = (location.state as { selectedDate?: string | Date } | null)?.selectedDate;
+    if (stateDate) {
+      setCurrentDate(moment(stateDate));
+    }
+  }, [location.state]);
 
   useEffect(() => {
     if (!openModal) {
