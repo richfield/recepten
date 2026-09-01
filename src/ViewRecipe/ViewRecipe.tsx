@@ -140,15 +140,9 @@ const ViewRecipe: React.FC = () => {
                 </Grid2>
                 <Grid2>
                     <ScreenWakeLock />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<CalendarMonth />}
-                        onClick={() => setCalendarDialogOpen(true)}
-                        sx={{ mr: 1 }}
-                    >
-                        Add to calendar
-                    </Button>
+                    <IconButton onClick={() => setCalendarDialogOpen(true)} size="small">
+                        <CalendarMonth />
+                    </IconButton>
                     <IconButton onClick={toggleEdit}>
                         <ExitToApp />
                     </IconButton>

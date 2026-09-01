@@ -40,8 +40,9 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({ searchQuery, selectedDate, 
         }
     }, [searchQuery, fetchData]);
 
-    const handleSelectRecipe = useCallback(async (id: string) => {
-        const result = await apiFetch(`/api/calendar/link`, 'POST', { date: selectedDate, recipeId: id }, {
+    const handleSelectRecipe = useCallback(async (id: string, dateOverride?: Date) => {
+        const selected = dateOverride ?? selectedDate;
+        const result = await apiFetch(`/api/calendar/link`, 'POST', { date: selected, recipeId: id }, {
             headers: { 'Content-Type': 'application/json' },
         });
         if (result) {
