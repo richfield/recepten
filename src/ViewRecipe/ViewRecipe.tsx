@@ -122,7 +122,8 @@ const ViewRecipe: React.FC = () => {
         }
 
         try {
-            const normalizedDate = moment.utc(selectedDate).startOf('day').toDate();
+            const dateStr = selectedDate.format('YYYY-MM-DD');
+            const normalizedDate = moment.utc(dateStr, 'YYYY-MM-DD').toDate();
             await apiFetch(`/api/calendar/link`, 'POST', { date: normalizedDate, recipeId: recipe._id }, {
                 headers: { 'Content-Type': 'application/json' },
             });

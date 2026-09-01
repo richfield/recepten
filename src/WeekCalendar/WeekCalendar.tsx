@@ -57,7 +57,9 @@ const WeekCalendar: React.FC = () => {
       ) {
         showBusy();
         try {
-          const normalizedDate = moment.utc(day).startOf("day").toDate();
+          const dayMoment = moment(day);
+          const dateStr = dayMoment.format('YYYY-MM-DD');
+          const normalizedDate = moment.utc(dateStr, 'YYYY-MM-DD').toDate();
           const result = await apiFetch(
             `/api/calendar/link`,
             "DELETE",

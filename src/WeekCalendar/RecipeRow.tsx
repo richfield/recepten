@@ -27,8 +27,10 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
     }, [recipe._id, fetchAuthenticatedImage]);
 
     const handleClick = () => {
-        if (recipe._id) {
-            handleSelect(recipe._id, selectedDate ? moment.utc(selectedDate).startOf('day').toDate() : undefined);
+        if (recipe._id && selectedDate) {
+            const dateStr = selectedDate.format('YYYY-MM-DD');
+            const normalizedDate = moment.utc(dateStr, 'YYYY-MM-DD').toDate();
+            handleSelect(recipe._id, normalizedDate);
         }
         setCalendarDialogOpen(false);
     }

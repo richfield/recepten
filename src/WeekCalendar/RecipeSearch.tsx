@@ -42,8 +42,13 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({ searchQuery, selectedDate, 
     }, [searchQuery, fetchData]);
 
     const handleSelectRecipe = useCallback(async (id: string, dateOverride?: Date) => {
-        const selected = dateOverride ?? selectedDate;
-        const normalizedDate = selected ? moment.utc(selected).startOf('day').toDate() : moment.utc().startOf('day').toDate();
+        let normalizedDate: Date;
+        if (dateOverride) {
+            normalizedDate = dateOverride;
+        } else {
+            const dateStr = moment.utc(selectedDate).format('YYYY-MM-DD');
+            normalizedDate = moment.utc(dateStr, 'YYYY-MM-DD').toDate();
+        }
         const result = await apiFetch(`/api/calendar/link`, 'POST', { date: normalizedDate, recipeId: id }, {
             headers: { 'Content-Type': 'application/json' },
         });
