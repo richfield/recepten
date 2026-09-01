@@ -122,7 +122,8 @@ const ViewRecipe: React.FC = () => {
         }
 
         try {
-            await apiFetch(`/api/calendar/link`, 'POST', { date: selectedDate.toDate(), recipeId: recipe._id }, {
+            const normalizedDate = selectedDate.clone().startOf('day').toDate();
+            await apiFetch(`/api/calendar/link`, 'POST', { date: normalizedDate, recipeId: recipe._id }, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setCalendarDialogOpen(false);

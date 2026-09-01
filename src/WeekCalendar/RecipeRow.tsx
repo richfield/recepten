@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, CardMedia, Grid2, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Button } from "@mui/material";
+import { Card, CardContent, Typography, CardMedia, Grid2, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment, { Moment } from 'moment/min/moment-with-locales';
 import { RecipeData } from "../Types.js";
@@ -28,7 +28,7 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
 
     const handleClick = () => {
         if (recipe._id) {
-            handleSelect(recipe._id, selectedDate?.toDate());
+            handleSelect(recipe._id, selectedDate?.clone().startOf('day').toDate());
         }
         setCalendarDialogOpen(false);
     }
@@ -52,9 +52,14 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
                             <Typography variant="body2" color="textSecondary">
                                 {recipe.description}
                             </Typography>
-                            <IconButton onClick={() => setCalendarDialogOpen(true)} size="small" sx={{ mt: 1 }}>
-                                <CalendarMonth />
-                            </IconButton>
+                            <Button
+                                variant="contained"
+                                onClick={() => setCalendarDialogOpen(true)}
+                                startIcon={<CalendarMonth />}
+                                sx={{ mt: 1 }}
+                            >
+                                Select
+                            </Button>
                         </CardContent>
                     </Grid2>
                 </Grid2>
