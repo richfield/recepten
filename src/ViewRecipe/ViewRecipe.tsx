@@ -1,8 +1,9 @@
 // ViewRecipe Component
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Card, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, Container, Typography, IconButton, Grid2, ListSubheader } from "@mui/material";
+import { Button, Card, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, Container, Typography, IconButton, Grid2, ListSubheader, Box } from "@mui/material";
+import { Rating } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { RecipeData, Language } from "../Types.js";
+import { RecipeData, Language, RecipeRatingSummary, RecipeRatingEntry } from "../Types.js";
 import { translate } from "../utils.js";
 import moment, { Moment } from 'moment/min/moment-with-locales';
 import { useParams, useNavigate } from "react-router-dom";
@@ -22,14 +23,27 @@ const formatTime = (time: string | undefined, language: Language) => {
     return (duration.hours() > 0 || duration.minutes() > 0) && duration.locale(language).humanize();
 };
 
+const ratingStyles = {
+    '& .MuiRating-iconFilled': {
+        color: '#FF6F3C',
+    },
+    '& .MuiRating-iconEmpty': {
+        color: 'rgba(255,255,255,0.35)',
+    },
+};
+
 const ViewRecipe: React.FC = () => {
     const { showBusy, hideBusy } = useBusy();
-    const { language, fetchAuthenticatedImage, apiFetch, showError, user } = useApplicationContext();
+    const { language, fetchAuthenticatedImage, apiFetch, showError, user, getProfileNames } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
     const [recipe, setRecipe] = useState<RecipeData>();
     const [selectedDate, setSelectedDate] = useState<Moment | null>(moment());
     const [calendarDialogOpen, setCalendarDialogOpen] = useState(false);
+    const [ratingSummary, setRatingSummary] = useState<RecipeRatingSummary>({ average: 0, count: 0, total: 0, ratings: [] });
+    const [myRating, setMyRating] = useState<number | null>(null);
+    const [ratings, setRatings] = useState<RecipeRatingEntry[]>([]);
+    const [profileMap, setProfileMap] = useState<Record<string, { displayName?: string; email?: string; photoURL?: string }>>({});
     useEffect(() => {
         const fetchImage = async () => {
             const image = await fetchAuthenticatedImage(`/api/recipes/${recipe?._id}/image`);
@@ -135,6 +149,55 @@ const ViewRecipe: React.FC = () => {
         }
     };
 
+    const loadRatings = useCallback(async () => {
+        if (!recipe?._id) {
+            return;
+        }
+
+        try {
+            const [ratingsResponse, myRatingResponse] = await Promise.all([
+                apiFetch<RecipeRatingSummary>(`/api/ratings/recipe/${recipe._id}/ratings`, 'GET'),
+                apiFetch<RecipeRatingEntry | null>(`/api/ratings/recipe/${recipe._id}/my-rating`, 'GET').catch(() => ({ data: null })),
+            ]);
+
+            const nextSummary = ratingsResponse.data ?? { average: 0, count: 0, total: 0, ratings: [] };
+            setRatingSummary(nextSummary);
+            setRatings(nextSummary.ratings ?? []);
+            setMyRating(myRatingResponse.data?.value ?? null);
+        } catch (error) {
+            console.error('Error fetching recipe ratings:', error);
+        }
+    }, [apiFetch, recipe?._id]);
+
+    useEffect(() => {
+        loadRatings();
+    }, [loadRatings, recipe?._id]);
+
+    useEffect(() => {
+        const uniqueUserIds = Array.from(new Set((ratings || []).map((rating) => rating.userId).filter(Boolean)));
+        if (uniqueUserIds.length === 0) {
+            setProfileMap({});
+            return;
+        }
+
+        getProfileNames(uniqueUserIds).then((map) => setProfileMap(map)).catch(() => setProfileMap({}));
+    }, [ratings, getProfileNames]);
+
+    const handleRatingChange = async (_event: React.SyntheticEvent<Element, Event>, value: number | null) => {
+        if (!recipe?._id || !user || value === null) {
+            return;
+        }
+
+        try {
+            setMyRating(value);
+            await apiFetch(`/api/ratings/recipe/${recipe._id}/rating`, 'POST', { value });
+            await loadRatings();
+        } catch (error) {
+            setMyRating(null);
+            showError(error);
+        }
+    };
+
     return (
         <Container>
             <Grid2 container spacing={2} justifyContent="space-between" alignItems="center">
@@ -170,6 +233,20 @@ const ViewRecipe: React.FC = () => {
                                 <ListItem>{translate("prepTime", language)}: {formatTime(recipe.prepTime, language)}</ListItem>
                                 <ListItem>{translate("totalTime", language)}: {formatTime(recipe.totalTime, language)}</ListItem>
                             </List>
+                            <Box sx={{ mt: 2 }}>
+                                <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Rating</Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                    <Rating value={ratingSummary.average || 0} precision={0.5} readOnly sx={ratingStyles} />
+                                    <Typography variant="body2">{ratingSummary.count ? ratingSummary.average.toFixed(1) : '0.0'} / 5</Typography>
+                                </Box>
+                                <Typography variant="caption" color="text.secondary">{ratingSummary.count} rating{ratingSummary.count === 1 ? '' : 's'}</Typography>
+                                {user && (
+                                    <Box sx={{ mt: 1 }}>
+                                        <Typography variant="caption" display="block" sx={{ mb: 0.5 }}>Your rating</Typography>
+                                        <Rating name={`recipe-rating-${recipe._id}`} value={myRating ?? 0} precision={0.5} onChange={handleRatingChange} sx={ratingStyles} />
+                                    </Box>
+                                )}
+                            </Box>
                         </CardContent>
                     </Card>
                     {recipe.keywords?.length !== 0 && (
@@ -208,6 +285,17 @@ const ViewRecipe: React.FC = () => {
                 <Grid2 size={{ md: 9 }}>
                     <Card>
                         <CardContent>
+                            {ratings.length > 0 && (
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography variant="h6" sx={{ mb: 1 }}>Ratings</Typography>
+                                    {ratings.map((rating) => (
+                                        <Box key={rating._id ?? `${rating.userId}-${rating.value}`} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, py: 0.5 }}>
+                                            <Typography variant="body2">{profileMap[rating.userId]?.displayName ?? rating.userId}</Typography>
+                                            <Rating value={rating.value} precision={0.5} readOnly size="small" sx={ratingStyles} />
+                                        </Box>
+                                    ))}
+                                </Box>
+                            )}
                             {renderField(recipe, "description", language)}
                             {renderField(recipe, "recipeInstructions", language, ({ text }) => text)}
                             {renderField(recipe, "recipeIngredient", language, multiplyQuantities)}

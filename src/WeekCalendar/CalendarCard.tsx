@@ -13,7 +13,8 @@ import {
   DialogActions,
   Box
 } from "@mui/material";
-import { RecipeData, LeftoverData } from "../Types.js";
+import { Rating } from '@mui/material';
+import { RecipeData, LeftoverData, RecipeRatingSummary, RecipeRatingEntry } from "../Types.js";
 import { CheckCircle, Add } from '@mui/icons-material';
 import { IconButton, Tooltip, Avatar } from '@mui/material';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
@@ -29,6 +30,15 @@ interface CalendarCardProps {
   onLeftoverAdded?: () => void;
 }
 
+const ratingStyles = {
+  '& .MuiRating-iconFilled': {
+    color: '#FF6F3C',
+  },
+  '& .MuiRating-iconEmpty': {
+    color: 'rgba(255,255,255,0.35)',
+  },
+};
+
 const CalendarCard: React.FC<CalendarCardProps> = ({
   recipe,
   day,
@@ -43,6 +53,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   const [adding, setAdding] = useState(false);
   const [leftoverCount, setLeftoverCount] = useState<number>(0);
   const [displayList, setDisplayList] = useState<LeftoverData[]>([]);
+  const [ratingSummary, setRatingSummary] = useState<RecipeRatingSummary>({ average: 0, count: 0, total: 0, ratings: [] });
+  const [userRating, setUserRating] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -110,6 +122,44 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
   useEffect(() => {
     fetchCountAndClaims();
   }, [recipe._id, apiFetch, day]);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      if (!recipe._id) {
+        return;
+      }
+
+      try {
+        const [summaryResponse, myRatingResponse] = await Promise.all([
+          apiFetch<RecipeRatingSummary>(`/api/ratings/recipe/${recipe._id}/ratings`, 'GET'),
+          apiFetch<RecipeRatingEntry | null>(`/api/ratings/recipe/${recipe._id}/my-rating`, 'GET').catch(() => ({ data: null })),
+        ]);
+
+        setRatingSummary(summaryResponse.data ?? { average: 0, count: 0, total: 0, ratings: [] });
+        setUserRating(myRatingResponse.data?.value ?? null);
+      } catch (error) {
+        console.error('Error loading recipe ratings:', error);
+      }
+    };
+
+    fetchRatings();
+  }, [apiFetch, recipe._id, user?.uid]);
+
+  const handleRatingChange = async (_event: React.SyntheticEvent<Element, Event>, value: number | null) => {
+    if (!recipe._id || !user || value === null) {
+      return;
+    }
+
+    try {
+      setUserRating(value);
+      await apiFetch(`/api/ratings/recipe/${recipe._id}/rating`, 'POST', { value });
+      const response = await apiFetch<RecipeRatingSummary>(`/api/ratings/recipe/${recipe._id}/ratings`, 'GET');
+      setRatingSummary(response.data ?? { average: 0, count: 0, total: 0, ratings: [] });
+    } catch (error) {
+      setUserRating(null);
+      showError(error);
+    }
+  };
 
   const handleClick = (day: Moment) => {
     if (recipe._id) {
@@ -212,6 +262,16 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
               <Typography variant="caption" color="textSecondary" sx={{ display: 'block', marginTop: '4px' }}>
                 {translate('inFreezer', language)} {leftoverCount}
               </Typography>
+            )}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+              <Rating value={ratingSummary.average || 0} precision={0.5} readOnly size="small" sx={ratingStyles} />
+              <Typography variant="caption" color="textSecondary">{ratingSummary.count ? ratingSummary.average.toFixed(1) : '0.0'} / 5</Typography>
+            </Box>
+            {user && (
+              <Box sx={{ mt: 1 }}>
+                <Typography variant="caption" color="textSecondary">Your rating</Typography>
+                <Rating value={userRating ?? 0} precision={0.5} onChange={handleRatingChange} size="small" sx={ratingStyles} />
+              </Box>
             )}
             <Typography variant="body2" color="textSecondary">
               {recipe.description}
