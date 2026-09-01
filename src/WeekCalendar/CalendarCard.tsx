@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -14,6 +14,7 @@ import {
   Box
 } from "@mui/material";
 import { Rating } from '@mui/material';
+import type { Theme } from '@mui/material/styles';
 import { RecipeData, LeftoverData, RecipeRatingSummary, RecipeRatingEntry } from "../Types.js";
 import { CheckCircle, Add } from '@mui/icons-material';
 import { IconButton, Tooltip, Avatar } from '@mui/material';
@@ -30,14 +31,23 @@ interface CalendarCardProps {
   onLeftoverAdded?: () => void;
 }
 
-const ratingStyles = {
+const ratingStyles = (theme: Theme) => ({
   '& .MuiRating-iconFilled': {
     color: '#FF6F3C',
   },
   '& .MuiRating-iconEmpty': {
-    color: 'rgba(255,255,255,0.35)',
+    color: 'transparent',
+    stroke: theme.palette.text.primary,
+    strokeWidth: 1.4,
+    fill: 'transparent',
+    opacity: 0.8,
   },
-};
+  '& .MuiRating-iconEmpty svg': {
+    fill: 'transparent',
+    stroke: theme.palette.text.primary,
+    strokeWidth: 1.4,
+  },
+});
 
 const CalendarCard: React.FC<CalendarCardProps> = ({
   recipe,
@@ -66,11 +76,11 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
     fetchImage();
   }, [recipe._id, fetchAuthenticatedImage]);
 
-  const fetchCountAndClaims = async () => {
+const fetchCountAndClaims = useCallback(async () => {
     try {
       if (!recipe._id) return;
       // fetch inFreezer count
-      const res = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}&status=inFreezer`, 'GET');
+      const res = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}&status=inFreezer`, 'GET');
       const data = res?.data ?? [];
       if (Array.isArray(data)) {
         setLeftoverCount(data.length);
@@ -91,7 +101,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
           try {
             const profileMap = await getProfileNames(uids);
             claimedWithNames = claimed.map((c: LeftoverData) => ({ ...c, claimedByName: profileMap[c.claimedBy || '']?.displayName, claimedByPhoto: profileMap[c.claimedBy || '']?.photoURL }));
-          } catch (e) {
+          } catch {
             claimedWithNames = claimed as LeftoverData[];
           }
         } else {
@@ -112,16 +122,16 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         if (!seen.has(c._id)) combined.push(c);
       });
       setDisplayList(combined);
-    } catch (err) {
+    } catch {
       // ignore errors for count/claims
       setLeftoverCount(0);
       setDisplayList([]);
     }
-  };
+  }, [apiFetch, day, getProfileNames, recipe._id]);
 
   useEffect(() => {
     fetchCountAndClaims();
-  }, [recipe._id, apiFetch, day]);
+  }, [fetchCountAndClaims]);
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -197,10 +207,10 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       await apiFetch('/api/leftovers', 'POST', { recipeId: recipe._id, portion: portionText });
       // refresh local count
       try {
-        const res2 = await apiFetch<any[]>(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
+        const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}`, 'GET');
         const data2 = res2?.data ?? [];
         if (Array.isArray(data2)) setLeftoverCount(data2.length);
-      } catch (e) {
+      } catch {
         // ignore
       }
       setAdding(false);
@@ -302,7 +312,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                                 fetchCountAndClaims();
                                 if (onLeftoverAdded) onLeftoverAdded();
                                 // show non-blocking success message
-                                try { showMessage(translate('unclaimSuccess', language)); } catch (e) { /* ignore */ }
+                                try { showMessage(translate('unclaimSuccess', language)); } catch { /* ignore */ }
                               } catch (e) {
                                 showError(e);
                               }
@@ -336,7 +346,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
                             // refresh list
                             fetchCountAndClaims();
                             if (onLeftoverAdded) onLeftoverAdded();
-                            try { showMessage(translate('claimSuccess', language)); } catch (e) { /* ignore */ }
+                            try { showMessage(translate('claimSuccess', language)); } catch { /* ignore */ }
                           } catch (e) {
                             showError(e);
                           }

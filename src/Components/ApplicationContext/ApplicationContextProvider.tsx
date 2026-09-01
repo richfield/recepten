@@ -200,7 +200,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
         profileCache.current[p.uid] = info;
         result[p.uid] = info;
       });
-    } catch (e) {
+    } catch {
       // fallback: use uid
       missing.forEach(u => { result[u] = { displayName: u }; });
     }

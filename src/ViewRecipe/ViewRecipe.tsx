@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Card, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, Container, Typography, IconButton, Grid2, ListSubheader, Box } from "@mui/material";
 import { Rating } from '@mui/material';
+import type { Theme } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { RecipeData, Language, RecipeRatingSummary, RecipeRatingEntry } from "../Types.js";
 import { translate } from "../utils.js";
@@ -23,14 +24,23 @@ const formatTime = (time: string | undefined, language: Language) => {
     return (duration.hours() > 0 || duration.minutes() > 0) && duration.locale(language).humanize();
 };
 
-const ratingStyles = {
+const ratingStyles = (theme: Theme) => ({
     '& .MuiRating-iconFilled': {
         color: '#FF6F3C',
     },
     '& .MuiRating-iconEmpty': {
-        color: 'rgba(255,255,255,0.35)',
+        color: 'transparent',
+        stroke: theme.palette.text.primary,
+        strokeWidth: 1.4,
+        fill: 'transparent',
+        opacity: 0.8,
     },
-};
+    '& .MuiRating-iconEmpty svg': {
+        fill: 'transparent',
+        stroke: theme.palette.text.primary,
+        strokeWidth: 1.4,
+    },
+});
 
 const ViewRecipe: React.FC = () => {
     const { showBusy, hideBusy } = useBusy();

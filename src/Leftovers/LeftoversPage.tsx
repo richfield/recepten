@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Typography, IconButton, Card, CardContent, CardMedia, Grid, Tooltip, Avatar } from '@mui/material';
 import { CheckCircle, DeleteForever } from '@mui/icons-material';
 import { useApplicationContext } from '../Components/ApplicationContext/useApplicationContext.js';
@@ -16,7 +16,7 @@ const LeftoversPage: React.FC = () => {
   const params = new URLSearchParams(location.search);
   const recipeId = params.get('recipeId');
 
-  const fetchLeftovers = async () => {
+  const fetchLeftovers = useCallback(async () => {
     if (!user) return;
     setLoading(true);
     try {
@@ -31,7 +31,7 @@ const LeftoversPage: React.FC = () => {
         try {
           const profileMap = await getProfileNames(claimedUids);
           items = items.map(i => ({ ...i, claimedByName: i.claimedBy ? profileMap[i.claimedBy as string]?.displayName : undefined, claimedByPhoto: i.claimedBy ? profileMap[i.claimedBy as string]?.photoURL : undefined }));
-        } catch (e) {
+        } catch {
           // ignore name lookup failures
         }
       }
@@ -42,18 +42,18 @@ const LeftoversPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [apiFetch, getProfileNames, recipeId, showError, user]);
 
   useEffect(() => {
     fetchLeftovers();
-  }, [recipeId, user]);
+  }, [fetchLeftovers]);
 
   const handleClaim = async (id: string) => {
     if (!(await confirm(translate('claimConfirm', language)))) return;
     try {
       await apiFetch(`/api/leftovers/${id}/claim`, 'POST');
       await fetchLeftovers();
-      try { showMessage(translate('claimSuccess', language)); } catch (e) { /* ignore */ }
+      try { showMessage(translate('claimSuccess', language)); } catch { /* ignore */ }
     } catch (err) {
       showError(err);
     }
@@ -64,7 +64,7 @@ const LeftoversPage: React.FC = () => {
     try {
       await apiFetch(`/api/leftovers/${id}/unclaim`, 'POST');
       await fetchLeftovers();
-      try { showMessage(translate('unclaimSuccess', language)); } catch (e) { /* ignore */ }
+      try { showMessage(translate('unclaimSuccess', language)); } catch { /* ignore */ }
     } catch (err) {
       showError(err);
     }
@@ -144,7 +144,7 @@ const LeftoversPage: React.FC = () => {
                           try {
                             await apiFetch(`/api/leftovers/${l._id}`, 'DELETE');
                             await fetchLeftovers();
-                            try { showMessage(translate('removeSuccess', language)); } catch (e) {}
+                            try { showMessage(translate('removeSuccess', language)); } catch { /* ignore */ }
                           } catch (err) {
                             showError(err);
                           }
