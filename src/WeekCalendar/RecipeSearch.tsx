@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Grid2 } from '@mui/material';
+import moment from 'moment/min/moment-with-locales';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import RecipeRow from './RecipeRow.js'; // Import the RecipeRow component
 import { RecipeData } from "../Types.js";
@@ -42,8 +43,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({ searchQuery, selectedDate, 
 
     const handleSelectRecipe = useCallback(async (id: string, dateOverride?: Date) => {
         const selected = dateOverride ?? selectedDate;
-        const normalizedDate = selected ? new Date(selected) : new Date();
-        normalizedDate.setHours(0, 0, 0, 0);
+        const normalizedDate = selected ? moment.utc(selected).startOf('day').toDate() : moment.utc().startOf('day').toDate();
         const result = await apiFetch(`/api/calendar/link`, 'POST', { date: normalizedDate, recipeId: id }, {
             headers: { 'Content-Type': 'application/json' },
         });

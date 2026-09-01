@@ -28,7 +28,7 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
 
     const handleClick = () => {
         if (recipe._id) {
-            handleSelect(recipe._id, selectedDate?.clone().startOf('day').toDate());
+            handleSelect(recipe._id, selectedDate ? moment.utc(selectedDate).startOf('day').toDate() : undefined);
         }
         setCalendarDialogOpen(false);
     }
