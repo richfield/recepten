@@ -246,20 +246,6 @@ const ViewRecipe: React.FC = () => {
                                 <ListItem>{translate("prepTime", language)}: {formatTime(recipe.prepTime, language)}</ListItem>
                                 <ListItem>{translate("totalTime", language)}: {formatTime(recipe.totalTime, language)}</ListItem>
                             </List>
-                            <Box sx={{ mt: 2 }}>
-                                <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Rating</Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                                    <Rating value={ratingSummary.average || 0} precision={0.5} readOnly sx={ratingStyles} />
-                                    <Typography variant="body2">{ratingSummary.count ? Number.isInteger(ratingSummary.average) ? ratingSummary.average.toString() : ratingSummary.average.toFixed(1) : '0'} / 5</Typography>
-                                </Box>
-                                <Typography variant="caption" color="text.secondary">{ratingSummary.count} rating{ratingSummary.count === 1 ? '' : 's'}</Typography>
-                                {user && (
-                                    <Box sx={{ mt: 1 }}>
-                                        <Typography variant="caption" display="block" sx={{ mb: 0.5 }}>Your rating</Typography>
-                                        <Rating name={`recipe-rating-${recipe._id}`} value={myRating ?? 0} precision={0.5} onChange={handleRatingChange} sx={ratingStyles} />
-                                    </Box>
-                                )}
-                            </Box>
                         </CardContent>
                     </Card>
                     {recipe.keywords?.length !== 0 && (
@@ -298,21 +284,37 @@ const ViewRecipe: React.FC = () => {
                 <Grid2 size={{ md: 9 }}>
                     <Card>
                         <CardContent>
-                            {ratings.length > 0 && (
-                                <Box sx={{ mb: 3 }}>
-                                    <Typography variant="h6" sx={{ mb: 1 }}>Ratings</Typography>
-                                    {ratings.map((rating) => (
-                                        <Box key={rating._id ?? `${rating.userId}-${rating.value}`} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, py: 0.5 }}>
-                                            <Typography variant="body2">{profileMap[rating.userId]?.displayName ?? rating.userId}</Typography>
-                                            <Rating value={rating.value} precision={0.5} readOnly size="small" sx={ratingStyles} />
-                                        </Box>
-                                    ))}
-                                </Box>
-                            )}
                             {renderField(recipe, "description", language)}
                             {renderField(recipe, "recipeInstructions", language, ({ text }) => text)}
                             {renderField(recipe, "recipeIngredient", language, multiplyQuantities)}
                             {renderField(recipe, "recipeCategory", language)}
+
+                            <Box sx={{ mt: 4, pt: 2, borderTop: 1, borderColor: 'divider' }}>
+                                <Typography variant="h6" sx={{ mb: 1 }}>Rating</Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+                                    <Rating value={ratingSummary.average || 0} precision={0.5} readOnly sx={ratingStyles} />
+                                    <Typography variant="body2">{ratingSummary.count ? Number.isInteger(ratingSummary.average) ? ratingSummary.average.toString() : ratingSummary.average.toFixed(1) : '0'} / 5</Typography>
+                                </Box>
+                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>{ratingSummary.count} rating{ratingSummary.count === 1 ? '' : 's'}</Typography>
+                                {user && (
+                                    <Box sx={{ mb: 2 }}>
+                                        <Typography variant="caption" display="block" sx={{ mb: 0.5 }}>Your rating</Typography>
+                                        <Rating name={`recipe-rating-${recipe._id}`} value={myRating ?? 0} precision={0.5} onChange={handleRatingChange} sx={ratingStyles} />
+                                    </Box>
+                                )}
+
+                                {ratings.length > 0 && (
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Ratings</Typography>
+                                        {ratings.map((rating) => (
+                                            <Box key={rating._id ?? `${rating.userId}-${rating.value}`} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, py: 0.5 }}>
+                                                <Typography variant="body2">{profileMap[rating.userId]?.displayName ?? rating.userId}</Typography>
+                                                <Rating value={rating.value} precision={0.5} readOnly size="small" sx={ratingStyles} />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                )}
+                            </Box>
                         </CardContent>
                     </Card>
                 </Grid2>
