@@ -33,16 +33,30 @@ const LeftoversPage: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
-      const recipeSpecificUrl = recipeId ? `/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=all` : '/api/leftovers?status=allFuture';
-      const res = await apiFetch<LeftoverData[]>(recipeSpecificUrl, 'GET');
-      let items = res.data || [];
+      let items: LeftoverData[] = [];
 
-      if (items.length === 0 && recipeId) {
-        const fallbackRes = await apiFetch<LeftoverData[]>('/api/leftovers?status=all', 'GET');
-        items = fallbackRes.data || [];
+      if (recipeId) {
+        const freezerRes = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=inFreezer`, 'GET');
+        const allRes = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=all`, 'GET');
+
+        const todayStart = moment.utc().startOf('day').toDate();
+        const todayEnd = moment.utc().endOf('day').toDate();
+
+        const freezerItems = freezerRes.data || [];
+        const claimedTodayItems = (allRes.data || []).filter((item) => {
+          if (item.inFreezer) return false;
+          if (!item.claimedAt) return false;
+
+          const claimedAt = new Date(item.claimedAt);
+          return claimedAt >= todayStart && claimedAt <= todayEnd;
+        });
+
+        items = [...freezerItems, ...claimedTodayItems];
+      } else {
+        const res = await apiFetch<LeftoverData[]>('/api/leftovers?status=inFreezer', 'GET');
+        items = res.data || [];
       }
 
-      // Resolve claimant display names for claimed items so we can show names for others
       const claimedUids = Array.from(new Set(items.filter(i => !i.inFreezer && i.claimedBy).map(i => i.claimedBy as string)));
       if (claimedUids.length > 0) {
         try {
