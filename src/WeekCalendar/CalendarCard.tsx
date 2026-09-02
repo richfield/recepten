@@ -91,7 +91,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       // fetch claimed on this day using start/end ISO to avoid timezone issues
       const startISO = day.clone().startOf('day').toISOString();
       const endISO = day.clone().endOf('day').toISOString();
-      const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
+      const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
       const claimed = res2?.data ?? [] as LeftoverData[];
       let claimedWithNames: LeftoverData[] = [];
       if (Array.isArray(claimed) && claimed.length > 0) {
@@ -108,17 +108,8 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
           claimedWithNames = claimed as LeftoverData[];
         }
       }
-      // Combine inFreezer items with claimed items for display; include claimed items even though not in freezer
-      const combined: LeftoverData[] = [];
-      // fetch all inFreezer items (full freezer contents)
-      const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?status=inFreezer`, 'GET');
-      const dataIn = resIn?.data ?? [] as LeftoverData[];
-      if (Array.isArray(dataIn)) {
-        combined.push(...dataIn.filter((item) => {
-          const itemRecipeId = typeof item.recipe === 'string' ? item.recipe : item.recipe?._id;
-          return itemRecipeId === recipe._id;
-        }));
-      }
+      // Combine this recipe's freezer items with claimed items for the day.
+      const combined: LeftoverData[] = Array.isArray(data) ? [...data] : [];
       // Then add claimed items for the day (avoid duplicates by _id)
       const seen = new Set(combined.map(i => i._id));
       claimedWithNames.forEach((c) => {
@@ -290,7 +281,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
               <Typography variant="body2" color="textSecondary">
                 {recipe.description}
               </Typography>
-              {recipe.isLeftover && displayList.length > 0 && (
+              {displayList.length > 0 && (
                 <Box sx={{ mt: 1 }}>
                   <Typography variant="subtitle2">{translate('freezerItems', language)}</Typography>
                   {displayList.map((c) => (
