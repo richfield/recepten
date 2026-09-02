@@ -114,7 +114,10 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?status=inFreezer`, 'GET');
       const dataIn = resIn?.data ?? [] as LeftoverData[];
       if (Array.isArray(dataIn)) {
-        combined.push(...dataIn);
+        combined.push(...dataIn.filter((item) => {
+          const itemRecipeId = typeof item.recipe === 'string' ? item.recipe : item.recipe?._id;
+          return itemRecipeId === recipe._id;
+        }));
       }
       // Then add claimed items for the day (avoid duplicates by _id)
       const seen = new Set(combined.map(i => i._id));

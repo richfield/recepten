@@ -18,7 +18,10 @@ const LeftoversPage: React.FC = () => {
   const recipeId = params.get('recipeId');
 
   const fetchRecipe = useCallback(async () => {
-    if (!recipeId || !user) return;
+    if (!recipeId || !user) {
+      setRecipe(null);
+      return;
+    }
 
     try {
       const res = await apiFetch<RecipeData>(`/api/recipes/get/${recipeId}`, 'GET');
