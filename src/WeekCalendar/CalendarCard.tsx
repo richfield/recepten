@@ -91,7 +91,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       // fetch claimed on this day using start/end ISO to avoid timezone issues
       const startISO = day.clone().startOf('day').toISOString();
       const endISO = day.clone().endOf('day').toISOString();
-      const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${recipe._id}&status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
+      const res2 = await apiFetch<LeftoverData[]>(`/api/leftovers?status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`, 'GET');
       const claimed = res2?.data ?? [] as LeftoverData[];
       let claimedWithNames: LeftoverData[] = [];
       if (Array.isArray(claimed) && claimed.length > 0) {
@@ -108,8 +108,10 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
           claimedWithNames = claimed as LeftoverData[];
         }
       }
-      // Combine this recipe's freezer items with claimed items for the day.
-      const combined: LeftoverData[] = Array.isArray(data) ? [...data] : [];
+      // Show all current freezer items and items claimed for this calendar day.
+      const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?status=inFreezer`, 'GET');
+      const dataIn = resIn?.data ?? [] as LeftoverData[];
+      const combined: LeftoverData[] = Array.isArray(dataIn) ? [...dataIn] : [];
       // Then add claimed items for the day (avoid duplicates by _id)
       const seen = new Set(combined.map(i => i._id));
       claimedWithNames.forEach((c) => {
