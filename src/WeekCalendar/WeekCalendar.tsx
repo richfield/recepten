@@ -118,12 +118,12 @@ const WeekCalendar: React.FC = () => {
     setCurrentDate(currentDate.clone().add(1, "week"));
 
   const handleOpenModal = () => {
-    if(!openModal) {
+    if (!openModal) {
       setOpenModal(true);
     }
   };
   const handleCloseModal = () => {
-    if(openModal) {
+    if (openModal) {
       setOpenModal(false);
     }
   };
@@ -133,7 +133,7 @@ const WeekCalendar: React.FC = () => {
   };
 
   const recipeSelected = () => {
-    if(openModal) {
+    if (openModal) {
       setOpenModal(false);
     }
   };
@@ -231,15 +231,15 @@ const WeekCalendar: React.FC = () => {
 
               <Grid2 container justifyContent="center">
                 <Grid2 size={{ xs: 0.5 }} />
-                      <Grid2 size={{ xs: 11 }}>
+                <Grid2 size={{ xs: 11 }}>
                   {recipes?.map((recipe, idx) => (
-                      <CalendarCard
-                        key={idx}
-                        recipe={recipe}
-                        day={day}
-                        handleUnlink={onUnlink}
-                        onLeftoverAdded={() => fetchData(`/api/calendar/dates-with-recipes`)}
-                      />
+                    <CalendarCard
+                      key={idx}
+                      recipe={recipe}
+                      day={day}
+                      handleUnlink={onUnlink}
+                      onLeftoverAdded={() => fetchData(`/api/calendar/dates-with-recipes`)}
+                    />
                   ))}
                 </Grid2>
                 <Grid2 size={{ xs: 0.5 }} />

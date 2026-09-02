@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, CardMedia, Grid2, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import moment, { Moment } from 'moment/min/moment-with-locales';
+import { Card, CardContent, Typography, CardMedia, Grid2, Button } from "@mui/material";
 import { RecipeData } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { CalendarMonth } from "@mui/icons-material";
 
 interface RecipeRowProps {
     recipe: RecipeData;
-    handleSelect: (id: string, date?: Date) => void
+    handleSelect: (id: string) => void
 }
 
 const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
     const { fetchAuthenticatedImage } = useApplicationContext();
 
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-    const [calendarDialogOpen, setCalendarDialogOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<Moment | null>(moment());
 
     useEffect(() => {
         const fetchImage = async () => {
@@ -26,20 +22,11 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
         fetchImage();
     }, [recipe._id, fetchAuthenticatedImage]);
 
-    const handleClick = () => {
-        if (recipe._id && selectedDate) {
-            const dateStr = selectedDate.format('YYYY-MM-DD');
-            const normalizedDate = moment.utc(dateStr, 'YYYY-MM-DD').toDate();
-            handleSelect(recipe._id, normalizedDate);
-        }
-        setCalendarDialogOpen(false);
-    }
-
     return (
         <>
             <Card>
                 <Grid2 container>
-                    <Grid2 size={{xs:4}}>
+                    <Grid2 size={{ xs: 4 }}>
                         <CardMedia
                             component="img"
                             height="140"
@@ -48,7 +35,7 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
                             sx={{ width: '100%', objectFit: 'cover' }} // Ensure the image covers the area
                         />
                     </Grid2>
-                    <Grid2  size={{xs:8}}>
+                    <Grid2 size={{ xs: 8 }}>
                         <CardContent>
                             <Typography variant="h6">{recipe.name}</Typography>
                             <Typography variant="body2" color="textSecondary">
@@ -56,7 +43,7 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
                             </Typography>
                             <Button
                                 variant="contained"
-                                onClick={() => setCalendarDialogOpen(true)}
+                                onClick={() => recipe._id && handleSelect(recipe._id)}
                                 startIcon={<CalendarMonth />}
                                 sx={{ mt: 1 }}
                             >
@@ -67,21 +54,6 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
                 </Grid2>
             </Card>
 
-            <Dialog open={calendarDialogOpen} onClose={() => setCalendarDialogOpen(false)}>
-                <DialogTitle>Select a date</DialogTitle>
-                <DialogContent>
-                    <DatePicker
-                        value={selectedDate}
-                        onChange={(newValue) => setSelectedDate(newValue)}
-                        format="DD-MM-YYYY"
-                        slotProps={{ textField: { fullWidth: true, margin: 'normal' } }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setCalendarDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleClick} variant="contained">Add to calendar</Button>
-                </DialogActions>
-            </Dialog>
         </>
     );
 };
