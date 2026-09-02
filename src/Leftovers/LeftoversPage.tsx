@@ -16,6 +16,7 @@ const LeftoversPage: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const recipeId = params.get('recipeId');
+  const linkedDate = params.get('date');
 
   const fetchRecipe = useCallback(async () => {
     if (!recipeId || !user) {
@@ -39,20 +40,17 @@ const LeftoversPage: React.FC = () => {
       let items: LeftoverData[] = [];
 
       if (recipeId) {
-        const freezerRes = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=inFreezer`, 'GET');
-        const allRes = await apiFetch<LeftoverData[]>(`/api/leftovers?recipeId=${encodeURIComponent(recipeId)}&status=all`, 'GET');
-
-        const todayStart = moment.utc().startOf('day').toDate();
-        const todayEnd = moment.utc().endOf('day').toDate();
+        const freezerRes = await apiFetch<LeftoverData[]>('/api/leftovers?status=inFreezer', 'GET');
+        const date = linkedDate ? moment(linkedDate, 'YYYY-MM-DD') : moment();
+        const startISO = date.clone().startOf('day').toISOString();
+        const endISO = date.clone().endOf('day').toISOString();
+        const claimedRes = await apiFetch<LeftoverData[]>(
+          `/api/leftovers?status=claimed&start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`,
+          'GET'
+        );
 
         const freezerItems = freezerRes.data || [];
-        const claimedTodayItems = (allRes.data || []).filter((item) => {
-          if (item.inFreezer) return false;
-          if (!item.claimedAt) return false;
-
-          const claimedAt = new Date(item.claimedAt);
-          return claimedAt >= todayStart && claimedAt <= todayEnd;
-        });
+        const claimedTodayItems = claimedRes.data || [];
 
         items = [...freezerItems, ...claimedTodayItems];
       } else {
@@ -76,7 +74,7 @@ const LeftoversPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [apiFetch, getProfileNames, recipeId, showError, user]);
+  }, [apiFetch, getProfileNames, linkedDate, recipeId, showError, user]);
 
   useEffect(() => {
     fetchLeftovers();

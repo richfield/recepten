@@ -175,7 +175,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
 
   const handleDouble = () => {
     if (recipe.isLeftover) {
-      navigate(`/leftovers?recipeId=${recipe._id}`);
+      navigate(`/leftovers?recipeId=${recipe._id}&date=${encodeURIComponent(day.format('YYYY-MM-DD'))}`);
     } else if (recipe._id) {
       navigate(`/recipe/${recipe._id}`);
     }
