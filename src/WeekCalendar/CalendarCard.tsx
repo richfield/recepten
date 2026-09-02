@@ -281,7 +281,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
               <Typography variant="body2" color="textSecondary">
                 {recipe.description}
               </Typography>
-              {displayList.length > 0 && (
+              {recipe.isLeftover && displayList.length > 0 && (
                 <Box sx={{ mt: 1 }}>
                   <Typography variant="subtitle2">{translate('freezerItems', language)}</Typography>
                   {displayList.map((c) => (
