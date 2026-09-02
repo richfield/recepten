@@ -222,9 +222,9 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
         if (!user) {
           return;
         }
-        const today = moment().startOf('day');
-                // send an ISO timestamp (UTC) to make date handling explicit and consistent with other calls
-                const response = await apiFetch<string>('/api/calendar/today', 'POST', { date: today.toISOString() });
+
+        const today = moment().startOf('day').format('YYYY-MM-DD');
+        const response = await apiFetch<string>('/api/calendar/today', 'POST', { date: today });
         setTodaysRecipe(response.data);
       } catch (error) {
         console.error('Error fetching recipe data:', error);
@@ -244,7 +244,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [user, apiFetch])
 
   // Expose profile name cache fetcher for components to reuse
-  
+
 
 
   useEffect(() => {

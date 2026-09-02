@@ -45,8 +45,8 @@ export type RecipeData = {
     recipeCuisine?: string[];
     aggregateRating?: string; // Optional field
     video?: string; // Optional field
-   isLeftover?: boolean;
-   _id?: string;
+    isLeftover?: boolean;
+    _id?: string;
 };
 
 export interface Translations {
@@ -57,7 +57,7 @@ export interface TranslationFile {
     [languageCode: string]: Record<Translations>;
 }
 
-export type Language = "en"|"nl"
+export type Language = "en" | "nl"
 
 /**
  * Represents the settings associated with a user profile.
@@ -143,18 +143,18 @@ export type ProfileInfo = {
     uid: string;
     displayName?: string;
     email?: string;
-photoURL?: string;
+    photoURL?: string;
 }
 
 export type LeftoverData = {
-_id: string;
-recipe?: RecipeData;
-addedBy?: string;
-addedAt?: string | Date;
-portion?: string;
-inFreezer?: boolean;
-claimedBy?: string;
-claimedAt?: string | Date;
-claimedByName?: string;
-claimedByPhoto?: string;
+    _id: string;
+    recipe?: RecipeData;
+    addedBy?: string;
+    addedAt?: string | Date;
+    portion?: string;
+    inFreezer?: boolean;
+    claimedBy?: string;
+    claimedAt?: string | Date;
+    claimedByName?: string;
+    claimedByPhoto?: string;
 }
