@@ -181,12 +181,12 @@ function App() {
               <Button color="inherit" onClick={() => navigate("/calendar")} startIcon={<CalendarToday />} style={{ marginRight: "10px" }}>
                 {translate("calendar", language)}
               </Button>
-                        <Button color="inherit" onClick={() => navigate("/leftovers")} startIcon={<ListAltTwoTone />} style={{ marginRight: "10px" }}>
-                                    {translate('leftovers', language)}
-                        </Button>
-                        <SearchField />
-                      </>
-                    )}
+              <Button color="inherit" onClick={() => navigate("/leftovers")} startIcon={<ListAltTwoTone />} style={{ marginRight: "10px" }}>
+                {translate('leftovers', language)}
+              </Button>
+              <SearchField />
+            </>
+          )}
           {isMobile && (
             <>
               <IconButton
@@ -272,10 +272,10 @@ function App() {
                   <ListItem component={Link} to="/scraper">
                     <ListItemText primary={translate("add", language)} />
                   </ListItem>
-                    <ListItem component={Link} to="/leftovers">
-                      <ListItemText primary={translate("leftovers", language)} />
-                    </ListItem>
-                  </List>
+                  <ListItem component={Link} to="/leftovers">
+                    <ListItemText primary={translate("leftovers", language)} />
+                  </ListItem>
+                </List>
               </Drawer>
             </>
           )}
@@ -303,12 +303,15 @@ function App() {
             element={
               todaysRecipe
                 ? (() => {
-                    if (todaysRecipe.startsWith('leftovers:')) {
-                      const recipeId = todaysRecipe.replace('leftovers:', '');
-                      return <Navigate to={`/leftovers?recipeId=${encodeURIComponent(recipeId)}`} />;
-                    }
-                    return <Navigate to={`/recipe/${todaysRecipe}`} />;
-                  })()
+                  if (todaysRecipe === 'leftovers') {
+                    return <Navigate to="/leftovers" />;
+                  }
+                  if (todaysRecipe.startsWith('leftovers:')) {
+                    const recipeId = todaysRecipe.replace('leftovers:', '');
+                    return <Navigate to={`/leftovers?recipeId=${encodeURIComponent(recipeId)}`} />;
+                  }
+                  return <Navigate to={`/recipe/${encodeURIComponent(todaysRecipe)}`} />;
+                })()
                 : <RecipeList />
             }
           />

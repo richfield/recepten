@@ -76,7 +76,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
     fetchImage();
   }, [recipe._id, fetchAuthenticatedImage]);
 
-const fetchCountAndClaims = useCallback(async () => {
+  const fetchCountAndClaims = useCallback(async () => {
     try {
       if (!recipe._id) return;
       // fetch inFreezer count
@@ -224,166 +224,166 @@ const fetchCountAndClaims = useCallback(async () => {
 
   return (
     <>
-    <Card style={{ marginTop: '16px' }} onDoubleClick={handleDouble}>
-      <Grid2 container>
-        <Grid2 size={{ xs: 4 }}>
-          <CardMedia
-            component="img"
-            height="140"
-            image={imageUrl}
-            alt={recipe.name}
-            sx={{ width: "100%", objectFit: "cover" }} // Ensure the image covers the area
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 8 }} sx={{ position: "relative" }}>
-          <CardContent>
-            <Button
-              onClick={() => handleClick(day)}
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                zIndex: 1
-              }}
-            >
-              <LinkOff />
-            </Button>
-            {/* Remove 'View Freezer' button because the card already shows freezer contents */}
-            {!recipe.isLeftover && (
-              <Tooltip title={translate('addLeftover', language)}>
-                <IconButton
-                  onClick={openAddLeftover}
-                  color="primary"
-                  sx={{
-                    position: "absolute",
-                    top: 8,
-                    right: 56,
-                    zIndex: 1
-                  }}
-                  size="small"
-                >
-                  <Add />
-                </IconButton>
-              </Tooltip>
-            )}
-            <Typography variant="h6" sx={{ marginTop: '25px' }}>
-              {recipe.name}
-            </Typography>
-            {!recipe.isLeftover && (
-              <Typography variant="caption" color="textSecondary" sx={{ display: 'block', marginTop: '4px' }}>
-                {translate('inFreezer', language)} {leftoverCount}
+      <Card style={{ marginTop: '16px' }} onDoubleClick={handleDouble}>
+        <Grid2 container>
+          <Grid2 size={{ xs: 4 }}>
+            <CardMedia
+              component="img"
+              height="140"
+              image={imageUrl}
+              alt={recipe.name}
+              sx={{ width: "100%", objectFit: "cover" }} // Ensure the image covers the area
+            />
+          </Grid2>
+          <Grid2 size={{ xs: 8 }} sx={{ position: "relative" }}>
+            <CardContent>
+              <Button
+                onClick={() => handleClick(day)}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  zIndex: 1
+                }}
+              >
+                <LinkOff />
+              </Button>
+              {/* Remove 'View Freezer' button because the card already shows freezer contents */}
+              {!recipe.isLeftover && (
+                <Tooltip title={translate('addLeftover', language)}>
+                  <IconButton
+                    onClick={openAddLeftover}
+                    color="primary"
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 56,
+                      zIndex: 1
+                    }}
+                    size="small"
+                  >
+                    <Add />
+                  </IconButton>
+                </Tooltip>
+              )}
+              <Typography variant="h6" sx={{ marginTop: '25px' }}>
+                {recipe.name}
               </Typography>
-            )}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, flexWrap: 'wrap' }}>
-              <Rating value={ratingSummary.average || 0} precision={0.5} readOnly size="small" sx={ratingStyles} />
-              <Typography variant="caption" color="textSecondary">{ratingSummary.count ? Number.isInteger(ratingSummary.average) ? ratingSummary.average.toString() : ratingSummary.average.toFixed(1) : '0'} / 5</Typography>
-            </Box>
-            {user && (
-              <Box sx={{ mt: 1 }}>
-                <Typography variant="caption" color="textSecondary">Your rating</Typography>
-                <Rating value={userRating ?? 0} precision={0.5} onChange={handleRatingChange} size="small" sx={ratingStyles} />
+              {!recipe.isLeftover && (
+                <Typography variant="caption" color="textSecondary" sx={{ display: 'block', marginTop: '4px' }}>
+                  {translate('inFreezer', language)} {leftoverCount}
+                </Typography>
+              )}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+                <Rating value={ratingSummary.average || 0} precision={0.5} readOnly size="small" sx={ratingStyles} />
+                <Typography variant="caption" color="textSecondary">{ratingSummary.count ? Number.isInteger(ratingSummary.average) ? ratingSummary.average.toString() : ratingSummary.average.toFixed(1) : '0'} / 5</Typography>
               </Box>
-            )}
-            <Typography variant="body2" color="textSecondary">
-              {recipe.description}
-            </Typography>
-            {recipe.isLeftover && displayList.length > 0 && (
-              <Box sx={{ mt: 1 }}>
-                <Typography variant="subtitle2">{translate('freezerItems', language)}</Typography>
-                {displayList.map((c) => (
-                  <Box key={c._id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="caption" sx={{ flex: 1 }}>
-                      {c.recipe?.name || recipe.name} {c.portion || ''}
-                    </Typography>
+              {user && (
+                <Box sx={{ mt: 1 }}>
+                  <Typography variant="caption" color="textSecondary">Your rating</Typography>
+                  <Rating value={userRating ?? 0} precision={0.5} onChange={handleRatingChange} size="small" sx={ratingStyles} />
+                </Box>
+              )}
+              <Typography variant="body2" color="textSecondary">
+                {recipe.description}
+              </Typography>
+              {recipe.isLeftover && displayList.length > 0 && (
+                <Box sx={{ mt: 1 }}>
+                  <Typography variant="subtitle2">{translate('freezerItems', language)}</Typography>
+                  {displayList.map((c) => (
+                    <Box key={c._id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="caption" sx={{ flex: 1 }}>
+                        {c.recipe?.name || recipe.name} {c.portion || ''}
+                      </Typography>
 
-                    {/* Show claimant avatar instead of name when claimed */}
-                    {/* Claimed avatar: clickable to unclaim if it's the current user's claim, otherwise just show avatar with tooltip */}
-                    {!c.inFreezer && (
-                      user && c.claimedBy === user.uid ? (
-                        <Tooltip title={translate('unclaimClick', language)}>
-                          <Avatar
-                            src={c.claimedByPhoto}
-                            alt={c.claimedByName || ''}
-                            sx={{ width: 28, height: 28, cursor: 'pointer' }}
-                            onClick={async () => {
-                              const ok = await confirm(translate('unclaimConfirm', language));
-                              if (!ok) return;
-                              try {
-                                await apiFetch(`/api/leftovers/${c._id}/unclaim`, 'POST');
-                                fetchCountAndClaims();
-                                if (onLeftoverAdded) onLeftoverAdded();
-                                // show non-blocking success message
-                                try { showMessage(translate('unclaimSuccess', language)); } catch { /* ignore */ }
-                              } catch (e) {
-                                showError(e);
-                              }
-                            }}
-                          >
-                            {(!c.claimedByPhoto && c.claimedByName) ? (c.claimedByName.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase()) : null}
-                          </Avatar>
+                      {/* Show claimant avatar instead of name when claimed */}
+                      {/* Claimed avatar: clickable to unclaim if it's the current user's claim, otherwise just show avatar with tooltip */}
+                      {!c.inFreezer && (
+                        user && c.claimedBy === user.uid ? (
+                          <Tooltip title={translate('unclaimClick', language)}>
+                            <Avatar
+                              src={c.claimedByPhoto}
+                              alt={c.claimedByName || ''}
+                              sx={{ width: 28, height: 28, cursor: 'pointer' }}
+                              onClick={async () => {
+                                const ok = await confirm(translate('unclaimConfirm', language));
+                                if (!ok) return;
+                                try {
+                                  await apiFetch(`/api/leftovers/${c._id}/unclaim`, 'POST');
+                                  fetchCountAndClaims();
+                                  if (onLeftoverAdded) onLeftoverAdded();
+                                  // show non-blocking success message
+                                  try { showMessage(translate('unclaimSuccess', language)); } catch { /* ignore */ }
+                                } catch (e) {
+                                  showError(e);
+                                }
+                              }}
+                            >
+                              {(!c.claimedByPhoto && c.claimedByName) ? (c.claimedByName.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase()) : null}
+                            </Avatar>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title={c.claimedByName || ''}>
+                            <Avatar
+                              src={c.claimedByPhoto}
+                              alt={c.claimedByName || ''}
+                              sx={{ width: 28, height: 28 }}
+                            >
+                              {(!c.claimedByPhoto && c.claimedByName) ? (c.claimedByName.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase()) : null}
+                            </Avatar>
+                          </Tooltip>
+                        )
+                      )}
+
+                      {/* Claim button for in-freezer items */}
+                      {c.inFreezer && (
+                        <Tooltip title={translate('claim', language)}>
+                          <IconButton size="small" onClick={async () => {
+                            if (!user) { showError('Not authenticated'); return; }
+                            const ok = await confirm(translate('claimConfirm', language));
+                            if (!ok) return;
+                            try {
+                              await apiFetch(`/api/leftovers/${c._id}/claim`, 'POST', JSON.stringify({ day }));
+                              // refresh list
+                              fetchCountAndClaims();
+                              if (onLeftoverAdded) onLeftoverAdded();
+                              try { showMessage(translate('claimSuccess', language)); } catch { /* ignore */ }
+                            } catch (e) {
+                              showError(e);
+                            }
+                          }}>
+                            <CheckCircle color="success" />
+                          </IconButton>
                         </Tooltip>
-                      ) : (
-                        <Tooltip title={c.claimedByName || ''}>
-                          <Avatar
-                            src={c.claimedByPhoto}
-                            alt={c.claimedByName || ''}
-                            sx={{ width: 28, height: 28 }}
-                          >
-                            {(!c.claimedByPhoto && c.claimedByName) ? (c.claimedByName.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase()) : null}
-                          </Avatar>
-                        </Tooltip>
-                      )
-                    )}
+                      )}
 
-                    {/* Claim button for in-freezer items */}
-                    {c.inFreezer && (
-                      <Tooltip title={translate('claim', language)}>
-                        <IconButton size="small" onClick={async () => {
-                          if (!user) { showError('Not authenticated'); return; }
-                          const ok = await confirm(translate('claimConfirm', language));
-                          if (!ok) return;
-                          try {
-                            await apiFetch(`/api/leftovers/${c._id}/claim`, 'POST', JSON.stringify({ day }));
-                            // refresh list
-                            fetchCountAndClaims();
-                            if (onLeftoverAdded) onLeftoverAdded();
-                            try { showMessage(translate('claimSuccess', language)); } catch { /* ignore */ }
-                          } catch (e) {
-                            showError(e);
-                          }
-                        }}>
-                          <CheckCircle color="success" />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-
-                  </Box>
-                ))}
-              </Box>
-            )}
-          </CardContent>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </CardContent>
+          </Grid2>
         </Grid2>
-      </Grid2>
-    </Card>
+      </Card>
 
-    <Dialog open={openLeftoverDialog} onClose={closeAddLeftover}>
-      <DialogTitle>{translate('addLeftover', language)}</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          label={translate('portion', language)}
-          type="text"
-          fullWidth
-          value={portionText}
-          onChange={(e) => setPortionText(e.target.value)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={closeAddLeftover}>{translate('Cancel', language)}</Button>
-        <Button onClick={submitLeftover} disabled={adding} variant="contained">{translate('add', language)}</Button>
-      </DialogActions>
-    </Dialog>
+      <Dialog open={openLeftoverDialog} onClose={closeAddLeftover}>
+        <DialogTitle>{translate('addLeftover', language)}</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label={translate('portion', language)}
+            type="text"
+            fullWidth
+            value={portionText}
+            onChange={(e) => setPortionText(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeAddLeftover}>{translate('Cancel', language)}</Button>
+          <Button onClick={submitLeftover} disabled={adding} variant="contained">{translate('add', language)}</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
