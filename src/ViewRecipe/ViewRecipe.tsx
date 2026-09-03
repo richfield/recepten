@@ -287,22 +287,22 @@ const ViewRecipe: React.FC = () => {
                             {renderField(recipe, "recipeCategory", language)}
 
                             <Box sx={{ mt: 4, pt: 2, borderTop: 1, borderColor: 'divider' }}>
-                                <Typography variant="h6" sx={{ mb: 1 }}>Rating</Typography>
+                                <Typography variant="h6" sx={{ mb: 1 }}>{translate('rating', language)}</Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 1 }}>
                                     <Rating value={ratingSummary.average || 0} precision={0.5} readOnly sx={ratingStyles} />
                                     <Typography variant="body2">{ratingSummary.count ? Number.isInteger(ratingSummary.average) ? ratingSummary.average.toString() : ratingSummary.average.toFixed(1) : '0'} / 5</Typography>
                                 </Box>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>{ratingSummary.count} rating{ratingSummary.count === 1 ? '' : 's'}</Typography>
+                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>{ratingSummary.count} {translate(ratingSummary.count === 1 ? 'rating' : 'ratings', language)}</Typography>
                                 {user && (
                                     <Box sx={{ mb: 2 }}>
-                                        <Typography variant="caption" display="block" sx={{ mb: 0.5 }}>Your rating</Typography>
+                                        <Typography variant="caption" display="block" sx={{ mb: 0.5 }}>{translate('yourRating', language)}</Typography>
                                         <Rating name={`recipe-rating-${recipe._id}`} value={myRating ?? 0} precision={0.5} onChange={handleRatingChange} sx={ratingStyles} />
                                     </Box>
                                 )}
 
                                 {ratings.length > 0 && (
                                     <Box>
-                                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Ratings</Typography>
+                                        <Typography variant="subtitle2" sx={{ mb: 1 }}>{translate('ratings', language)}</Typography>
                                         {ratings.map((rating) => (
                                             <Box key={rating._id ?? `${rating.userId}-${rating.value}`} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, py: 0.5 }}>
                                                 <Typography variant="body2">{profileMap[rating.userId]?.displayName ?? rating.userId}</Typography>

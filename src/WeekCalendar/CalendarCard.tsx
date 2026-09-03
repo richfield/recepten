@@ -276,7 +276,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
               </Box>
               {user && (
                 <Box sx={{ mt: 1 }}>
-                  <Typography variant="caption" color="textSecondary">Your rating</Typography>
+                  <Typography variant="caption" color="textSecondary">{translate('yourRating', language)}</Typography>
                   <Rating value={userRating ?? 0} precision={0.5} onChange={handleRatingChange} size="small" sx={ratingStyles} />
                 </Box>
               )}

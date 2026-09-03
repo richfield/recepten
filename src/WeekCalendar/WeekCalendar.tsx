@@ -96,14 +96,15 @@ const WeekCalendar: React.FC = () => {
     }
   }, [openModal, fetchData]);
 
-  moment.locale(language === 'nl' ? 'nl' : 'en-gb');
+  const calendarLocale = language === 'nl' ? 'nl' : 'en-gb';
+  moment.locale(calendarLocale);
 
-  const startOfWeek = currentDate.clone().startOf("week");
-  const endOfWeek = currentDate.clone().endOf("week");
+  const startOfWeek = currentDate.clone().locale(calendarLocale).startOf("week");
+  const endOfWeek = currentDate.clone().locale(calendarLocale).endOf("week");
 
   const generateWeekDays = (): Moment[] => {
     const days: Moment[] = [];
-    const day = startOfWeek.clone();
+    const day = startOfWeek.clone().locale(calendarLocale);
     while (day.isSameOrBefore(endOfWeek)) {
       days.push(day.clone());
       day.add(1, "day");
@@ -178,7 +179,7 @@ const WeekCalendar: React.FC = () => {
           <ArrowBack />
         </IconButton>
         <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
-          {startOfWeek.format("DD MMM")} - {endOfWeek.format("DD MMM YYYY")}
+          {startOfWeek.format("D MMMM")} - {endOfWeek.format("D MMMM YYYY")}
         </Typography>
         <IconButton onClick={handleNextWeek} color="primary">
           <ArrowForward />
@@ -211,7 +212,7 @@ const WeekCalendar: React.FC = () => {
                     {day.format("dddd")}
                   </Typography>
                   <Typography variant="body2" sx={{ textAlign: "left" }}>
-                    {day.format("DD MMM YYYY")}
+                    {day.format("D MMMM YYYY")}
                   </Typography>
                 </Grid2>
                 <Grid2 size={{ xs: 6 }} style={{ position: "relative" }}>
