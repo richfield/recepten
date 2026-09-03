@@ -318,7 +318,7 @@ const ViewRecipe: React.FC = () => {
             </Grid2>
 
             <Dialog open={calendarDialogOpen} onClose={() => setCalendarDialogOpen(false)}>
-                <DialogTitle>Select a date</DialogTitle>
+                <DialogTitle>{translate('selectDate', language)}</DialogTitle>
                 <DialogContent>
                     <DatePicker
                         value={selectedDate}

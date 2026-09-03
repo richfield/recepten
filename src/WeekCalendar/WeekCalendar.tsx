@@ -96,7 +96,7 @@ const WeekCalendar: React.FC = () => {
     }
   }, [openModal, fetchData]);
 
-  moment.locale(language);
+  moment.locale(language === 'nl' ? 'nl' : 'en-gb');
 
   const startOfWeek = currentDate.clone().startOf("week");
   const endOfWeek = currentDate.clone().endOf("week");
@@ -272,7 +272,7 @@ const WeekCalendar: React.FC = () => {
           </Typography>
           <TextField
             fullWidth
-            label="Search"
+            label={translate("search", language)}
             variant="outlined"
             value={instantSearch}
             onChange={(e) => setInstantSearch(e.target.value)}

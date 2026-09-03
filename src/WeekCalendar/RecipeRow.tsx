@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, CardMedia, Grid2, Button } from "@mui/material";
 import { RecipeData } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
+import { translate } from "../utils.js";
 import { CalendarMonth } from "@mui/icons-material";
 
 interface RecipeRowProps {
@@ -10,7 +11,7 @@ interface RecipeRowProps {
 }
 
 const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
-    const { fetchAuthenticatedImage } = useApplicationContext();
+    const { fetchAuthenticatedImage, language } = useApplicationContext();
 
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
@@ -47,7 +48,7 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe, handleSelect }) => {
                                 startIcon={<CalendarMonth />}
                                 sx={{ mt: 1 }}
                             >
-                                Select
+                                {translate('select', language)}
                             </Button>
                         </CardContent>
                     </Grid2>

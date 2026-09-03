@@ -6,9 +6,10 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RecipeData } from "../Types.js";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
+import { translate } from "../utils.js";
 
 export const RecipeCard = ({ recipe, index, onDeleted }: { recipe: RecipeData; index: number, onDeleted: () => void }) => {
-    const { fetchAuthenticatedImage, apiFetch } = useApplicationContext();
+    const { fetchAuthenticatedImage, apiFetch, language } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const [calendarDialogOpen, setCalendarDialogOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Moment | null>(moment());
@@ -84,7 +85,7 @@ export const RecipeCard = ({ recipe, index, onDeleted }: { recipe: RecipeData; i
             </CardActions>
         </Card>
         <Dialog open={calendarDialogOpen} onClose={() => setCalendarDialogOpen(false)}>
-            <DialogTitle>Select a date</DialogTitle>
+            <DialogTitle>{translate('selectDate', language)}</DialogTitle>
             <DialogContent>
                 <DatePicker
                     value={selectedDate}
