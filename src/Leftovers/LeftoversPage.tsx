@@ -84,7 +84,7 @@ const LeftoversPage: React.FC = () => {
   const handleClaim = async (id: string) => {
     if (!(await confirm(translate('claimConfirm', language)))) return;
     try {
-      await apiFetch(`/api/leftovers/${id}/claim`, 'POST');
+      await apiFetch(`/api/leftovers/${id}/claim`, 'POST', { day: linkedDate || moment().format('YYYY-MM-DD') });
       await fetchLeftovers();
       try { showMessage(translate('claimSuccess', language)); } catch { /* ignore */ }
     } catch (err) {
