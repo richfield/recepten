@@ -147,36 +147,52 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     return await axios(config);
   }, [user]);
 
+  const imageCache = React.useRef<Record<string, Promise<string>>>({});
+
   const fetchAuthenticatedImage = useCallback(async (url: string): Promise<string> => {
     if (!user) {
       return "/default.jpg";
     }
 
-    const token = await user.getIdToken();
-    let response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    for (let i = 0; i < 3; i++) {
-      if (response.status === 500) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        response = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      } else {
-        break;
+    const cacheKey = `${user.uid}:${url}`;
+    const cachedImage = imageCache.current[cacheKey];
+    if (cachedImage) {
+      return cachedImage;
+    }
+
+    const imagePromise = (async () => {
+      const token = await user.getIdToken();
+      let response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      for (let i = 0; i < 3; i++) {
+        if (response.status === 500) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          response = await fetch(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        } else {
+          break;
+        }
       }
-    }
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch image: ${response.statusText}`);
-    }
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
 
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    })();
+
+    imageCache.current[cacheKey] = imagePromise;
+    imagePromise.catch(() => {
+      delete imageCache.current[cacheKey];
+    });
+    return imagePromise;
   }, [user]);
 
   // Profile cache for profile info (displayName, email, photoURL)
