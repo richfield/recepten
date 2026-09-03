@@ -96,15 +96,21 @@ const WeekCalendar: React.FC = () => {
     }
   }, [openModal, fetchData]);
 
-  const calendarLocale = language === 'nl' ? 'nl' : 'en-gb';
-  moment.locale(calendarLocale);
+  const calendarLocale = language === 'nl' ? 'nl-NL' : 'en-GB';
+  const formatCalendarDate = (date: Moment, includeWeekday = false) =>
+    new Intl.DateTimeFormat(calendarLocale, {
+      weekday: includeWeekday ? 'long' : undefined,
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(date.toDate());
 
-  const startOfWeek = currentDate.clone().locale(calendarLocale).startOf("week");
-  const endOfWeek = currentDate.clone().locale(calendarLocale).endOf("week");
+  const startOfWeek = currentDate.clone().startOf("week");
+  const endOfWeek = currentDate.clone().endOf("week");
 
   const generateWeekDays = (): Moment[] => {
     const days: Moment[] = [];
-    const day = startOfWeek.clone().locale(calendarLocale);
+    const day = startOfWeek.clone();
     while (day.isSameOrBefore(endOfWeek)) {
       days.push(day.clone());
       day.add(1, "day");
@@ -179,7 +185,7 @@ const WeekCalendar: React.FC = () => {
           <ArrowBack />
         </IconButton>
         <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
-          {startOfWeek.format("D MMMM")} - {endOfWeek.format("D MMMM YYYY")}
+          {formatCalendarDate(startOfWeek).replace(/ \d{4}$/, '')} - {formatCalendarDate(endOfWeek)}
         </Typography>
         <IconButton onClick={handleNextWeek} color="primary">
           <ArrowForward />
@@ -209,10 +215,10 @@ const WeekCalendar: React.FC = () => {
                     fontWeight="bold"
                     sx={{ textAlign: "left" }}
                   >
-                    {day.format("dddd")}
+                    {formatCalendarDate(day, true).replace(/ \d.*$/, '')}
                   </Typography>
                   <Typography variant="body2" sx={{ textAlign: "left" }}>
-                    {day.format("D MMMM YYYY")}
+                    {formatCalendarDate(day)}
                   </Typography>
                 </Grid2>
                 <Grid2 size={{ xs: 6 }} style={{ position: "relative" }}>
