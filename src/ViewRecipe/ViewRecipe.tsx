@@ -232,13 +232,11 @@ const ViewRecipe: React.FC = () => {
             <Grid2 container spacing={2}>
                 <Grid2 size={{ md: 3 }} style={{ textAlign: "center" }}>
                     <Card>
-                        {recipe.images && recipe.images.length > 0 && (
-                            <CardMedia
-                                component="img"
-                                style={{ width: "100%" }}
-                                image={imageUrl}
-                                alt={recipe.name} />
-                        )}
+                        <CardMedia
+                            component="img"
+                            style={{ width: "100%" }}
+                            image={imageUrl || '/default.jpg'}
+                            alt={recipe.name} />
                         <CardContent>
                             <List>
                                 <ListItem>{translate("cookTime", language)}: {formatTime(recipe.cookTime, language)}</ListItem>
