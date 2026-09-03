@@ -8,9 +8,11 @@ import { translate } from '../utils.js';
 import { LeftoverData, RecipeData } from '../Types.js';
 
 const LeftoversPage: React.FC = () => {
-  const { apiFetch, confirm, showError, showMessage, user, language, getProfileNames, isAdmin } = useApplicationContext();
+  const { apiFetch, confirm, showError, showMessage, user, language, getProfileNames, isAdmin, fetchAuthenticatedImage } = useApplicationContext();
   const [leftovers, setLeftovers] = useState<LeftoverData[]>([]);
   const [recipe, setRecipe] = useState<RecipeData | null>(null);
+  const [recipeImageUrl, setRecipeImageUrl] = useState<string>('/default.jpg');
+  const [leftoverImageUrls, setLeftoverImageUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   const location = useLocation();
@@ -81,6 +83,36 @@ const LeftoversPage: React.FC = () => {
     fetchRecipe();
   }, [fetchLeftovers, fetchRecipe]);
 
+  useEffect(() => {
+    if (!recipe?._id) {
+      setRecipeImageUrl('/default.jpg');
+      return;
+    }
+
+    fetchAuthenticatedImage(`/api/recipes/${recipe._id}/image`)
+      .then(setRecipeImageUrl)
+      .catch(() => setRecipeImageUrl('/default.jpg'));
+  }, [fetchAuthenticatedImage, recipe?._id]);
+
+  useEffect(() => {
+    const loadLeftoverImages = async () => {
+      const entries = await Promise.all(
+        leftovers.map(async (leftover) => {
+          const recipeId = leftover.recipe?._id;
+          if (!recipeId) return [leftover._id, '/default.jpg'] as const;
+          try {
+            return [leftover._id, await fetchAuthenticatedImage(`/api/recipes/${recipeId}/image`)] as const;
+          } catch {
+            return [leftover._id, '/default.jpg'] as const;
+          }
+        })
+      );
+      setLeftoverImageUrls(Object.fromEntries(entries));
+    };
+
+    loadLeftoverImages();
+  }, [fetchAuthenticatedImage, leftovers]);
+
   const handleClaim = async (id: string) => {
     if (!(await confirm(translate('claimConfirm', language)))) return;
     try {
@@ -111,7 +143,7 @@ const LeftoversPage: React.FC = () => {
             <Grid item xs={4} md={3}>
               <CardMedia
                 component="img"
-                image={recipe.images?.[0] || '/default.jpg'}
+                image={recipeImageUrl}
                 alt={recipe.name}
                 sx={{ width: '100%', height: 180, objectFit: 'cover' }}
               />
@@ -148,7 +180,7 @@ const LeftoversPage: React.FC = () => {
                 <Grid item xs={4}>
                   <CardMedia
                     component="img"
-                    image={l.recipe?.images?.[0] || '/default.jpg'}
+                    image={leftoverImageUrls[l._id] || '/default.jpg'}
                     alt={l.recipe?.name}
                     sx={{ width: '100%', height: 120, objectFit: 'cover' }}
                   />
