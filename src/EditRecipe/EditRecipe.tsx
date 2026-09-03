@@ -58,9 +58,7 @@ const EditRecipe: React.FC = () => {
         const formData = new FormData();
         formData.append('image', file);
 
-        await apiFetch(`/api/recipes/${recipeId}/image/upload`, 'POST', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        await apiFetch(`/api/recipes/${recipeId}/image/upload`, 'POST', formData);
     };
 
     async function handleSetDefaultImage(url: string): Promise<void> {
@@ -77,15 +75,20 @@ const EditRecipe: React.FC = () => {
         }
     }
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
         if (e.target.files?.[0]) {
             const file = e.target.files[0];
             const recipeId = recipe._id; // Assuming `recipe` contains the ID
             if (recipeId) {
-                uploadImage(recipeId, file)
-                    .catch((err) => {
-                        console.error('Failed to upload image', err);
-                    });
+                try {
+                    await uploadImage(recipeId, file);
+                    const image = await fetchAuthenticatedImage(`/api/recipes/${recipeId}/image?v=${Date.now()}`);
+                    setImageUrl(image);
+                } catch (err) {
+                    console.error('Failed to upload image', err);
+                } finally {
+                    e.target.value = '';
+                }
             } else {
                 console.error('Recipe ID is not defined');
             }
