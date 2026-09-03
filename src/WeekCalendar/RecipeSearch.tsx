@@ -21,9 +21,9 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({ searchQuery, selectedDate, 
         if (user) {
             showBusy();
             try {
-                const response = await apiFetch<RecipeData[]>(url, 'GET');
+                const response = await apiFetch<{ items: RecipeData[] }>(url, 'GET');
                 if (response.data) {
-                    setRecipes(response.data);
+                    setRecipes(response.data.items);
                 }
             } catch (error) {
                 console.error('Error fetching recipe data:', error);
