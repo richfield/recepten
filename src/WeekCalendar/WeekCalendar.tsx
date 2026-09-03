@@ -25,7 +25,7 @@ const WeekCalendar: React.FC = () => {
   const { showBusy, hideBusy } = useBusy();
   const location = useLocation();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
-  const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [instantSearch, setInstantSearch] = useState<string>("");
@@ -61,11 +61,10 @@ const WeekCalendar: React.FC = () => {
         try {
           const dayMoment = moment(day);
           const dateStr = dayMoment.format('YYYY-MM-DD');
-          const normalizedDate = moment.utc(dateStr, 'YYYY-MM-DD').toDate();
           const result = await apiFetch(
             `/api/calendar/link`,
             "DELETE",
-            { date: normalizedDate, recipeId: id },
+            { date: dateStr, recipeId: id },
             {
               headers: { "Content-Type": "application/json" },
             }
@@ -87,7 +86,7 @@ const WeekCalendar: React.FC = () => {
   useEffect(() => {
     const stateDate = (location.state as { selectedDate?: string | Date } | null)?.selectedDate;
     if (stateDate) {
-      setCurrentDate(moment(stateDate));
+      setCurrentDate(moment(typeof stateDate === 'string' ? stateDate : stateDate));
     }
   }, [location.state]);
 
@@ -142,7 +141,7 @@ const WeekCalendar: React.FC = () => {
     day: moment.Moment
   ): React.MouseEventHandler<HTMLButtonElement> | undefined => {
     handleOpenModal();
-    setSelectedDate(day);
+    setSelectedDate(day.format('YYYY-MM-DD'));
     return;
   };
 
@@ -290,7 +289,7 @@ const WeekCalendar: React.FC = () => {
           </Button>
           <RecipeSearch
             searchQuery={searchQuery}
-            selectedDate={selectedDate?.toDate() ?? new Date()}
+            selectedDate={selectedDate ?? moment().format('YYYY-MM-DD')}
             onRecipeSelected={recipeSelected}
           />
         </Box>

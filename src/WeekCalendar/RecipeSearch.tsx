@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Grid2 } from '@mui/material';
-import moment from 'moment/min/moment-with-locales';
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import RecipeRow from './RecipeRow.js'; // Import the RecipeRow component
 import { RecipeData } from "../Types.js";
@@ -10,7 +9,7 @@ import { useBusy } from '../Busy/BusyContext.js';
 interface RecipeSearchProps {
     searchQuery: string;
     onRecipeSelected: (id: string) => void;
-    selectedDate: Date;
+    selectedDate: string;
 }
 
 const RecipeSearch: React.FC<RecipeSearchProps> = ({ searchQuery, selectedDate, onRecipeSelected }) => {
@@ -42,8 +41,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({ searchQuery, selectedDate, 
     }, [searchQuery, fetchData]);
 
     const handleSelectRecipe = useCallback(async (id: string) => {
-        const dateStr = moment(selectedDate).format('YYYY-MM-DD');
-        const result = await apiFetch(`/api/calendar/link`, 'POST', { date: dateStr, recipeId: id }, {
+        const result = await apiFetch(`/api/calendar/link`, 'POST', { date: selectedDate, recipeId: id }, {
             headers: { 'Content-Type': 'application/json' },
         });
         if (result) {

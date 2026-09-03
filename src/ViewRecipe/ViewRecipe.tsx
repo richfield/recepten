@@ -146,12 +146,11 @@ const ViewRecipe: React.FC = () => {
 
         try {
             const dateStr = selectedDate.format('YYYY-MM-DD');
-            const normalizedDate = moment.utc(dateStr, 'YYYY-MM-DD').toDate();
-            await apiFetch(`/api/calendar/link`, 'POST', { date: normalizedDate, recipeId: recipe._id }, {
+            await apiFetch(`/api/calendar/link`, 'POST', { date: dateStr, recipeId: recipe._id }, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setCalendarDialogOpen(false);
-            navigate('/calendar', { state: { selectedDate: normalizedDate } });
+            navigate('/calendar', { state: { selectedDate: dateStr } });
         } catch (error) {
             showError(error);
             console.error('Error adding recipe to calendar:', error);
