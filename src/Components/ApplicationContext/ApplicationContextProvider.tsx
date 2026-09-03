@@ -133,12 +133,13 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
     }
 
     const token = await user.getIdToken();
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
     const config = {
       method,
       url,
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         ...headers
       },
       data: body
