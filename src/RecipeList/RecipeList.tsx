@@ -19,8 +19,11 @@ const RecipeList: React.FC = () => {
         }
         showBusy();
         try {
-            const response = await apiFetch<{ items: RecipeData[]; totalPages: number }>(url, "GET");
-            if (response.data) {
+            const response = await apiFetch<RecipeData[] | { items: RecipeData[]; totalPages: number }>(url, "GET");
+            if (Array.isArray(response.data)) {
+                setRecipes(response.data);
+                setTotalPages(1);
+            } else if (response.data) {
                 setRecipes(response.data.items);
                 setTotalPages(response.data.totalPages);
             }

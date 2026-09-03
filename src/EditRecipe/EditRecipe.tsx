@@ -15,13 +15,13 @@ import ArrayCard from "./ArrayCard.js";
 
 const EditRecipe: React.FC = () => {
 
-    const { language, fetchAuthenticatedImage, apiFetch, user } = useApplicationContext();
+    const { language, fetchAuthenticatedImage, apiFetch, user, showError } = useApplicationContext();
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const { id } = useParams();
 
     useEffect(() => {
         const fetchImage = async () => {
-            const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image`);
+            const image = await fetchAuthenticatedImage(`/api/recipes/${id}/image?v=${Date.now()}`);
             setImageUrl(image);
         };
         fetchImage();
@@ -71,6 +71,7 @@ const EditRecipe: React.FC = () => {
             setImageUrl(image);
 
         } catch (error) {
+            showError(error);
             console.error('Failed to set default image', error);
         }
     }
