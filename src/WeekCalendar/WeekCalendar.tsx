@@ -105,8 +105,8 @@ const WeekCalendar: React.FC = () => {
       year: 'numeric',
     }).format(date.toDate());
 
-  const startOfWeek = currentDate.clone().startOf("week");
-  const endOfWeek = currentDate.clone().endOf("week");
+  const startOfWeek = currentDate.clone().startOf("isoWeek");
+  const endOfWeek = currentDate.clone().endOf("isoWeek");
 
   const generateWeekDays = (): Moment[] => {
     const days: Moment[] = [];
