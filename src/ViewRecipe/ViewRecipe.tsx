@@ -119,7 +119,9 @@ const ViewRecipe: React.FC = () => {
     const [newRecipeYield, setNewRecipeYield] = useState<number>(1);
 
     useEffect(() => {
-        const newYield = parseInt(recipe?.recipeYield?.split(',')[0] || '4')
+        const yieldText = String(recipe?.recipeYield ?? '');
+        const parsedYield = Number.parseInt(yieldText.match(/\d+/)?.[0] ?? '', 10);
+        const newYield = Number.isFinite(parsedYield) && parsedYield > 0 ? parsedYield : 1;
         setRecipeYield(newYield);
         setNewRecipeYield(newYield);
     }, [recipe?.recipeYield])
@@ -261,7 +263,7 @@ const ViewRecipe: React.FC = () => {
                             </CardContent>
                         </Card>
                     )}
-                    {recipe.recipeYield?.length !== 0 && (
+                    {recipe.recipeYield && (
                         <Card>
                             <CardContent>
                                 <Typography variant="h6">{translate("recipeYield", language)}</Typography>
