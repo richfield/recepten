@@ -11,6 +11,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { translate } from "../../utils.js";
 import moment from "moment";
+import "moment/locale/nl";
+import "moment/locale/en-gb";
 
 const lightTheme = createTheme({
   palette: {
@@ -289,7 +291,7 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
 
   return (
     <ApplicationContext.Provider value={{ theme, toggleTheme, language, setLanguage, user, signOut, apiFetch, fetchAuthenticatedImage, profile, setProfile, isAdmin, confirm, todaysRecipe, showError, showMessage, getProfileNames }}>
-      <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language}>
+      <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={language === 'nl' ? 'nl' : 'en-gb'}>
         <ThemeProvider theme={theme}>
           {children}
           {dialog && (
