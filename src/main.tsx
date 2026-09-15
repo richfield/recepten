@@ -12,15 +12,14 @@ import { BusyIndicator } from "./Busy/BusyIndicator.js";
 import { ApplicationContextProvider } from "./Components/ApplicationContext/ApplicationContextProvider.js";
 import { CssBaseline } from "@mui/material";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyARTshsQJPtDELd3W6wffxDXdXvOT3jutc",
-  authDomain: "recepten-da616.firebaseapp.com",
-  projectId: "recepten-da616",
-  storageBucket: "recepten-da616.appspot.com",
-  messagingSenderId: "291820331748",
-  appId: "1:291820331748:web:5212db9b93a8dceef602f1",
-  measurementId: "G-474Q37Q7TS"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase

@@ -1,10 +1,27 @@
 import { defineConfig } from 'vite'
+import { loadEnv } from 'vite';
 import react from "@vitejs/plugin-react-swc";
 import { VitePWA } from 'vite-plugin-pwa';
-const apiUrl = process.env.API_URL || 'http://debian.ten-velde.com:3005'
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const requiredFirebaseVariables = [
+    'VITE_FIREBASE_API_KEY',
+    'VITE_FIREBASE_AUTH_DOMAIN',
+    'VITE_FIREBASE_PROJECT_ID',
+    'VITE_FIREBASE_STORAGE_BUCKET',
+    'VITE_FIREBASE_MESSAGING_SENDER_ID',
+    'VITE_FIREBASE_APP_ID',
+  ];
+  const missingFirebaseVariables = requiredFirebaseVariables.filter((name) => !env[name]);
+  if (missingFirebaseVariables.length > 0) {
+    throw new Error(`Missing frontend environment variables: ${missingFirebaseVariables.join(', ')}`);
+  }
+
+  const apiUrl = env.VITE_API_URL || 'http://localhost:3000';
+
+  return {
   plugins: [react(),
   VitePWA({
     includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'android-chrome-192x192.png', 'android-chrome-512x512.png', 'favicon-16x16.png', 'favicon-32x32.png'],
@@ -126,4 +143,5 @@ export default defineConfig({
       },
     },
   }
+  };
 })
