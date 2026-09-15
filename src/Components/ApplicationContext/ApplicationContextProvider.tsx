@@ -274,6 +274,10 @@ export const ApplicationContextProvider: React.FC<ApplicationContextProviderProp
   }, [profile, adminRole])
 
   useEffect(() => {
+    moment.locale(language === 'nl' ? 'nl' : 'en-gb');
+  }, [language]);
+
+  useEffect(() => {
     const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     switch (profile?.settings.theme) {
       case "dark":
