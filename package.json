@@ -11,7 +11,6 @@
     "dev:server": "ts-node src/api/server.ts",
     "fetch:openapi": "node scripts/fetch-openapi.js"
   },
-
   "dependencies": {
     "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.1",
