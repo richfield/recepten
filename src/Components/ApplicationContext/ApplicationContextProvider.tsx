@@ -14,6 +14,8 @@ import moment from "moment";
 import "moment/locale/nl";
 import "moment/locale/en-gb";
 
+moment.locale('nl');
+
 const lightTheme = createTheme({
   palette: {
     mode: 'light',
