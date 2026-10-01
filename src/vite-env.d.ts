@@ -13,3 +13,7 @@ interface ImportMetaEnv {
 interface ImportMeta {
 	readonly env: ImportMetaEnv;
 }
+
+// moment's package exports map omits type declarations for locale subpaths
+declare module "moment/locale/nl";
+declare module "moment/locale/en-gb";

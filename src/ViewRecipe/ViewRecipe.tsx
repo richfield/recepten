@@ -6,7 +6,7 @@ import type { Theme } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { RecipeData, Language, RecipeRatingSummary, RecipeRatingEntry } from "../Types.js";
 import { translate } from "../utils.js";
-import moment, { Moment } from 'moment/min/moment-with-locales';
+import moment, { Moment } from 'moment';
 import { useParams, useNavigate } from "react-router-dom";
 import { useApplicationContext } from "../Components/ApplicationContext/useApplicationContext.js";
 import { ArrowLeft, ArrowRight, CalendarMonth, Edit, ExitToApp } from "@mui/icons-material";

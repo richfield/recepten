@@ -30,7 +30,7 @@ import {
 import RecipeList from "./RecipeList/RecipeList.js";
 import { useApplicationContext } from "./Components/ApplicationContext/useApplicationContext.js";
 import { translate } from "./utils.js";
-import moment from "moment/min/moment-with-locales";
+import moment from "moment";
 import { signInWithGoogle } from "./main.js";
 import RecipeScraper from "./RecipeScraper/RecipeScraper.js";
 import ViewRecipe from "./ViewRecipe/ViewRecipe.js";

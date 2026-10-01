@@ -1,7 +1,7 @@
 import { Edit, Delete, Cancel, OpenInBrowser, CalendarMonth } from "@mui/icons-material";
 import { Button, ButtonGroup, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid2, IconButton, Typography } from "@mui/material";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import moment, { Moment } from 'moment/min/moment-with-locales';
+import moment, { Moment } from 'moment';
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RecipeData } from "../Types.js";
