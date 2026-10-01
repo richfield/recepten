@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import {
   AppBar,
   Toolbar,
@@ -17,6 +17,7 @@ import {
   TextField,
   Card,
   ListItemIcon,
+  CircularProgress,
 } from "@mui/material";
 import { Link, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import {
@@ -32,14 +33,15 @@ import { useApplicationContext } from "./Components/ApplicationContext/useApplic
 import { translate } from "./utils.js";
 import moment from "moment";
 import { signInWithGoogle } from "./main.js";
-import RecipeScraper from "./RecipeScraper/RecipeScraper.js";
-import ViewRecipe from "./ViewRecipe/ViewRecipe.js";
-import EditRecipe from "./EditRecipe/EditRecipe.js";
-import UserProfile from "./UserProfile/UserProfile.js";
-import WeekCalendar from "./WeekCalendar/WeekCalendar.js";
-import LeftoversPage from './Leftovers/LeftoversPage.js';
 import { useBusy } from "./Busy/BusyContext.js";
 import UpdatePopup from "./Components/UpdatePopup/UpdatePopup.js";
+
+const RecipeScraper = lazy(() => import("./RecipeScraper/RecipeScraper.js"));
+const ViewRecipe = lazy(() => import("./ViewRecipe/ViewRecipe.js"));
+const EditRecipe = lazy(() => import("./EditRecipe/EditRecipe.js"));
+const UserProfile = lazy(() => import("./UserProfile/UserProfile.js"));
+const WeekCalendar = lazy(() => import("./WeekCalendar/WeekCalendar.js"));
+const LeftoversPage = lazy(() => import('./Leftovers/LeftoversPage.js'));
 
 function App() {
 
@@ -297,7 +299,8 @@ function App() {
         </Toolbar>
       </AppBar>
       <Container style={{ marginTop: "10px" }}>
-        <Routes>
+        <Suspense fallback={<CircularProgress style={{ display: "block", margin: "40px auto" }} />}>
+          <Routes>
           <Route
             path="/"
             element={
@@ -324,7 +327,8 @@ function App() {
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/calendar" element={<WeekCalendar />} />
           <Route path="/leftovers" element={<LeftoversPage />} />
-        </Routes>
+          </Routes>
+        </Suspense>
       </Container>
     </>
 

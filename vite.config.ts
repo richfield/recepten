@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import { loadEnv } from 'vite';
 import react from "@vitejs/plugin-react-swc";
 import { VitePWA } from 'vite-plugin-pwa';
+import { fileURLToPath } from 'node:url';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -22,6 +23,15 @@ export default defineConfig(({ mode }) => {
   const apiUrl = env.VITE_API_URL || 'http://localhost:3000';
 
   return {
+    resolve: {
+      // node_modules/moment ships both ./moment.js (main) and ./dist/moment.js (jsnext:main);
+      // different importers were resolving to each, duplicating the module and its registered locales.
+      // Match the bare "moment" specifier only, so "moment/locale/*" subpaths resolve normally.
+      alias: [
+        { find: /^moment$/, replacement: fileURLToPath(new URL('./node_modules/moment/moment.js', import.meta.url)) },
+      ],
+      dedupe: ['moment'],
+    },
     plugins: [react(),
     VitePWA({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'android-chrome-192x192.png', 'android-chrome-512x512.png', 'favicon-16x16.png', 'favicon-32x32.png'],
@@ -142,6 +152,22 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/ical/, '/calendar/ical'), // Map /ical to the backend route
         },
       },
-    }
+    },
+    build: {
+      // mui vendor chunk is inherently >500kB; it's isolated for long-term caching
+      chunkSizeWarningLimit: 700,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            firebase: ['firebase/app', 'firebase/analytics', 'firebase/auth'],
+            mui: ['@mui/material', '@mui/x-date-pickers'],
+            'mui-icons': ['@mui/icons-material'],
+            // moment is intentionally excluded: splitting it into its own chunk
+            // duplicated its internal module state, desyncing registered locale
+            // data (moment/locale/nl) from the core module used by AdapterMoment.
+          },
+        },
+      },
+    },
   };
 })
