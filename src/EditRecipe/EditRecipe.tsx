@@ -155,7 +155,7 @@ const EditRecipe: React.FC = () => {
                                         </Box>
                                         <Grid2 container spacing={2}>
                                             <Grid2 size={{ md: 4, xs: 12 }}>
-                                                {recipe._id && <img key={recipe._id} src={imageUrl} alt="Recipe" width="100%" />}
+                                                {recipe._id && <img key={recipe._id} src={imageUrl} alt={translate('recipeImageAlt', language)} width="100%" />}
                                             </Grid2>
                                             <Grid2 size={{ md: 8, xs: 12 }}>
                                                 <Box>
@@ -254,7 +254,7 @@ const ImageCard: React.FC<{ language: Language; field: string; handleSetDefaultI
                                                             transform: 'translate(-50%, -100%)',
                                                         }}
                                                     >
-                                                        <img src={fields.value[index]} alt="Preview" width="300" />
+                                                        <img src={fields.value[index]} alt={translate('previewImageAlt', language)} width="300" />
                                                     </Box>
                                                 </Portal>
                                             )}

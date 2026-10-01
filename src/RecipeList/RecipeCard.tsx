@@ -95,22 +95,22 @@ export const RecipeCard = ({ recipe, index, onDeleted }: { recipe: RecipeData; i
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setCalendarDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleAddToCalendar} variant="contained">Add to calendar</Button>
+                <Button onClick={() => setCalendarDialogOpen(false)}>{translate('Cancel', language)}</Button>
+                <Button onClick={handleAddToCalendar} variant="contained">{translate('addToCalendar', language)}</Button>
             </DialogActions>
         </Dialog>
 
         <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogTitle>{translate('deleteRecipeTitle', language)}</DialogTitle>
             <DialogContent>
-                <DialogContentText>Are you sure you want to delete this recipe?</DialogContentText>
+                <DialogContentText>{translate('deleteRecipeConfirm', language)}</DialogContentText>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="secondary" startIcon={<Cancel />}>
-                    Cancel
+                    {translate('Cancel', language)}
                 </Button>
                 <Button onClick={confirmDelete} color="error" startIcon={<Delete />}>
-                    Delete
+                    {translate('delete', language)}
                 </Button>
             </DialogActions>
         </Dialog>

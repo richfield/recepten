@@ -46,7 +46,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ userProfile, roles, g
                                             value={input.value || []}
                                             onChange={(event) => input.onChange(event.target.value)}
                                         >
-                                            <MenuItem key="notSet" value="">Kies</MenuItem>
+                                            <MenuItem key="notSet" value="">{translate("select", language)}</MenuItem>
                                             <MenuItem key="nl" value="nl">Nederlands</MenuItem>
                                             <MenuItem key="en" value="en">English</MenuItem>
                                         </Select>
@@ -64,7 +64,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ userProfile, roles, g
                                             value={input.value || []}
                                             onChange={(event) => input.onChange(event.target.value)}
                                         >
-                                            <MenuItem key="notSet" value="">Kies</MenuItem>
+                                            <MenuItem key="notSet" value="">{translate("select", language)}</MenuItem>
                                             <MenuItem key="followOS" value="followOS">{translate("followOS", language)}</MenuItem>
                                             <MenuItem key="dark" value="dark">{translate("dark", language)}</MenuItem>
                                             <MenuItem key="light" value="light">{translate("light", language)}</MenuItem>
@@ -78,12 +78,12 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ userProfile, roles, g
                                 <Field name="roles">
                                     {({ input }) => (
                                         <FormControl fullWidth>
-                                            <InputLabel>Roles</InputLabel>
+                                            <InputLabel>{translate("roles", language)}</InputLabel>
                                             <Select<string[]>
                                                 {...input}
                                                 multiple
                                                 value={input.value || []}
-                                                input={<OutlinedInput label="Roles" />}
+                                                input={<OutlinedInput label={translate("roles", language)} />}
                                                 renderValue={(selected) => getRoleDisplayNames(selected)}
                                             >
                                                 {roles.map((role) => (
@@ -101,12 +101,12 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ userProfile, roles, g
                                     <Field name="groups">
                                         {({ input }) => (
                                             <FormControl fullWidth>
-                                                <InputLabel>Groups</InputLabel>
+                                                <InputLabel>{translate("groups", language)}</InputLabel>
                                                 <Select<string[]>
                                                     {...input}
                                                     multiple
                                                     value={input.value || []}
-                                                    input={<OutlinedInput label="Groups" />}
+                                                    input={<OutlinedInput label={translate("groups", language)} />}
                                                     renderValue={(selected) => getGroupDisplayNames(selected)}
                                                 >
                                                     {groups.map((group) => (

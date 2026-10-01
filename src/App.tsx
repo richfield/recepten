@@ -284,7 +284,7 @@ function App() {
               <IconButton color="inherit" onClick={() => navigate("/profile")}>
                 <Avatar
                   src={user.photoURL}
-                  alt="User Avatar"
+                  alt={translate('userAvatarAlt', language)}
                   style={{ width: "40px", height: "40px", marginRight: "10px" }}
                 />
               </IconButton>

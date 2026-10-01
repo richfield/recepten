@@ -330,8 +330,8 @@ const ViewRecipe: React.FC = () => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setCalendarDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleAddToCalendar} variant="contained">Add to calendar</Button>
+                    <Button onClick={() => setCalendarDialogOpen(false)}>{translate('Cancel', language)}</Button>
+                    <Button onClick={handleAddToCalendar} variant="contained">{translate('addToCalendar', language)}</Button>
                 </DialogActions>
             </Dialog>
         </Container>
