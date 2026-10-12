@@ -209,6 +209,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       }
       setAdding(false);
       closeAddLeftover();
+      showMessage(translate('leftoverAdded', language));
       if (onLeftoverAdded) onLeftoverAdded();
     } catch (err) {
       setAdding(false);
