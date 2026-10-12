@@ -365,7 +365,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         <DialogContent>
           <TextField
             margin="dense"
-            label={translate('portion', language)}
+            label={translate('leftoverNote', language)}
             type="text"
             fullWidth
             value={portionText}

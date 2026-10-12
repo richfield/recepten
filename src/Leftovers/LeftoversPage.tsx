@@ -189,7 +189,7 @@ const LeftoversPage: React.FC = () => {
                   <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="h6">{l.recipe?.name}</Typography>
-                      <Typography variant="body2">{l.portion || translate('portion', language)}</Typography>
+                      <Typography variant="body2">{l.portion || translate('leftoverNote', language)}</Typography>
                       <Typography variant="caption" display="block">{translate('addedAt', language)} {moment(l.addedAt).format('LL')}</Typography>
                       {/* If claimed, show claimant name and avatar */}
                       {!l.inFreezer && l.claimedByName && (
