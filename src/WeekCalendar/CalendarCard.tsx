@@ -197,8 +197,6 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
 
   const submitLeftover = async () => {
     try {
-      const ok = await confirm(translate('addLeftoverConfirm', language));
-      if (!ok) { closeAddLeftover(); return; }
       setAdding(true);
       await apiFetch('/api/leftovers', 'POST', { recipeId: recipe._id, portion: portionText });
       // refresh local count
@@ -366,7 +364,6 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
         <DialogTitle>{translate('addLeftover', language)}</DialogTitle>
         <DialogContent>
           <TextField
-            autoFocus
             margin="dense"
             label={translate('portion', language)}
             type="text"
