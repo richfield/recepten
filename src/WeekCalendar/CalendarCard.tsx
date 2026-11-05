@@ -111,12 +111,12 @@ const CalendarCard: React.FC<CalendarCardProps> = ({
       // Show all current freezer items and items claimed for this calendar day.
       const resIn = await apiFetch<LeftoverData[]>(`/api/leftovers?status=inFreezer`, 'GET');
       const dataIn = resIn?.data ?? [] as LeftoverData[];
-      const combined: LeftoverData[] = Array.isArray(dataIn) ? [...dataIn] : [];
-      // Then add claimed items for the day (avoid duplicates by _id)
-      const seen = new Set(combined.map(i => i._id));
-      claimedWithNames.forEach((c) => {
-        if (!seen.has(c._id)) combined.push(c);
-      });
+      // Claimed state wins if an item shows up in both responses
+      const claimedIds = new Set(claimedWithNames.map(c => c._id));
+      const combined: LeftoverData[] = [
+        ...(Array.isArray(dataIn) ? dataIn.filter(i => !claimedIds.has(i._id)) : []),
+        ...claimedWithNames,
+      ];
       setDisplayList(combined);
     } catch {
       // ignore errors for count/claims

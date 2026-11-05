@@ -54,7 +54,9 @@ const LeftoversPage: React.FC = () => {
         const freezerItems = freezerRes.data || [];
         const claimedTodayItems = claimedRes.data || [];
 
-        items = [...freezerItems, ...claimedTodayItems];
+        // Claimed state wins if an item shows up in both responses
+        const claimedIds = new Set(claimedTodayItems.map(c => c._id));
+        items = [...freezerItems.filter(f => !claimedIds.has(f._id)), ...claimedTodayItems];
       } else {
         const res = await apiFetch<LeftoverData[]>('/api/leftovers?status=inFreezer', 'GET');
         items = res.data || [];
@@ -116,7 +118,12 @@ const LeftoversPage: React.FC = () => {
   const handleClaim = async (id: string) => {
     if (!(await confirm(translate('claimConfirm', language)))) return;
     try {
-      await apiFetch(`/api/leftovers/${id}/claim`, 'POST', { day: linkedDate || moment().format('YYYY-MM-DD') });
+      const res = await apiFetch<LeftoverData>(`/api/leftovers/${id}/claim`, 'POST', { day: linkedDate || moment().format('YYYY-MM-DD') });
+      const claimed = res.data;
+      // Reflect the claim immediately so the item never lingers as "in freezer"
+      setLeftovers(prev => prev.map(l => l._id === id
+        ? { ...l, inFreezer: false, claimedBy: claimed?.claimedBy ?? user?.uid, claimedAt: claimed?.claimedAt ?? l.claimedAt, claimedByName: user?.displayName ?? undefined, claimedByPhoto: user?.photoURL ?? undefined }
+        : l));
       await fetchLeftovers();
       try { showMessage(translate('claimSuccess', language)); } catch { /* ignore */ }
     } catch (err) {
